@@ -459,6 +459,42 @@ def test_update_inspire_categories(workflow_app):
     )
 
 
+def test_dont_update_inspire_categories(workflow_app):
+    record = {
+        "_collections": ["Literature"],
+        "titles": ["A title"],
+        "document_type": ["book", "note", "report"],
+        "publication_info": [
+            {
+                "journal_title": "Unknown1",
+                "journal_record": {
+                    "$ref": "http://localhost:5000/api/journals/0000000"
+                },
+            },
+            {"cnum": "C01-01-01"},
+            {
+                "journal_title": "Unknown2",
+                "journal_record": {
+                    "$ref": "http://localhost:5000/api/journals/1111111"
+                },
+            },
+        ],
+        "inspire_categories": [
+            {"term": "Test"},
+        ]
+    }
+
+    obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
+    obj.extra_data["journal_inspire_categories"] = [
+        {"term": "Astrophysics"},
+        {"term": "Accelerators"},
+    ]
+    update_inspire_categories(obj, None)
+    assert (
+        obj.data["inspire_categories"] != obj.extra_data["journal_inspire_categories"]
+    )
+
+
 @mock.patch(
     "inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow",
     side_effect=fake_download_file,
