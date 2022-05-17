@@ -255,7 +255,6 @@ def test_fuzzy_match_without_math_ml_and_latex(workflow_app):
 
 
 def test_matching(workflow_app):
-
     correct_match = {
         "$schema": "https://inspirehep.net/schemas/records/hep.json",
         "_collections": ["Literature"],
@@ -274,7 +273,7 @@ def test_matching(workflow_app):
                 "source": "Elsevier B.V.",
             }
         ],
-        "arxiv_eprints": [{"categories": ["hep-ph", "astro-ph.CO"], "value": "1811.12764"}],
+        "arxiv_eprints": [{"categories": ["hep-lat"], "value": "1205.1659"}],
     }
 
     record_match_1 = TestRecordMetadata.create_from_kwargs(
@@ -300,7 +299,7 @@ def test_matching(workflow_app):
                 "source": "Elsevier B.V.",
             }
         ],
-        "arxiv_eprints": [{"categories": ["hep-lat"], "value": "1205.1659"}],
+        "arxiv_eprints": [{"categories": ["hep-ph", "astro-ph.CO"], "value": "1811.12764"}],
     }
 
     record_match_2 = TestRecordMetadata.create_from_kwargs(
