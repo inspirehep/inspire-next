@@ -644,7 +644,7 @@ def normalize_journal_title_entry(obj, publication_info, add_inspire_categories=
 
 
 def update_inspire_categories(obj, eng):
-    if obj.extra_data.get('journal_inspire_categories'):
+    if obj.extra_data.get('journal_inspire_categories') and 'inspire_categories' not in obj.data:
         obj.data['inspire_categories'] = obj.extra_data['journal_inspire_categories']
 
 
