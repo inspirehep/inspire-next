@@ -270,7 +270,7 @@ def test_save_roots(workflow_app):
 
 def test_save_roots_using_hep_root_table_api(workflow_app):
     with override_config(
-        FEATURE_FLAG_USE_ROOT_TABLE_ON_HEP=True, INSPIREHEP_URL="http://web:8000"
+        FEATURE_FLAG_USE_ROOT_TABLE_ON_HEP=True, INSPIREHEP_URL="http://web:8000/api"
     ):
         head = InspireRecord.create_or_update(
             fake_record("title1", 123), skip_files=False
