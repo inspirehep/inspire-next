@@ -128,7 +128,7 @@ def save_roots(obj, eng):
                     )
                 )
             requests.delete(
-                "{inspirehep_url}/api/literature/workflows_sources".format(
+                "{inspirehep_url}/literature/workflows_sources".format(
                     inspirehep_url=current_app.config["INSPIREHEP_URL"]
                 ),
                 headers=request_headers,
@@ -173,7 +173,7 @@ def save_roots(obj, eng):
         updated_head_rooots = _merge_roots_hep(head_uuid, head_roots, update_roots)
         for head_root in updated_head_rooots:
             response = requests.post(
-                "{inspirehep_url}/api/literature/workflows_sources".format(
+                "{inspirehep_url}/literature/workflows_sources".format(
                     inspirehep_url=current_app.config["INSPIREHEP_URL"]
                 ),
                 headers=_get_headers_for_hep_root_table_request(),
