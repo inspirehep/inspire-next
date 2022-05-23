@@ -140,7 +140,7 @@ def test_store_root_update_record(workflow_app):
             'acquisition_source': {'source': 'arXiv'},
         }
 
-        insert_wf_record_source(json=original_root, record_uuid=head_uuid, source='arxiv')
+        insert_wf_record_source(json_data=original_root, record_uuid=head_uuid, source='arxiv')
 
         obj = workflow_object_class.create(record)
 

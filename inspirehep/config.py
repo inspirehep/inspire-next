@@ -58,7 +58,7 @@ FEATURE_FLAG_ENABLE_MERGER = True
 FEATURE_FLAG_ENABLE_UPDATE_TO_LEGACY = False
 FEATURE_FLAG_ENABLE_SEND_TO_LEGACY = True
 """This feature flag will prevent to send a ``replace`` update to legacy."""
-
+FEATURE_FLAG_USE_ROOT_TABLE_ON_HEP = False
 # Default language and timezone
 # =============================
 BABEL_DEFAULT_LANGUAGE = 'en'

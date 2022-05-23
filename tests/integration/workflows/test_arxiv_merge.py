@@ -47,7 +47,7 @@ from inspirehep.modules.workflows.tasks.actions import load_from_source_data
 from inspirehep.modules.workflows.tasks.merging import merge_articles
 from inspirehep.modules.workflows.utils import (
     insert_wf_record_source,
-    read_all_wf_record_sources,
+    get_all_wf_record_sources,
     read_wf_record_source,
 )
 
@@ -194,7 +194,7 @@ def test_merge_without_conflicts_handles_update_without_acquisition_source_and_a
         assert obj.extra_data['merger_original_root'] == {}
 
         # source us unknown, so no new root is saved.
-        roots = read_all_wf_record_sources(factory.record_metadata.id)
+        roots = get_all_wf_record_sources(factory.record_metadata.id)
         assert not roots
 
 
@@ -298,7 +298,7 @@ def test_merge_without_conflicts_rootful(
 
         update_workflow_id = build_workflow(RECORD_WITH_CONFLICTS).id
 
-        insert_wf_record_source(json=ARXIV_ROOT, record_uuid=factory.record_metadata.id, source='arxiv')
+        insert_wf_record_source(json_data=ARXIV_ROOT, record_uuid=factory.record_metadata.id, source='arxiv')
 
         eng_uuid = start('article', object_id=update_workflow_id)
 
