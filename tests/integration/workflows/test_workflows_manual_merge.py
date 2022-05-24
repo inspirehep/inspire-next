@@ -325,7 +325,7 @@ def test_save_roots_using_hep_root_table_api(workflow_app):
         with requests_mock.Mocker() as request_mocker:
             request_mocker.register_uri(
                 "POST",
-                "http://web:8000/api/literature/workflows_sources",
+                "http://web:8000/api/literature/workflows_record_sources",
                 json={
                     "message": "workflow source for record {record_uuid} and source {source} added".format(
                         record_uuid=(head.id), source="arxiv"
@@ -336,7 +336,7 @@ def test_save_roots_using_hep_root_table_api(workflow_app):
             )
             request_mocker.register_uri(
                 "POST",
-                "http://web:8000/api/literature/workflows_sources",
+                "http://web:8000/api/literature/workflows_record_sources",
                 json={
                     "message": "workflow source for record {record_uuid} and source {source} added".format(
                         record_uuid=(update.id), source="arxiv"
@@ -347,7 +347,7 @@ def test_save_roots_using_hep_root_table_api(workflow_app):
             )
             request_mocker.register_uri(
                 "POST",
-                "http://web:8000/api/literature/workflows_sources",
+                "http://web:8000/api/literature/workflows_record_sources",
                 json={
                     "message": "workflow source for record {record_uuid} and source {source} added".format(
                         record_uuid=(update.id), source="publisher"
@@ -358,14 +358,14 @@ def test_save_roots_using_hep_root_table_api(workflow_app):
             )
             request_mocker.register_uri(
                 "GET",
-                "http://web:8000/api/literature/workflows_sources",
+                "http://web:8000/api/literature/workflows_record_sources",
                 json={"workflow_sources": workflow_sources_head},
                 headers=_get_headers_for_hep_root_table_request(),
                 status_code=200,
             )
             request_mocker.register_uri(
                 "GET",
-                "http://web:8000/api/literature/workflows_sources",
+                "http://web:8000/api/literature/workflows_record_sources",
                 json={"workflow_sources": workflow_sources_update},
                 headers=_get_headers_for_hep_root_table_request(),
                 status_code=200,
@@ -373,7 +373,7 @@ def test_save_roots_using_hep_root_table_api(workflow_app):
 
             request_mocker.register_uri(
                 "DELETE",
-                "http://web:8000/api/literature/workflows_sources",
+                "http://web:8000/api/literature/workflows_record_sources",
                 json={"message": "Record succesfully deleted"},
                 headers=_get_headers_for_hep_root_table_request(),
                 status_code=200,
@@ -381,7 +381,7 @@ def test_save_roots_using_hep_root_table_api(workflow_app):
 
             request_mocker.register_uri(
                 "POST",
-                "http://web:8000/api/literature/workflows_sources",
+                "http://web:8000/api/literature/workflows_record_sources",
                 json={
                     "message": "workflow source for record {record_uuid} and source {source} added".format(
                         record_uuid=arxiv_update_data["record_uuid"],
@@ -394,7 +394,7 @@ def test_save_roots_using_hep_root_table_api(workflow_app):
 
             request_mocker.register_uri(
                 "POST",
-                "http://web:8000/api/literature/workflows_sources",
+                "http://web:8000/api/literature/workflows_record_sources",
                 json={
                     "message": "workflow source for record {record_uuid} and source {source} added".format(
                         record_uuid=publisher_update_data["record_uuid"],
