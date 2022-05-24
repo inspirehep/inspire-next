@@ -362,7 +362,7 @@ def read_wf_record_source(record_uuid, source):
         return
     source = get_source_for_root(source)
     if current_app.config.get('FEATURE_FLAG_USE_ROOT_TABLE_ON_HEP'):
-        headers = {"content-type": "application/json"}
+        headers = _get_headers_for_hep_root_table_request()
         response = requests.get(
             "{inspirehep_url}/literature/workflows_record_sources".format(
                 inspirehep_url=current_app.config["INSPIREHEP_URL"]
@@ -398,11 +398,12 @@ def get_all_wf_record_sources(record_uuid):
     """
     if current_app.config.get('FEATURE_FLAG_USE_ROOT_TABLE_ON_HEP'):
         inspirehep_url = current_app.config.get("INSPIREHEP_URL")
+        headers = _get_headers_for_hep_root_table_request()
         response = requests.get(
             "{inspirehep_url}/literature/workflows_record_sources".format(
                 inspirehep_url=inspirehep_url
             ),
-            headers={"content-type": "application/json"},
+            headers=headers,
             data=json.dumps({"record_uuid": record_uuid}),
         )
         if response.status_code == 200:
@@ -432,7 +433,7 @@ def insert_wf_record_source(json_data, record_uuid, source):
 
     if current_app.config.get('FEATURE_FLAG_USE_ROOT_TABLE_ON_HEP'):
         inspirehep_url = current_app.config.get("INSPIREHEP_URL")
-        headers = {"content-type": "application/json"}
+        headers = _get_headers_for_hep_root_table_request()
         response = requests.post(
             "{inspirehep_url}/literature/workflows_record_sources".format(
                 inspirehep_url=inspirehep_url
