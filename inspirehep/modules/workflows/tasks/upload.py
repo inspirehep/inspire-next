@@ -187,7 +187,7 @@ def store_root(obj, eng):
     headers = _get_headers_for_hep_root_table_request()
     if current_app.config.get("FEATURE_FLAG_USE_ROOT_TABLE_ON_HEP"):
         response = requests.post(
-            "{inspirehep_url}/literature/workflows_sources".format(
+            "{inspirehep_url}/literature/workflows_record_sources".format(
                 inspirehep_url=current_app.config["INSPIREHEP_URL"]
             ),
             headers=headers,
