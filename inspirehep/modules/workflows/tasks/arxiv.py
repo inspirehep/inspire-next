@@ -279,8 +279,8 @@ def extract_authors_from_xml(xml_content):
         xml_content = xml_content.split('\n', 1)[1]
 
     content = Selector(text=xml_content, type="xml")
-
     content.remove_namespaces()
+    undefined_or_none_value_regex = re.compile("undefined|none", re.IGNORECASE)
     # Going through all the authors in the file
     for author in content.xpath("//Person"):
 
@@ -300,12 +300,13 @@ def extract_authors_from_xml(xml_content):
 
         # Getting all the names for affiliated organizations using the organization ids from author
         for affiliation in author.xpath("./authorAffiliations/authorAffiliation/@organizationid").getall():
-            affiliations.append(content.xpath('//organizations/Organization[@id="{}"]/orgName[@source="spiresICN" or @source="INSPIRE" and text()!="undefined" and text()!="UNDEFINED" and text()!="" ]/text()'.format(affiliation)).get())
+            orgName = content.xpath('//organizations/Organization[@id="{}"]/orgName[@source="spiresICN" or @source="INSPIRE" and text()!="" ]/text()'.format(affiliation)).get()
+            if not re.match(undefined_or_none_value_regex, orgName):
+                affiliations.append(orgName)
 
             # Getting all the affiliations_identifiers for affiliated organizations using the organization ids from author
-
             for value, source in itertools.izip(content.xpath('//organizations/Organization[@id="{}"]/orgName[@source="ROR" or @source="GRID" and text()!=""]/text()'.format(affiliation)).getall(), content.xpath('//organizations/Organization[@id="{}"]/orgName[@source="ROR" or @source="GRID" and text()!=""]/@source'.format(affiliation)).getall()):
-                if not re.match("undefined", source, flags=re.IGNORECASE) or not re.match("undefined", id, flags=re.IGNORECASE):
+                if not re.match(undefined_or_none_value_regex, source) or not re.match(undefined_or_none_value_regex, id):
 
                     if source == 'ROR' and not re.match("https://ror.org/*", value):
                         value = 'https://ror.org/{}'.format(value)
