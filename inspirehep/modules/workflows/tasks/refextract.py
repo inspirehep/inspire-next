@@ -28,6 +28,7 @@ import backoff
 from itertools import chain
 import json
 from flask import current_app
+from requests.exceptions import RequestException
 import requests
 
 from invenio_workflows.errors import WorkflowsError
@@ -63,7 +64,7 @@ LOGGER = getStackTraceLogger(__name__)
 @with_debug_logging
 @backoff.on_exception(
     backoff.expo,
-    requests.exceptions.RequestException,
+    RequestException,
     max_tries=5,
 )
 def extract_journal_info(obj, eng):
@@ -91,12 +92,22 @@ def extract_journal_info(obj, eng):
         refextract_request_headers = {
             "content-type": "application/json",
         }
-        response = requests.post(
-            "{}/extract_journal_info".format(current_app.config["REFEXTRACT_SERVICE_URL"]),
-            headers=refextract_request_headers,
-            data=json.dumps({"publication_infos": publication_infos, "journal_kb_data": kbs_journal_dict})
-        )
-        extracted_publication_info = response.json()['extracted_publication_infos']
+        try:
+            response = requests.post(
+                "{}/extract_journal_info".format(current_app.config["REFEXTRACT_SERVICE_URL"]),
+                headers=refextract_request_headers,
+                data=json.dumps({"publication_infos": publication_infos, "journal_kb_data": kbs_journal_dict})
+            )
+            response.raise_for_status()
+        except RequestException:
+            LOGGER.info("Couldn't extract publication info from url!")
+            raise WorkflowsError(
+                "Error from refextract: [{code}]: {message}".format(
+                    code=response.status_code,
+                    message=response.json()
+                )
+            )
+        extracted_publication_info = response.json().get('extracted_publication_infos', [])
         for publication_info, extracted_publication_info in zip(publication_infos, extracted_publication_info):
             if extracted_publication_info.get('volume'):
                 publication_info['journal_volume'] = extracted_publication_info['volume']
