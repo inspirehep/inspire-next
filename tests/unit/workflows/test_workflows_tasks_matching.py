@@ -299,6 +299,74 @@ def test_core_is_not_written_in_extradata_if_article_is_non_core(app):
         assert 'core' not in obj.extra_data
 
 
+def test_core_is_written_in_extradata_if_article_primary_category_is_core(app):
+    schema = load_schema('hep')
+    subschema = schema['properties']['arxiv_eprints']
+
+    categories_config = {
+        'ARXIV_CATEGORIES': {
+            'core': ['hep-ph', 'math.AP'],
+            'non-core': ['astro-ph.CO', 'gr-qc']
+        }
+    }
+
+    with patch.dict(app.config, categories_config):
+        data = {}
+        extra_data = {}
+
+        obj = MockObj(data, extra_data)
+        eng = MockEng()
+
+        obj.data = {
+            'arxiv_eprints': [
+                {
+                    'categories': [
+                        'hep-ph',
+                        'math.AP',
+                    ],
+                    'value': '1705.01122',
+                },
+            ],
+        }
+        assert validate(obj.data['arxiv_eprints'], subschema) is None
+        set_core_in_extra_data(obj, eng)
+        assert obj.extra_data['core']
+
+
+def test_core_is_not_written_in_extradata_if_article_primary_category_is_not_core(app):
+    schema = load_schema('hep')
+    subschema = schema['properties']['arxiv_eprints']
+
+    categories_config = {
+        'ARXIV_CATEGORIES': {
+            'core': ['hep-ph'],
+            'non-core': ['astro-ph.CO', 'gr-qc']
+        }
+    }
+
+    with patch.dict(app.config, categories_config):
+        data = {}
+        extra_data = {}
+
+        obj = MockObj(data, extra_data)
+        eng = MockEng()
+
+        obj.data = {
+            'arxiv_eprints': [
+                {
+                    'categories': [
+                        'astro-ph.CO',
+                        'hep-ph',
+                    ],
+                    'value': '1705.01122',
+                },
+            ],
+        }
+        assert validate(obj.data['arxiv_eprints'], subschema) is None
+        set_core_in_extra_data(obj, eng)
+        assert 'core' not in obj.extra_data
+
+
 @patch('inspirehep.modules.workflows.tasks.matching.match')
 def test_pending_in_holding_pen_returns_true_if_something_matched(mock_match):
     mock_match.return_value = iter([{'_id': 1}])
