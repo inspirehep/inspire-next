@@ -1128,3 +1128,51 @@ def test_arxiv_author_no_none_in_institution_affiliations():
     validate(expected_authors, authors_subschema)
 
     assert expected_authors[0] == obj.data['authors'][14]
+
+
+def test_arxiv_author_no_organization_name():
+    schema = load_schema('hep')
+    eprints_subschema = schema['properties']['arxiv_eprints']
+
+    filename = pkg_resources.resource_filename(
+        __name__, os.path.join('fixtures', '2205.14864.tar.gz'))
+
+    data = {
+        '$schema': 'http://localhost:5000/hep.json',
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'hep-ex',
+                ],
+                'value': '2205.14864',
+            },
+        ],
+    }
+    validate(data['arxiv_eprints'], eprints_subschema)
+
+    extra_data = {}
+    files = MockFiles({
+        '2205.14864.tar.gz': AttrDict({
+            'file': AttrDict({
+                'uri': filename,
+            })
+        })
+    })
+
+    obj = MockObj(data, extra_data, files=files)
+    eng = MockEng()
+
+    arxiv_author_list(obj, eng)
+
+    authors_subschema = schema['properties']['authors']
+    expected_authors = [
+        {
+            'ids': [
+                {'value': 'INSPIRE-00149777', 'schema': u'INSPIRE ID'},
+            ],
+            'full_name': u'Biermann, Peter',
+        },
+    ]
+    validate(expected_authors, authors_subschema)
+
+    assert expected_authors[0] == obj.data['authors'][29]
