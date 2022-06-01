@@ -83,7 +83,12 @@ def merge_articles(obj, eng):
         head_record = head_record.to_dict()
 
     head_root = read_wf_record_source(record_uuid=head_uuid, source=update_source.lower())
-    head_root = deepcopy(head_root.json if head_root else {})
+
+    # TODO: remove check when we'll use hep on prod
+    if current_app.config.get('FEATURE_FLAG_USE_ROOT_TABLE_ON_HEP'):
+        head_root = deepcopy(head_root['json'] if head_root else {})
+    else:
+        head_root = deepcopy(head_root.json if head_root else {})
 
     obj.extra_data['head_uuid'] = str(head_uuid)
     obj.extra_data['head_version_id'] = head_version_id
