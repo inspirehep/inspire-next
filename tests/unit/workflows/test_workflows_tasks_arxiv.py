@@ -1176,3 +1176,54 @@ def test_arxiv_author_no_organization_name():
     validate(expected_authors, authors_subschema)
 
     assert expected_authors[0] == obj.data['authors'][29]
+
+
+def test_arxiv_handles_invalid_authorid_value():
+    schema = load_schema('hep')
+    eprints_subschema = schema['properties']['arxiv_eprints']
+
+    filename = pkg_resources.resource_filename(
+        __name__, os.path.join('fixtures', '2107.10592.tar.gz'))
+
+    data = {
+        '$schema': 'http://localhost:5000/hep.json',
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'hep-ex',
+                ],
+                'value': '2107.10592',
+            },
+        ],
+    }
+    validate(data['arxiv_eprints'], eprints_subschema)
+
+    extra_data = {}
+    files = MockFiles({
+        '2107.10592.tar.gz': AttrDict({
+            'file': AttrDict({
+                'uri': filename,
+            })
+        })
+    })
+
+    obj = MockObj(data, extra_data, files=files)
+    eng = MockEng()
+
+    arxiv_author_list(obj, eng)
+
+    authors_subschema = schema['properties']['authors']
+    expected_authors = [
+        {
+            'affiliations': [
+                {'value': u'Kosice U.'},
+            ],
+            'affiliations_identifiers': [
+                {'value': 'https://ror.org/039965637', 'schema': 'ROR'},
+            ],
+            'full_name': u'Ahuja, Ishaan',
+        },
+    ]
+    validate(expected_authors, authors_subschema)
+
+    assert expected_authors[0] == obj.data['authors'][9]
