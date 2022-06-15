@@ -60,7 +60,7 @@ def formdata_to_model(obj, formdata):
         builder.add_author(builder.make_author(
             supervisor['full_name'],
             affiliations=force_list(supervisor['affiliation'])
-            if author['affiliation'] else None,
+            if supervisor['affiliation'] else None,
             roles=['supervisor']
         ))
 
