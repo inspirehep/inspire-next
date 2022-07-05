@@ -1227,3 +1227,58 @@ def test_arxiv_handles_invalid_authorid_value():
     validate(expected_authors, authors_subschema)
 
     assert expected_authors[0] == obj.data['authors'][9]
+
+
+def test_arxiv_handles_non_ascii_affiliations():
+    schema = load_schema('hep')
+    eprints_subschema = schema['properties']['arxiv_eprints']
+
+    filename = pkg_resources.resource_filename(
+        __name__, os.path.join('fixtures', '2206.14521.tar.gz'))
+
+    data = {
+        '$schema': 'http://localhost:5000/hep.json',
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'hep-ex',
+                ],
+                'value': '2206.14521',
+            },
+        ],
+    }
+    validate(data['arxiv_eprints'], eprints_subschema)
+
+    extra_data = {}
+    files = MockFiles({
+        '2206.14521.tar.gz': AttrDict({
+            'file': AttrDict({
+                'uri': filename,
+            })
+        })
+    })
+
+    obj = MockObj(data, extra_data, files=files)
+    eng = MockEng()
+
+    authors_subschema = schema['properties']['authors']
+    expected_authors = [
+        {
+            'affiliations': [
+                {'value': u'Liverpool U.'},
+                {'value': u'CERN'},
+            ],
+            'ids': [
+                {'value': 'INSPIRE-00657132', 'schema': u'INSPIRE ID'},
+            ],
+            'affiliations_identifiers': [
+                {'value': 'https://ror.org/04xs57h96', 'schema': 'ROR'},
+                {'value': 'https://ror.org/01ggx4157', 'schema': 'ROR'},
+            ],
+            'full_name': u'Abed Abud, Adam',
+        },
+    ]
+    validate(expected_authors, authors_subschema)
+
+    assert arxiv_author_list(obj, eng) is None
+    assert expected_authors[0] == obj.data['authors'][0]

@@ -304,12 +304,12 @@ def extract_authors_from_xml(xml_content):
 
         # Gets all the names for affiliated organizations using the organization ids from author
         for affiliation in author.xpath("./authorAffiliations/authorAffiliation/@organizationid").getall():
-            orgName = content.xpath('//organizations/Organization[@id="{}"]/orgName[@source="spiresICN" or @source="INSPIRE" and text()!="" ]/text()'.format(affiliation)).get()
+            orgName = content.xpath(u'//organizations/Organization[@id="{}"]/orgName[@source="spiresICN" or @source="INSPIRE" and text()!="" ]/text()'.format(affiliation)).get()
             if orgName and not re.match(undefined_or_none_value_regex, orgName):
                 affiliations.append(orgName)
 
             # Gets all the affiliations_identifiers for affiliated organizations using the organization ids from author
-            for value, source in itertools.izip(content.xpath('//organizations/Organization[@id="{}"]/orgName[@source="ROR" or @source="GRID" and text()!=""]/text()'.format(affiliation)).getall(), content.xpath('//organizations/Organization[@id="{}"]/orgName[@source="ROR" or @source="GRID" and text()!=""]/@source'.format(affiliation)).getall()):
+            for value, source in itertools.izip(content.xpath(u'//organizations/Organization[@id="{}"]/orgName[@source="ROR" or @source="GRID" and text()!=""]/text()'.format(affiliation)).getall(), content.xpath(u'//organizations/Organization[@id="{}"]/orgName[@source="ROR" or @source="GRID" and text()!=""]/@source'.format(affiliation)).getall()):
                 if not re.match(undefined_or_none_value_regex, source) or not re.match(undefined_or_none_value_regex, id):
 
                     if source == 'ROR' and not re.match(ror_path_value_regex, value):
