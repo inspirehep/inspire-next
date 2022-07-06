@@ -74,7 +74,6 @@ from inspirehep.modules.workflows.tasks.actions import (
     normalize_affiliations,
     is_core,
     create_core_selection_wf,
-    create_core_deselection_wf,
     check_if_france_in_fulltext,
     check_if_france_in_raw_affiliations,
     link_institutions_with_affiliations
@@ -105,8 +104,7 @@ from inspirehep.modules.workflows.tasks.matching import (
     has_more_than_one_exact_match,
     raise_if_match_workflow,
     match_previously_rejected_wf_in_holdingpen,
-    match_non_completed_wf_in_holdingpen,
-    check_if_secondary_categories_are_core
+    match_non_completed_wf_in_holdingpen
 )
 from inspirehep.modules.workflows.tasks.merging import (
     has_conflicts,
@@ -598,16 +596,6 @@ CREATE_CORE_SELECTION_WF = [
     create_core_selection_wf,
 ]
 
-CORE_DESELECTION = [
-    IF_NOT(
-        is_marked('is-update'),
-        IF(
-            check_if_secondary_categories_are_core,
-            create_core_deselection_wf
-        )
-    )
-]
-
 
 class Article(object):
     """Article ingestion workflow for Literature collection."""
@@ -645,6 +633,5 @@ class Article(object):
                 ),
             )
         ] +
-        FIND_NEXT_AND_RUN_IF_NECESSARY +
-        CORE_DESELECTION
+        FIND_NEXT_AND_RUN_IF_NECESSARY
     )

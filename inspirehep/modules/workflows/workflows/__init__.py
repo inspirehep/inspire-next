@@ -29,4 +29,3 @@ from .author import Author                 # noqa: F401
 from .manual_merge import ManualMerge      # noqa: F401
 from .edit_article import EditArticle      # noqa: F401
 from .core_selection import CoreSelection  # noqa: F401
-from .non_core_selection import NonCoreSelection  # noqa: F401
