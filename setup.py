@@ -163,8 +163,7 @@ setup(
             'author = inspirehep.modules.workflows.workflows:Author',
             'manual_merge = inspirehep.modules.workflows.workflows:ManualMerge',
             'edit_article = inspirehep.modules.workflows.workflows:EditArticle',
-            'core_selection = inspirehep.modules.workflows.workflows:CoreSelection',
-            'non_core_selection = inspirehep.modules.workflows.workflows:NonCoreSelection'
+            'core_selection = inspirehep.modules.workflows.workflows:CoreSelection'
         ],
         'invenio_workflows_ui.actions': [
             'author_approval = inspirehep.modules.workflows.actions.author_approval:AuthorApproval',

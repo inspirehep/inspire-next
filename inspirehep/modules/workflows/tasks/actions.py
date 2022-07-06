@@ -1163,36 +1163,6 @@ def create_core_selection_wf(obj, eng):
     start.delay("core_selection", object_id=workflow_object.id)
 
 
-def create_core_deselection_wf(obj, eng):
-    record_control_number = obj.data.get('control_number')
-    if not record_control_number:
-        raise MissingRecordControlNumber
-
-    extra_data_to_clean = ['_task_history', '_error_msg', 'source_data', 'restart-count']
-    extra_data = dict(obj.extra_data.copy())
-    for key in extra_data_to_clean:
-        if key in extra_data:
-            del extra_data[key]
-    data = obj.data.copy()
-
-    workflow_object = workflow_object_class.create(
-        data={},
-        id_user=None,
-        data_type="hep"
-    )
-
-    workflow_object.data = data
-
-    extra_data['source_data'] = {}
-
-    workflow_object.extra_data = extra_data
-
-    workflow_object.save()
-    db.session.commit()
-
-    start.delay("non_core_selection", object_id=workflow_object.id)
-
-
 @backoff.on_exception(backoff.expo, (BadGatewayError, requests.exceptions.ConnectionError), base=4, max_tries=5)
 def post_pdf_to_grobid(obj, grobid_api_path, **kwargs):
     with get_document_in_workflow(obj) as tmp_document:
