@@ -65,7 +65,7 @@ from inspire_json_merger.config import GrobidOnArxivAuthorsOperations
 from inspire_schemas.builders import LiteratureBuilder
 from inspire_schemas.readers import LiteratureReader
 from inspire_schemas.utils import normalize_collaboration_name, validate
-from inspire_utils.record import get_value
+from inspire_utils.record import get_value, normalize_affiliations
 from inspire_utils.dedupers import dedupe_list
 
 from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
@@ -79,7 +79,7 @@ from inspirehep.modules.workflows.tasks.refextract import (
     extract_references_from_text_data,
 )
 from inspirehep.modules.refextract.matcher import match_references
-from inspirehep.modules.search import InstitutionsSearch
+from inspirehep.modules.search import InstitutionsSearch, LiteratureSearch
 from inspirehep.modules.workflows.tasks.upload import create_error
 from inspirehep.modules.workflows.errors import BadGatewayError, CannotFindProperSubgroup, MissingRecordControlNumber
 from inspirehep.modules.workflows.utils import (
@@ -994,69 +994,6 @@ def normalize_collaborations(obj, eng):
     return obj
 
 
-def _clean_up_affiliation_data(affiliations):
-    cleaned_affiliations = []
-    for aff in affiliations:
-        cleaned_affiliations.append({key: val for key, val in aff.items() if key in ['value', 'record']})
-    return cleaned_affiliations
-
-
-def _raw_aff_highlight_len(highlighted_raw_aff):
-    matches = re.findall(r"<em>(.*?)</em>", highlighted_raw_aff)
-    return sum(len(match) for match in matches)
-
-
-def _extract_matched_aff_from_highlight(highlighted_raw_affs, author_raw_affs, author_affs):
-    raw_aff_highlight_lenghts = [_raw_aff_highlight_len(raw_aff) for raw_aff in highlighted_raw_affs]
-    longest_highlight_idx = raw_aff_highlight_lenghts.index(max(raw_aff_highlight_lenghts))
-    extracted_raw_aff = re.sub('<em>|</em>', "", highlighted_raw_affs[longest_highlight_idx])
-    for raw_aff, aff in zip(author_raw_affs, author_affs):
-        if raw_aff['value'] == extracted_raw_aff:
-            return [aff]
-
-
-def _find_unambiguous_affiliation(result):
-    for matched_author in result:
-        matched_author_data = matched_author.meta.inner_hits.authors.hits[0].to_dict()
-        matched_author_raw_affs = matched_author_data['raw_affiliations']
-        matched_author_affs = matched_author_data['affiliations']
-        matched_aff = []
-        if len(matched_author_raw_affs) == 1:
-            matched_aff = matched_author_affs
-        elif len(matched_author_raw_affs) == len(matched_author_affs):
-            matched_aff = _extract_matched_aff_from_highlight(
-                matched_author.meta.highlight['authors.raw_affiliations.value'],
-                matched_author_raw_affs,
-                matched_author_affs
-            )
-        if matched_aff:
-            return _clean_up_affiliation_data(matched_aff)
-
-
-def _match_lit_author_affiliation(raw_aff):
-    query = Q(
-        "nested",
-        path="authors",
-        query=(
-            Q("match", authors__raw_affiliations__value=raw_aff) &
-            Q("exists", field="authors.affiliations.value")
-        ),
-        inner_hits={},
-    )
-    query_filters = Q("term", _collections="Literature") & Q("term", curated=True)
-    result = (
-        Search(index="records-hep", using=current_search_client)
-        .query(query)
-        .filter(query_filters)
-        .highlight("authors.raw_affiliations.value", fragment_size=len(raw_aff))
-        .source(False)
-        .params(size=20)
-        .execute()
-        .hits
-    )
-    return result
-
-
 def _assign_institution(matched_affiliation):
     query = Q("match", legacy_ICN=matched_affiliation["value"])
     result = InstitutionsSearch().query(query).params(size=1).execute()
@@ -1079,37 +1016,33 @@ def _assign_institution_reference_to_affiliations(author_affiliations, already_m
                 already_matched_affiliations_refs[complete_affiliation['value']] = complete_affiliation['record']
 
 
-def normalize_affiliations(obj, eng):
-    matched_affiliations = {}
-    for author in obj.data.get("authors", []):
+def normalize_author_affiliations(obj, eng):
+    search = LiteratureSearch()
+    normalized_affiliations, ambiguous_affiliations = normalize_affiliations(
+        obj.data, search
+    )
+    for author, normalized_affiliation in zip(
+        obj.data.get("authors", []), normalized_affiliations
+    ):
         author_affiliations = author.get("affiliations", [])
         if author_affiliations:
             continue
         raw_affs = get_value(author, "raw_affiliations.value", [])
-        for raw_aff in raw_affs:
-            if raw_aff in matched_affiliations:
-                author_affiliations.extend(matched_affiliations[raw_aff])
-                continue
-            matched_author_affiliations_hits = _match_lit_author_affiliation(raw_aff)
-            matched_author_affiliations = _find_unambiguous_affiliation(matched_author_affiliations_hits)
-            if matched_author_affiliations:
-                matched_affiliations[raw_aff] = matched_author_affiliations
-                author_affiliations.extend(matched_author_affiliations)
-            else:
-                LOGGER.info(
-                    u"(wf: %s) Found ambiguous affiliations for raw affiliation %s, skipping affiliation linking.",
-                    obj.id,
-                    raw_aff
-                )
-        if author_affiliations:
-            author["affiliations"] = dedupe_list(author_affiliations)
+        if normalized_affiliation:
+            author["affiliations"] = normalized_affiliation
             LOGGER.info(
-                u"(wf: %s) Normalized affiliations for author %s. Raw affiliations: %s. Assigned affiliations: %s",
+                "(wf: %s) Normalized affiliations for author %s. Raw affiliations: %s. Assigned affiliations: %s",
                 obj.id,
                 author["full_name"],
                 ",".join(raw_affs),
-                author_affiliations
+                author_affiliations,
             )
+    for ambiguous_affiliation in ambiguous_affiliations:
+        LOGGER.info(
+            "(wf: %s) Found ambiguous affiliations for raw affiliation %s, skipping affiliation linking.",
+            obj.id,
+            ambiguous_affiliation,
+        )
     return obj
 
 

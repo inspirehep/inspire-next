@@ -44,7 +44,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     _assign_institution, affiliations_for_hidden_collections,
     core_selection_wf_already_created, create_core_selection_wf,
     link_institutions_with_affiliations, load_from_source_data,
-    normalize_affiliations, normalize_collaborations, normalize_journal_titles,
+    normalize_author_affiliations, normalize_collaborations, normalize_journal_titles,
     refextract, replace_collection_to_hidden, update_inspire_categories)
 
 
@@ -152,19 +152,19 @@ def insert_institutions_in_db(workflow_app):
 def insert_literature_in_db(workflow_app):
     """Temporarily add few institutions in the DB"""
     TestRecordMetadata.create_from_file(
-        __name__, "literature_1863053.json", pid_type="ins", index_name="records-hep"
+        __name__, "literature_1863053.json", pid_type="lit", index_name="records-hep"
     )
     TestRecordMetadata.create_from_file(
-        __name__, "literature_1862822.json", pid_type="ins", index_name="records-hep"
+        __name__, "literature_1862822.json", pid_type="lit", index_name="records-hep"
     )
     TestRecordMetadata.create_from_file(
-        __name__, "literature_1836272.json", pid_type="ins", index_name="records-hep"
+        __name__, "literature_1836272.json", pid_type="lit", index_name="records-hep"
     )
     TestRecordMetadata.create_from_file(
-        __name__, "literature_1459277.json", pid_type="ins", index_name="records-hep"
+        __name__, "literature_1459277.json", pid_type="lit", index_name="records-hep"
     )
     TestRecordMetadata.create_from_file(
-        __name__, "literature_1800446.json", pid_type="ins", index_name="records-hep"
+        __name__, "literature_1800446.json", pid_type="lit", index_name="records-hep"
     )
 
 
@@ -945,32 +945,27 @@ def test_normalize_affiliations_happy_flow(
     }
 
     obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
-    obj = normalize_affiliations(obj, None)
+    obj = normalize_author_affiliations(obj, None)
 
     assert obj.data["authors"][0]["affiliations"] == [
         {
-            u"record": {u"$ref": u"http://localhost:5000/api/institutions/903335"},
-            u"value": u"Warsaw U.",
+            "record": {"$ref": "http://localhost:5000/api/institutions/903335"},
+            "value": "Warsaw U.",
         }
     ]
     assert obj.data["authors"][1]["affiliations"] == [
         {
-            u"record": {u"$ref": u"http:/localhost:5000/api/institutions/902725"},
-            u"value": u"CERN",
+            "record": {"$ref": "http:/localhost:5000/api/institutions/902725"},
+            "value": "CERN",
         }
     ]
 
-    assert mock_logger.mock_calls[3][1] == (
-        u"(wf: %s) Normalized affiliations for author %s. Raw affiliations: %s. Assigned affiliations: %s",
+    assert mock_logger.mock_calls[-2][1] == (
+        "(wf: %s) Normalized affiliations for author %s. Raw affiliations: %s. Assigned affiliations: %s",
         1,
         "Kowal, Michal",
         "Faculty of Physics, University of Warsaw, Pasteura 5 Warsaw",
-        [
-            {
-                u"record": {u"$ref": u"http://localhost:5000/api/institutions/903335"},
-                u"value": u"Warsaw U.",
-            }
-        ],
+        [],
     )
 
 
@@ -995,7 +990,7 @@ def test_normalize_affiliations_when_authors_has_two_happy_flow(
     }
 
     obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
-    obj = normalize_affiliations(obj, None)
+    obj = normalize_author_affiliations(obj, None)
 
     assert obj.data["authors"][0]["affiliations"] == [
         {
@@ -1028,7 +1023,7 @@ def test_normalize_affiliations_when_lit_affiliation_missing_institution_ref(
     }
 
     obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
-    obj = normalize_affiliations(obj, None)
+    obj = normalize_author_affiliations(obj, None)
 
     assert obj.data["authors"][0]["affiliations"] == [
         {
@@ -1041,10 +1036,7 @@ def test_normalize_affiliations_when_lit_affiliation_missing_institution_ref(
     ]
 
 
-@mock.patch(
-    "inspirehep.modules.workflows.tasks.actions._find_unambiguous_affiliation",
-    return_value={"value": "CERN"},
-)
+@mock.patch('inspire_utils.record._find_unambiguous_affiliation', return_value={"value": "CERN"})
 def test_normalize_affiliations_run_query_only_once_when_authors_have_same_raw_aff(
     mock_assign_matched_affiliation_to_author, workflow_app, insert_literature_in_db
 ):
@@ -1069,7 +1061,7 @@ def test_normalize_affiliations_run_query_only_once_when_authors_have_same_raw_a
     }
 
     obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
-    obj = normalize_affiliations(obj, None)
+    obj = normalize_author_affiliations(obj, None)
 
     assert mock_assign_matched_affiliation_to_author.called_once()
 
@@ -1090,7 +1082,7 @@ def test_normalize_affiliations_handle_not_found_affiliations(
     }
 
     obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
-    obj = normalize_affiliations(obj, None)
+    obj = normalize_author_affiliations(obj, None)
 
     assert not obj.data["authors"][0].get("affiliations")
 
@@ -1159,7 +1151,7 @@ def test_normalize_affiliations_doesnt_return_nested_affiliations_if_using_memoi
     }
 
     obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
-    obj = normalize_affiliations(obj, None)
+    obj = normalize_author_affiliations(obj, None)
 
     assert obj.data["authors"][0]["affiliations"] == [
         {
@@ -1197,7 +1189,7 @@ def test_normalize_affiliations_doesnt_add_duplicated_affiliations(
         ],
     }
     obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
-    obj = normalize_affiliations(obj, None)
+    obj = normalize_author_affiliations(obj, None)
 
     assert obj.data["authors"][0]["affiliations"] == [
         {
@@ -1360,7 +1352,7 @@ def test_normalize_affiliations_doesnt_add_not_valid_stuff_to_affiliation(
         ],
     }
     obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
-    obj = normalize_affiliations(obj, None)
+    obj = normalize_author_affiliations(obj, None)
 
     assert obj.data["authors"][0]["affiliations"] == [
         {
@@ -1400,7 +1392,7 @@ def test_normalize_affiliations_assign_all_affiliations_if_one_raw_aff_in_matche
         ],
     }
     obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
-    obj = normalize_affiliations(obj, None)
+    obj = normalize_author_affiliations(obj, None)
 
     assert obj.data["authors"][0].get("affiliations") == [
         {
@@ -1435,7 +1427,7 @@ def test_normalize_affiliations_assign_only_matching_affiliation_when_multiple_r
         ],
     }
     obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
-    obj = normalize_affiliations(obj, None)
+    obj = normalize_author_affiliations(obj, None)
 
     assert obj.data["authors"][0].get("affiliations") == [
         {
@@ -1445,10 +1437,6 @@ def test_normalize_affiliations_assign_only_matching_affiliation_when_multiple_r
     ]
 
 
-@mock.patch(
-    "inspirehep.modules.workflows.tasks.actions._extract_matched_aff_from_highlight",
-    return_value=None,
-)
 def test_aff_normalization_if_no_match_from_highlighting_and_no_other_matches(
     workflow_app, insert_literature_in_db
 ):
@@ -1469,7 +1457,7 @@ def test_aff_normalization_if_no_match_from_highlighting_and_no_other_matches(
         ],
     }
     obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
-    obj = normalize_affiliations(obj, None)
+    obj = normalize_author_affiliations(obj, None)
 
     assert not obj.data["authors"][0].get("affiliations")
 

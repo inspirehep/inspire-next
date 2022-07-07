@@ -71,7 +71,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     extract_authors_from_pdf,
     is_fermilab_report,
     add_collection, normalize_collaborations,
-    normalize_affiliations,
+    normalize_author_affiliations,
     is_core,
     create_core_selection_wf,
     create_core_deselection_wf,
@@ -334,7 +334,7 @@ POSTENHANCE_RECORD = [
     prepare_keywords,
     set_refereed_and_fix_document_type,
     fix_submission_number,
-    IF(is_core, normalize_affiliations),
+    IF(is_core, normalize_author_affiliations),
     link_institutions_with_affiliations,
     IF(
         is_fermilab_report,

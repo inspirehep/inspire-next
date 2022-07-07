@@ -7,7 +7,7 @@
 from __future__ import absolute_import, division, print_function
 
 from inspirehep.modules.literaturesuggest.tasks import curation_ticket_context
-from inspirehep.modules.workflows.tasks.actions import halt_record, normalize_affiliations, \
+from inspirehep.modules.workflows.tasks.actions import halt_record, normalize_author_affiliations, \
     link_institutions_with_affiliations, load_record_from_hep
 from inspirehep.modules.workflows.tasks.submission import prepare_keywords, create_ticket
 from inspirehep.modules.workflows.tasks.upload import store_record
@@ -33,7 +33,7 @@ class CoreSelection(object):
         load_record_from_hep,
         set_core,
         prepare_keywords,
-        normalize_affiliations,
+        normalize_author_affiliations,
         link_institutions_with_affiliations,
         do_not_repeat('create_ticket_curator_core_publisher')(
             create_ticket(
