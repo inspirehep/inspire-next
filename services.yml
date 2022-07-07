@@ -60,6 +60,7 @@ services:
         soft: -1
         hard: -1
     mem_limit: 2g
+    platform: linux/amd64
     ports:
       - "9200:9200"
       - "9300:9300"
