@@ -50,11 +50,15 @@ services:
 
   indexer:
     build: ./docker/elasticsearch
-    restart: "always"
+    restart: 'always'
     environment:
+      - cluster.name=opensearch-cluster
+      - node.name=opensearch-node1
+      - discovery.seed_hosts=opensearch-node1
       - bootstrap.memory_lock=true
-      - "ES_JAVA_OPTS=-Xms1024m -Xmx1024m"
       - discovery.type=single-node
+      - bootstrap.system_call_filter=false
+      - 'OPENSEARCH_JAVA_OPTS=-Xms1024m -Xmx1024m'
     ulimits:
       memlock:
         soft: -1
@@ -63,6 +67,7 @@ services:
     ports:
       - "9200:9200"
       - "9300:9300"
+
 
   database:
     image: postgres:9.6
