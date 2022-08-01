@@ -310,12 +310,13 @@ def extract_authors_from_xml(xml_content):
 
             # Gets all the affiliations_identifiers for affiliated organizations using the organization ids from author
             for value, source in itertools.izip(content.xpath(u'//organizations/Organization[@id="{}"]/orgName[@source="ROR" or @source="GRID" and text()!=""]/text()'.format(affiliation)).getall(), content.xpath(u'//organizations/Organization[@id="{}"]/orgName[@source="ROR" or @source="GRID" and text()!=""]/@source'.format(affiliation)).getall()):
-                if not re.match(undefined_or_none_value_regex, source) or not re.match(undefined_or_none_value_regex, id):
+                if re.match(undefined_or_none_value_regex, source) or re.match(undefined_or_none_value_regex, value):
+                    continue
 
-                    if source == 'ROR' and not re.match(ror_path_value_regex, value):
-                        value = 'https://ror.org/{}'.format(value)
+                if source == 'ROR' and not re.match(ror_path_value_regex, value):
+                    value = 'https://ror.org/{}'.format(value)
 
-                    affiliations_identifiers.append([source, value])
+                affiliations_identifiers.append([source, value])
 
         name = normalize_name(u"{}, {}".format(author.xpath('.//familyName/text()').get(), author.xpath('.//givenName/text()').get()))
 
