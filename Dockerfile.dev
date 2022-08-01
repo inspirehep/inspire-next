@@ -82,7 +82,9 @@ ENV PATH="/root/.poetry/bin:${PATH}" \
 
 WORKDIR /code
 
-RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/4ec09d4e6b8ca007e67bb873c96277b54986fbdb/get-poetry.py | python && \
+RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/4ec09d4e6b8ca007e67bb873c96277b54986fbdb/get-poetry.py \
+    | sed -E 's/(self\._get\(self\.METADATA_URL\).decode)\(\)/\1("utf-8")/' \
+    | python && \
     poetry --version && \
     pip install --no-cache-dir --upgrade pip==20.3.4 && \
     pip install --no-cache-dir --upgrade setuptools && \
