@@ -1282,3 +1282,57 @@ def test_arxiv_handles_non_ascii_affiliations():
 
     assert arxiv_author_list(obj, eng) is None
     assert expected_authors[0] == obj.data['authors'][0]
+
+
+def test_arxiv_author_no_none_in_ror():
+    schema = load_schema('hep')
+    eprints_subschema = schema['properties']['arxiv_eprints']
+
+    filename = pkg_resources.resource_filename(
+        __name__, os.path.join('fixtures', '2206.14521.tar.gz'))
+
+    data = {
+        '$schema': 'http://localhost:5000/hep.json',
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'hep-ex',
+                ],
+                'value': '2206.14521',
+            },
+        ],
+    }
+    validate(data['arxiv_eprints'], eprints_subschema)
+
+    extra_data = {}
+    files = MockFiles({
+        '2206.14521.tar.gz': AttrDict({
+            'file': AttrDict({
+                'uri': filename,
+            })
+        })
+    })
+
+    obj = MockObj(data, extra_data, files=files)
+    eng = MockEng()
+
+    arxiv_author_list(obj, eng)
+
+    authors_subschema = schema['properties']['authors']
+    expected_author = [
+        {
+            'affiliations': [
+                {'value': u'INFN, Catania'},
+            ],
+            'ids': [
+                {'value': u'INSPIRE-00700856', 'schema': u'INSPIRE ID'},
+            ],
+            'affiliations_identifiers': [
+                {'value': u'https://ror.org/02pq29p90', 'schema': 'ROR'},
+            ],
+            'full_name': u'Ali-Mohammadzadeh, Behnam',
+        },
+    ]
+    validate(expected_author, authors_subschema)
+
+    assert expected_author[0] == obj.data['authors'][16]
