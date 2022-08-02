@@ -64,7 +64,7 @@ from inspire_json_merger.api import merge
 from inspire_json_merger.config import GrobidOnArxivAuthorsOperations
 from inspire_schemas.builders import LiteratureBuilder
 from inspire_schemas.readers import LiteratureReader
-from inspire_schemas.utils import normalize_collaboration_name, validate
+from inspire_schemas.utils import normalize_collaboration_name, validate, classify_field
 from inspire_utils.record import get_value, normalize_affiliations
 from inspire_utils.dedupers import dedupe_list
 
@@ -1148,4 +1148,28 @@ def load_record_from_hep(obj, wf):
     obj.extra_data['head_version_id'] = record_data['revision_id'] + 1
     obj.extra_data['head_revision_id'] = record_data['revision_id']
 
+    return obj
+
+
+def remove_inspire_categories_derived_from_core_arxiv_categories(obj, eng):
+    if not obj.data.get("arxiv_eprints"):
+        return
+    inspire_categories_without_arxiv_sourced = [
+        category
+        for category in obj.data.get("inspire_categories", [])
+        if category.get("source") != "arxiv"
+    ]
+    non_core_arxiv_categories = [
+        arxiv_category
+        for arxiv_category in get_value(obj.data, 'arxiv_eprints[0].categories', [])
+        if arxiv_category in current_app.config["ARXIV_CATEGORIES"]["non-core"]
+    ]
+    inspire_categories_for_non_core_arxiv_categories = [
+        {"term": classify_field(arxiv_category), "source": "arxiv"}
+        for arxiv_category in non_core_arxiv_categories
+    ]
+    inspire_categories_without_arxiv_sourced.extend(
+        inspire_categories_for_non_core_arxiv_categories
+    )
+    obj.data["inspire_categories"] = inspire_categories_without_arxiv_sourced
     return obj

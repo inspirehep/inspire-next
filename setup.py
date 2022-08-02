@@ -168,6 +168,7 @@ setup(
         'invenio_workflows_ui.actions': [
             'author_approval = inspirehep.modules.workflows.actions.author_approval:AuthorApproval',
             'hep_approval = inspirehep.modules.workflows.actions.hep_approval:HEPApproval',
+            'core_selection_approval = inspirehep.modules.workflows.actions.core_selection_approval:CoreSelectionApproval',
             'merge_approval = inspirehep.modules.workflows.actions.merge_approval:MergeApproval',
             'match_approval = inspirehep.modules.workflows.actions.match_approval:MatchApproval',
         ],

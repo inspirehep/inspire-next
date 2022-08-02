@@ -39,13 +39,14 @@ from mocks import (fake_classifier_api_request, fake_download_file,
                    fake_magpie_api_request)
 from utils import override_config
 from workflow_utils import build_workflow
+from inspire_utils.query import ordered
 
 from inspirehep.modules.workflows.tasks.actions import (
     _assign_institution, affiliations_for_hidden_collections,
     core_selection_wf_already_created, create_core_selection_wf,
     link_institutions_with_affiliations, load_from_source_data,
     normalize_author_affiliations, normalize_collaborations, normalize_journal_titles,
-    refextract, replace_collection_to_hidden, update_inspire_categories)
+    refextract, remove_inspire_categories_derived_from_core_arxiv_categories, replace_collection_to_hidden, update_inspire_categories)
 
 
 @pytest.fixture(scope="function")
@@ -1604,3 +1605,39 @@ def test_refextract_from_url(insert_hep_records_into_db, workflow_app):
             refextract(obj, None) is None
             assert obj.data["references"][0]["raw_refs"][0]["source"] == "submitter"
             assert "references" in obj.data
+
+
+def test_remove_inspire_categories_derived_from_core_arxiv_categories(workflow_app):
+    expected_inspire_categories = [
+        {"source": "arxiv", "term": "Astrophysics"},
+        {"source": "arxiv", "term": "Gravitation and Cosmology"},
+        {"source": "user", "term": "Other"},
+        {"term": "Other"},
+    ]
+    record = {
+        "_collections": ["Literature"],
+        "titles": ["A title"],
+        "document_type": ["report"],
+        "arxiv_eprints": [
+            {
+                "categories": ["hep-ph", "astro-ph.CO", "gr-qc", "hep-ex", "hep-th"],
+                "value": "2207.01633",
+            }
+        ],
+        "inspire_categories": [
+            {"source": "arxiv", "term": "Phenomenology-HEP"},
+            {"source": "arxiv", "term": "Astrophysics"},
+            {"source": "arxiv", "term": "Gravitation and Cosmology"},
+            {"source": "arxiv", "term": "Experiment-HEP"},
+            {"source": "arxiv", "term": "Theory-HEP"},
+            {"source": "user", "term": "Other"},
+            {"term": "Other"},
+        ],
+    }
+    obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
+    remove_inspire_categories_derived_from_core_arxiv_categories(obj, None)
+    schema = load_schema("hep")
+    subschema = schema['properties']['inspire_categories']
+
+    assert ordered(obj.data['inspire_categories']) == ordered(expected_inspire_categories)
+    assert validate(obj.data["inspire_categories"], subschema) is None

@@ -1,0 +1,344 @@
+{
+    "id":"2130167",
+    "metadata":{
+       "citation_count_without_self_citations":0,
+       "citation_count":0,
+       "self":{
+          "$ref":"https://inspirebeta.net/api/literature/2130167"
+       },
+       "titles":[
+          {
+             "title":"Quantifying polarization changes induced by rotating Dove prisms and K-mirrors",
+             "source":"arXiv"
+          }
+       ],
+       "$schema":"https://inspirebeta.net/schemas/records/hep.json",
+       "authors":[
+          {
+             "ids":[
+                {
+                   "value":"S.Karan.2",
+                   "schema":"INSPIRE BAI"
+                }
+             ],
+             "uuid":"c1b958b6-39e4-4aaf-aea1-ee676176f7fc",
+             "record":{
+                "$ref":"https://inspirebeta.net/api/authors/1963659"
+             },
+             "full_name":"Karan, Suman",
+             "signature_block":"CARANs"
+          },
+          {
+             "ids":[
+                {
+                   "value":"Ruchi.1",
+                   "schema":"INSPIRE BAI"
+                }
+             ],
+             "uuid":"407109e9-5cef-45dc-8785-b1523152eec1",
+             "record":{
+                "$ref":"https://inspirebeta.net/api/authors/2130168"
+             },
+             "full_name":"Ruchi",
+             "signature_block":"RAC"
+          },
+          {
+             "ids":[
+                {
+                   "value":"P.Mohta.1",
+                   "schema":"INSPIRE BAI"
+                }
+             ],
+             "uuid":"137fe11d-31da-40ca-8fb7-8b30f2683821",
+             "record":{
+                "$ref":"https://inspirebeta.net/api/authors/2130169"
+             },
+             "full_name":"Mohta, Pranay",
+             "signature_block":"MATp"
+          },
+          {
+             "ids":[
+                {
+                   "value":"K.Jha.1",
+                   "schema":"INSPIRE BAI"
+                }
+             ],
+             "uuid":"07684340-3986-4ccb-b368-748eb43e5b9e",
+             "record":{
+                "$ref":"https://inspirebeta.net/api/authors/1914584"
+             },
+             "full_name":"Jha, Anand K.",
+             "signature_block":"Ja"
+          }
+       ],
+       "curated":false,
+       "figures":[
+          {
+             "key":"d8d60e9b9adabb12d1cacfbecb80650a",
+             "url":"https://inspirebeta.net/files/d8d60e9b9adabb12d1cacfbecb80650a",
+             "label":"fig:DP_IR_schematic",
+             "source":"arxiv",
+             "caption":"(a) Schematic of the field transmission through a Dove prism having base angle $\\alpha$. (b) Schematic of the field transmission through a K-mirror having base angle $\\beta$.",
+             "filename":"DP_IR_schematic.png",
+             "material":"preprint"
+          },
+          {
+             "key":"8dc92f424ed14eb17495a6b0b5832686",
+             "url":"https://inspirebeta.net/files/8dc92f424ed14eb17495a6b0b5832686",
+             "label":"fig:IR_sim",
+             "source":"arxiv",
+             "caption":"Poincar\\'{e} sphere representation of the polarization states of the transmitted field as a function of the rotation angle $\\phi$. As shown in the inset and by the black dot on the Poincar\\'{e} sphere, the incident polarization is vertical. The geodesic distance $d$ is the difference between the transmitted state of polarization $P$ and the incident SOP $P_{in}$.",
+             "filename":"Az_Ell_PS_V5.png",
+             "material":"preprint"
+          },
+          {
+             "key":"e78d55ddc24c6db9fbed19f75c27066c",
+             "url":"https://inspirebeta.net/files/e78d55ddc24c6db9fbed19f75c27066c",
+             "label":"fig:length_loop",
+             "source":"arxiv",
+             "caption":"(a), (b) and (c) are the plots of mean polarization change $D$ as a function of the base angle $\\alpha$ and $\\beta$ for linearly-, elliptically-, circularly-polarized incident fields, respectively. The insets show the incident SOP. (d),(e) and (f) are the Poincar\\'{e} sphere representations of the transmitted state of polarizations as a function of $\\phi$. The three closed loops on each Poincar\\'{e} sphere correspond to the Dove prism base angle $\\alpha=45^{\\circ}$, the K-mirror base angles $\\beta=17.88^{\\circ}$  and $\\beta= 32.5^{\\circ}$.",
+             "filename":"minimization_polarization_change_3loop.png",
+             "material":"preprint"
+          },
+          {
+             "key":"86b5fa32d74e3da176fa26534ecff5e4",
+             "url":"https://inspirebeta.net/files/86b5fa32d74e3da176fa26534ecff5e4",
+             "label":"fig:Expt_setup",
+             "source":"arxiv",
+             "caption":"Experimental setup for measuring the induced polarization changes due to a rotating Dove prism and a K-mirror. M: mirror, H: half-wave plate, Q: quarter-wave plate, DP: Dove prism, P: polarizers.",
+             "filename":"Exptal_Setup.png",
+             "material":"preprint"
+          },
+          {
+             "key":"47265e72c12bc95257679e132f7bc68d",
+             "url":"https://inspirebeta.net/files/47265e72c12bc95257679e132f7bc68d",
+             "label":"fig:DP_Results",
+             "source":"arxiv",
+             "caption":"Transmitted SOP as a function of the Dove prism rotation angle $\\phi$. (a), (b) and (c) are the Poincar\\'{e} sphere representations of the transmitted SOP corresponding to linearly-, elliptically-, and circularly-polarized incident fields, respectively. (d), (e) and (f) are the corresponding representation of the experimentally measured transmitted SOP. The inset, as well as the black dot on the Poincar\\'{e} sphere, represents the incident SOP. The sense of the rotation of the Dove prism is marked with a red arrow and points $P_1$ to $P_4$.",
+             "filename":"DP_Results_V5_revised_b.png",
+             "material":"preprint"
+          },
+          {
+             "key":"d8c37bfdefd4d97cfdbf589330de5d72",
+             "url":"https://inspirebeta.net/files/d8c37bfdefd4d97cfdbf589330de5d72",
+             "label":"fig:IR_Results",
+             "source":"arxiv",
+             "caption":"Transmitted SOP as a function of the K-mirror rotation angle $\\phi$. (a), (b) and (c) are the Poincar\\'{e} sphere representations of the transmitted SOP corresponding to linearly-, elliptically-, and circularly-polarized incident fields, respectively. (d), (e) and (f) are the corresponding representation of the experimentally measured transmitted SOP. The inset, as well as the black dot on the Poincar\\'{e} sphere, represents the incident SOP. The sense of the rotation of the K-mirror is marked with a red arrow and points $P_1$ to $P_4$.",
+             "filename":"IR_Results_V5_b.png",
+             "material":"preprint"
+          },
+          {
+             "key":"314744c23392c485a50047858d6e6ef8",
+             "url":"https://inspirebeta.net/files/314744c23392c485a50047858d6e6ef8",
+             "label":"fig:transform_coordinate",
+             "source":"arxiv",
+             "caption":"Schematic representation of the polarization coordinate systems for the incident and the reflected fields.",
+             "filename":"transform_coordinate.png",
+             "material":"preprint"
+          },
+          {
+             "key":"febf2ed9febc7a4d015c009d50574757",
+             "url":"https://inspirebeta.net/files/febf2ed9febc7a4d015c009d50574757",
+             "label":"fig:DP_schematic",
+             "source":"arxiv",
+             "caption":"Schematic of a Dove prism characterized by a base angle $\\alpha$.",
+             "filename":"DP_S_a.png",
+             "material":"preprint"
+          },
+          {
+             "key":"46e45a829f94a4fbfd457c627ce36f9e",
+             "url":"https://inspirebeta.net/files/46e45a829f94a4fbfd457c627ce36f9e",
+             "label":"fig:IR_schematic",
+             "source":"arxiv",
+             "caption":"(a) Schematic of a K-mirror characterized by base angle $\\beta$.",
+             "filename":"IR_S_a.png",
+             "material":"preprint"
+          },
+          {
+             "key":"5d03dbd5a7cf65449b0b76fe66476890",
+             "url":"https://inspirebeta.net/files/5d03dbd5a7cf65449b0b76fe66476890",
+             "label":"fig:geodesic_cartoon",
+             "source":"arxiv",
+             "caption":"Schematic representation of a continuous closed loop on the surface of the Poincaré sphere in terms of discrete points P. $P_{in}$ represents the incident state of polarization on the surface of the Poincaré sphere. $ds$ depicts the arclength element and the connecting black line between points $P$ and $P_{in}$ depicts the geodesic distance $d$ between them.",
+             "filename":"mean_geodesic_length_Calc.png",
+             "material":"preprint"
+          },
+          {
+             "key":"a118db554ea354c739238d80e6b70f3e",
+             "url":"https://inspirebeta.net/files/a118db554ea354c739238d80e6b70f3e",
+             "label":"fig:design_k_mirror",
+             "source":"arxiv",
+             "caption":"Ray diagram for a K-mirror at base angle $\\beta$.",
+             "filename":"design_k_mirror.png",
+             "material":"preprint"
+          }
+       ],
+       "license":[
+          {
+             "url":"http://creativecommons.org/licenses/by/4.0/",
+             "license":"CC BY 4.0",
+             "material":"preprint"
+          }
+       ],
+       "texkeys":[
+          "Karan:2022bwz"
+       ],
+       "citeable":true,
+       "abstracts":[
+          {
+             "value":"Dove prisms and K-mirrors are devices extensively used for rotating the wavefront of an optical field. These devices have several applications, including measurement of orbital angular momentum, microscopy, beam steering and pattern recognition. However, the wavefront rotation achieved through these devices is always accompanied by polarization changes in the incident field, which is an undesirable feature in many of these applications. Although the polarization changes induced by a Dove prism have been explored to quite some extent, no such study is available for a K-mirror. In this letter, we theoretically and experimentally investigate polarization changes induced in the transmitted field by a rotating K-mirror. For quantifying such polarization changes, we define a quantity, mean polarization change D, which ranges from 0 to π. We find that K-mirrors can reduce D to about 0.03π, for any incident state of polarization; however, reducing D to the same extent with a Dove prism is practically unviable. Therefore, K-mirrors are better alternatives to Dove prisms in applications in which the polarization changes accompanying wavefront rotation need to be minimum.",
+             "source":"arXiv"
+          }
+       ],
+       "documents":[
+          {
+             "key":"c8ae174ec334d64145454eb989ebd41e",
+             "url":"https://inspirebeta.net/files/c8ae174ec334d64145454eb989ebd41e",
+             "hidden":true,
+             "source":"arxiv",
+             "filename":"2208.00828.pdf",
+             "fulltext":true,
+             "material":"preprint",
+             "original_url":"http://export.arxiv.org/pdf/2208.00828"
+          }
+       ],
+       "references":[
+          {
+             "raw_refs":[
+                {
+                   "value":"[1] E. Waluschka, Polarization ray tracing, in SPIE Proceedings, edited by R. A. Chipman (SPIE, 1988).",
+                   "schema":"text",
+                   "source":"arXiv"
+                }
+             ],
+             "reference":{
+                "misc":[
+                   "Polarization ray tracing, in SPIE Proceedings, R. A. Chipman (eds.)",
+                   "(SPIE,)"
+                ],
+                "label":"1",
+                "authors":[
+                   {
+                      "full_name":"Waluschka, E."
+                   }
+                ],
+                "publication_info":{
+                   "year":1988
+                }
+             }
+          },
+          {
+             "raw_refs":[
+                {
+                   "value":"[2] E. Hecht, Optics, 4th ed. (Addison-Wesley, Reading, Mass., 1974).",
+                   "schema":"text",
+                   "source":"arXiv"
+                }
+             ],
+             "reference":{
+                "misc":[
+                   "Optics, 4th ed",
+                   "Reading, Mass.,)"
+                ],
+                "label":"2",
+                "authors":[
+                   {
+                      "full_name":"Hecht, E."
+                   }
+                ],
+                "imprint":{
+                   "publisher":"Addison-Wesley"
+                },
+                "publication_info":{
+                   "year":1974
+                }
+             }
+          },
+          {
+             "raw_refs":[
+                {
+                   "value":"[3] I. Moreno, Jones matrix for image-rotation prisms, Applied Optics 43, 3373 (2004).",
+                   "schema":"text",
+                   "source":"arXiv"
+                }
+             ],
+             "reference":{
+                "misc":[
+                   "Jones matrix for image-rotation prisms"
+                ],
+                "label":"3",
+                "authors":[
+                   {
+                      "full_name":"Moreno, I."
+                   }
+                ],
+                "publication_info":{
+                   "year":2004,
+                   "artid":"3373",
+                   "page_start":"3373",
+                   "journal_title":"Appl.Opt.",
+                   "journal_volume":"43"
+                }
+             }
+          }
+       ],
+       "_collections":[
+          "Literature"
+       ],
+       "public_notes":[
+          {
+             "value":"Main text: 12 pages, Supplementary Information: 11 pages",
+             "source":"arXiv"
+          }
+       ],
+       "arxiv_eprints":[
+          {
+             "categories":[
+                "physics.optics",
+                "quant-ph",
+                "astro-ph.CO"
+             ],
+             "value":"2208.00828"
+          }
+       ],
+       "document_type":[
+          "article"
+       ],
+       "preprint_date":"2022-08-01",
+       "control_number":2130167,
+       "number_of_pages":12,
+       "acquisition_source":{
+          "method":"hepcrawl",
+          "source":"arXiv",
+          "datetime":"2022-08-02T02:34:35.589025",
+          "submission_number":"12724"
+       },
+       "inspire_categories":[
+          {
+             "source":"arxiv",
+             "term":"Astrophysics"
+          },
+          {
+             "source":"arxiv",
+             "term":"General Physics"
+          },
+          {
+             "source":"arxiv",
+             "term":"Quantum Physics"
+          }
+       ]
+    },
+    "links":{
+       "bibtex":"https://inspirebeta.net/api/literature/2130167?format=bibtex",
+       "latex-eu":"https://inspirebeta.net/api/literature/2130167?format=latex-eu",
+       "latex-us":"https://inspirebeta.net/api/literature/2130167?format=latex-us",
+       "json":"https://inspirebeta.net/api/literature/2130167?format=json",
+       "cv":"https://inspirebeta.net/api/literature/2130167?format=cv",
+       "citations":"https://inspirebeta.net/api/literature/?q=refersto%3Arecid%3A2130167"
+    },
+    "created":"2022-08-02T04:42:25.230433+00:00",
+    "uuid":"7ce70050-135c-41f9-8434-6dc9ee75d2cd",
+    "revision_id":2,
+    "updated":"2022-08-02T04:42:27.085751+00:00"
+ }
+ 
