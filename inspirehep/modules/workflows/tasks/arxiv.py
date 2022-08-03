@@ -284,6 +284,7 @@ def extract_authors_from_xml(xml_content):
     undefined_or_empty_inspireid_value_regex = re.compile("undefined|inspire-\s*$", re.IGNORECASE)
     undefined_value_regex = re.compile("undefined", re.IGNORECASE)
     ror_path_value_regex = re.compile("https://ror.org/*")
+    remove_new_line_regex = re.compile(u"\s*\n\s*")
 
     # Goes through all the authors in the file
     for author in content.xpath("//Person"):
@@ -294,6 +295,8 @@ def extract_authors_from_xml(xml_content):
 
         # Gets all the author ids
         for source, id in itertools.izip(author.xpath('./authorIDs/authorID[@source!="" and text()!=""]/@source | ./authorids/authorid[@source!="" and text()!=""]/@source').getall(), author.xpath('./authorIDs/authorID[@source!="" and text()!=""]/text() | ./authorids/authorid[@source!="" and text()!=""]/text()').getall()):
+            source = re.sub(remove_new_line_regex, '', source)
+            id = re.sub(remove_new_line_regex, '', id)
             if not re.match(undefined_value_regex, source) and not re.match(undefined_or_empty_inspireid_value_regex, id):
                 if source == u'CCID':
                     ids.append(['CERN', id])
@@ -304,12 +307,15 @@ def extract_authors_from_xml(xml_content):
 
         # Gets all the names for affiliated organizations using the organization ids from author
         for affiliation in author.xpath("./authorAffiliations/authorAffiliation/@organizationid").getall():
-            orgName = content.xpath(u'//organizations/Organization[@id="{}"]/orgName[@source="spiresICN" or @source="INSPIRE" and text()!="" ]/text()'.format(affiliation)).get()
-            if orgName and not re.match(undefined_or_none_value_regex, orgName):
-                affiliations.append(orgName)
+            orgName = str(content.xpath(u'//organizations/Organization[@id="{}"]/orgName[@source="spiresICN" or @source="INSPIRE" and text()!="" ]/text()'.format(affiliation)).get())
+            cleaned_org_name = re.sub(remove_new_line_regex, '', orgName)
+            if orgName and not re.match(undefined_or_none_value_regex, cleaned_org_name):
+                affiliations.append(cleaned_org_name)
 
             # Gets all the affiliations_identifiers for affiliated organizations using the organization ids from author
             for value, source in itertools.izip(content.xpath(u'//organizations/Organization[@id="{}"]/orgName[@source="ROR" or @source="GRID" and text()!=""]/text()'.format(affiliation)).getall(), content.xpath(u'//organizations/Organization[@id="{}"]/orgName[@source="ROR" or @source="GRID" and text()!=""]/@source'.format(affiliation)).getall()):
+                source = re.sub(remove_new_line_regex, '', source)
+                value = re.sub(remove_new_line_regex, '', value)
                 if re.match(undefined_or_none_value_regex, source) or re.match(undefined_or_none_value_regex, value):
                     continue
 
