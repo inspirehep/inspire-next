@@ -1336,3 +1336,53 @@ def test_arxiv_author_no_none_in_ror():
     validate(expected_author, authors_subschema)
 
     assert expected_author[0] == obj.data['authors'][16]
+
+
+def test_arxiv_handles_newLines():
+    schema = load_schema('hep')
+    eprints_subschema = schema['properties']['arxiv_eprints']
+    filename = pkg_resources.resource_filename(
+        __name__, os.path.join('fixtures', '2207.10906.tar.gz'))
+
+    data = {
+        '$schema': 'http://localhost:5000/hep.json',
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'hep-ex',
+                ],
+                'value': '2207.10906',
+            },
+        ],
+    }
+    validate(data['arxiv_eprints'], eprints_subschema)
+
+    extra_data = {}
+    files = MockFiles({
+        '2207.10906.tar.gz': AttrDict({
+            'file': AttrDict({
+                'uri': filename,
+            })
+        })
+    })
+
+    obj = MockObj(data, extra_data, files=files)
+    eng = MockEng()
+
+    authors_subschema = schema['properties']['authors']
+    expected_author = [
+        {
+            'affiliations': [
+                {'value': u'Beijing, Inst. High Energy Phys.'},
+            ],
+            'ids': [
+                {'value': u'INSPIRE-00059665', 'schema': u'INSPIRE ID'},
+                {'value': u'0000-0002-3935-619X', 'schema': u'ORCID'},
+            ],
+            'full_name': u'Ablikim, Medina',
+        },
+    ]
+    validate(expected_author, authors_subschema)
+
+    arxiv_author_list(obj, eng)
+    assert expected_author[0] == obj.data['authors'][0]
