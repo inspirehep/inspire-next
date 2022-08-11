@@ -27,7 +27,7 @@
 <div class="col-md-3 visible-md visible-lg jobs-facet" id="facetparent">
   <div class="facet" id="facet_list" data-clampedwidth="#facetparent">
     <invenio-search-facets
-     template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/jobs/facets.html') }}">
+     template="{{ url_for('static', filename='node_modules/inspire-next-search-js/dist/templates/jobs/facets.html') }}">
     </invenio-search-facets>
   </div>
 </div>
@@ -35,7 +35,7 @@
 
 {%- block search_results %}
     <invenio-search-results
-            template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/jobs/results.html') }}">
+            template="{{ url_for('static', filename='node_modules/inspire-next-search-js/dist/templates/jobs/results.html') }}">
     </invenio-search-results>
 {%- endblock search_results %}
 
@@ -49,7 +49,7 @@
     sort-key="sort"
     default-option="{{ sort_options|default_sortoption }}"
     available-options='{{ sort_options|format_sortoptions|safe }}'
-    template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/selectbox.html') }}"
+    template="{{ url_for('static', filename='node_modules/inspire-next-search-js/dist/templates/selectbox.html') }}"
   >
   </invenio-search-select-box>
   {%- endblock search_sort_select %}

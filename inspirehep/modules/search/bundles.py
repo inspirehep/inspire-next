@@ -30,7 +30,7 @@ js = NpmBundle(
     'js/search/app.js',
     filters='requirejs',
     output='gen/inspirehepsearch.%(version)s.js',
-    depends=("node_modules/inspirehep-search-js/**/*.js", ),
+    depends=("node_modules/inspire-next-search-js/**/*.js", ),
     npm={
         'invenio-search-js': '~1.4.0',
         'angular-loading-bar': '~0.9.0',

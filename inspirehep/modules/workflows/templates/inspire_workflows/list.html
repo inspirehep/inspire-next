@@ -57,7 +57,7 @@
 {%- block body -%}
 <div id="holding-pen">
   <holding-pen-batch-decision
-    template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/inspirehep-holdingpen-js/batch-actions.html') }}">
+    template="{{ url_for('static', filename='node_modules/inspire-next-search-js/dist/templates/inspirehep-holdingpen-js/batch-actions.html') }}">
   </holding-pen-batch-decision>
 
   <invenio-search search-endpoint="/api/holdingpen"
@@ -69,7 +69,7 @@
         <h4>Results per page</h4>
 
         <holding-pen-template-handler
-          template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/inspirehep-holdingpen-js/results/resultsize.html') }}">
+          template="{{ url_for('static', filename='node_modules/inspire-next-search-js/dist/templates/inspirehep-holdingpen-js/results/resultsize.html') }}">
         </holding-pen-template-handler>
 
 
@@ -81,13 +81,13 @@
           sort-key="sort"
           default-option="{{ sort_options|default_sortoption }}"
           available-options='{{ sort_options|format_sortoptions|safe }}'
-          template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/inspirehep-holdingpen-js/selectbox.html') }}">
+          template="{{ url_for('static', filename='node_modules/inspire-next-search-js/dist/templates/inspirehep-holdingpen-js/selectbox.html') }}">
         </invenio-search-select-box>
         {%- endif %}
 
 
         <invenio-search-facets
-          template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/inspirehep-holdingpen-js/facets.html') }}">
+          template="{{ url_for('static', filename='node_modules/inspire-next-search-js/dist/templates/inspirehep-holdingpen-js/facets.html') }}">
         </invenio-search-facets>
 
       </div>
@@ -109,12 +109,12 @@
 
 
         <invenio-search-results
-          template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/inspirehep-holdingpen-js/results/results.html') }}">
+          template="{{ url_for('static', filename='node_modules/inspire-next-search-js/dist/templates/inspirehep-holdingpen-js/results/results.html') }}">
         </invenio-search-results>
 
         <div class="col-md-12 col-sm-12 text-center">
           <invenio-search-pagination
-            template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/pagination.html') }}">
+            template="{{ url_for('static', filename='node_modules/inspire-next-search-js/dist/templates/pagination.html') }}">
           </invenio-search-pagination>
         </div>
       </div>

@@ -31,7 +31,7 @@
       {% endfor %}
     {% endif %}
   {% endif %}
-  <inspire-export-modal button-template="/oldui/node_modules/inspirehep-search-js/dist/templates/export/templates/button_single.html" body-template="/oldui/node_modules/inspirehep-search-js/dist/templates/export/templates/modalbody.html" recid={{record['control_number']}}>
+  <inspire-export-modal button-template="/oldui/node_modules/inspire-next-search-js/dist/templates/export/templates/button_single.html" body-template="/oldui/node_modules/inspire-next-search-js/dist/templates/export/templates/modalbody.html" recid={{record['control_number']}}>
   </inspire-export-modal>
 {% endmacro %}
 
