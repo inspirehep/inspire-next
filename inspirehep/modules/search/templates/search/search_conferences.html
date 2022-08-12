@@ -27,7 +27,7 @@
 <div class="col-md-3 visible-md visible-lg conferences-facet" id="facetparent">
   <div class="facet" id="facet_list" data-clampedwidth="#facetparent">
     <invenio-search-facets
-     template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/conferences/facets.html') }}">
+     template="{{ url_for('static', filename='node_modules/inspire-next-search-js/dist/templates/conferences/facets.html') }}">
     </invenio-search-facets>
   </div>
 </div>
@@ -35,7 +35,7 @@
 
 {%- block search_results %}
     <invenio-search-results
-            template="{{ url_for('static', filename='node_modules/inspirehep-search-js/dist/templates/conferences/results.html') }}">
+            template="{{ url_for('static', filename='node_modules/inspire-next-search-js/dist/templates/conferences/results.html') }}">
     </invenio-search-results>
 {%- endblock search_results %}
 

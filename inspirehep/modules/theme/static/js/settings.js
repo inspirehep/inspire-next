@@ -48,7 +48,7 @@ require.config({
     'hogan': 'node_modules/hogan.js/web/builds/3.0.2/hogan-3.0.2.amd',
     'impact-graphs': 'node_modules/impact-graphs/impact-graph',
     'inspirehep-clipboard': 'js/inspire_clipboard',
-    'inspirehep-search': 'node_modules/inspirehep-search-js/dist/inspirehep-search',
+    'inspirehep-search': 'node_modules/inspire-next-search-js/dist/inspirehep-search',
     'inspirehep-typeahead': 'node_modules/inspirehep-typeahead-search-js/src/typeahead',
     'invenio-search': 'node_modules/invenio-search-js/dist/invenio-search-js',
     'invenio_with_spires_typeahead_configuration': 'node_modules/inspirehep-typeahead-search-js/src/invenio_with_spires_typeahead_configuration',
