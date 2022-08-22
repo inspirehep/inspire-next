@@ -31,7 +31,7 @@ from inspire_utils.record import get_value
 from invenio_db import db
 from invenio_workflows import workflow_object_class, WorkflowEngine, \
     ObjectStatus
-from invenio_workflows.errors import WorkflowsError
+from invenio_workflows.errors import WorkflowsError, HaltProcessing
 import re
 
 from inspire_matcher.api import match
@@ -446,20 +446,36 @@ def has_same_source(extra_data_key):
 
         for wf_id in workflows:
             wf = workflow_object_class.get(wf_id)
-            wf_source = get_value(wf.data, 'acquisition_source.source').lower()
-            if wf_source == current_source:
+            if _has_same_source(current_source, wf):
                 return True
         return False
 
     return _get_wfs_same_source
 
 
-def stop_matched_holdingpen_wfs(obj, eng):
+def _has_same_source(current_wf_source, holdingpen_match_wf):
+    wf_source = get_value(holdingpen_match_wf.data, 'acquisition_source.source').lower()
+    if wf_source == current_wf_source.lower():
+        return True
+
+
+def _halt_record_if_match_from_different_source(holdingpen_wf_eng, holdingpen_wf):
+    try:
+        holdingpen_wf_eng.halt(msg="Waiting for matched worfklow to finish")
+    except HaltProcessing:
+        holdingpen_wf.status = ObjectStatus.HALTED
+        holdingpen_wf.extra_data['halted-by-match-with-different-source'] = True
+        holdingpen_wf_eng.save()
+        holdingpen_wf.save()
+
+
+def handle_matched_holdingpen_wfs(obj, eng):
     """Stop the matched workflow objects in the holdingpen.
 
-    Stops the matched workflows in the holdingpen by replacing their steps with
+    Stops the matched workflows with the same source in the holdingpen by replacing their steps with
     a new one defined on the fly, containing a ``stop`` step, and executing it.
-    For traceability reason, these workflows are also marked as
+    Workflows that have different source are being halted.
+    For traceability reason, stopped workflows are also marked as
     ``'stopped-by-wf'``, whose value is the current workflow's id.
 
     In the use case of harvesting twice an article, this function is involved
@@ -473,13 +489,17 @@ def stop_matched_holdingpen_wfs(obj, eng):
     Returns:
         None
     """
-    stopping_steps = [mark('stopped-by-wf', int(obj.id)), stop_processing]
-
     save_workflow(obj, eng)
-
+    current_wf_source = get_value(obj.data, 'acquisition_source.source')
+    stopping_steps = [mark('stopped-by-wf', int(obj.id)), stop_processing]
     for holdingpen_wf_id in obj.extra_data['holdingpen_matches']:
         holdingpen_wf = workflow_object_class.get(holdingpen_wf_id)
         holdingpen_wf_eng = WorkflowEngine.from_uuid(holdingpen_wf.id_workflow)
+
+        # halt workflow
+        if not _has_same_source(current_wf_source, holdingpen_wf):
+            _halt_record_if_match_from_different_source(holdingpen_wf_eng, holdingpen_wf)
+            continue
 
         # stop this holdingpen workflow by replacing its steps with a stop step
         holdingpen_wf_eng.callbacks.replace(stopping_steps)

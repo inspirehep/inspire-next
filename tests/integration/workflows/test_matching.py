@@ -36,7 +36,8 @@ from workflow_utils import build_workflow
 
 from inspirehep.modules.workflows.tasks.matching import (
     fuzzy_match, has_same_source, match_non_completed_wf_in_holdingpen,
-    match_previously_rejected_wf_in_holdingpen, stop_matched_holdingpen_wfs)
+    match_previously_rejected_wf_in_holdingpen,
+    handle_matched_holdingpen_wfs)
 
 
 @pytest.fixture
@@ -163,11 +164,85 @@ def test_stop_matched_holdingpen_wfs(
     match_non_completed_wf_in_holdingpen(obj2, None)
     assert obj2.extra_data["holdingpen_matches"] == [obj_id]
 
-    stop_matched_holdingpen_wfs(obj2, None)
+    handle_matched_holdingpen_wfs(obj2, None)
 
     stopped_wf = workflow_object_class.get(obj_id)
     assert stopped_wf.status == ObjectStatus.COMPLETED
     assert stopped_wf.extra_data["stopped-by-wf"] == obj2_id
+
+
+@patch(
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
+    side_effect=fake_classifier_api_request,
+)
+@patch(
+    "inspirehep.modules.workflows.tasks.magpie.json_api_request",
+    side_effect=fake_magpie_api_request,
+)
+def test_handle_matched_holdingpen_wfs(
+    mocked_api_request_magpie, mocked_classifer_api, app, simple_record
+):
+    # need to run a wf in order to assign to it the wf definition and a uuid
+    # for it
+
+    obj = build_workflow(data_type="hep", **simple_record)
+    workflow_uuid = start("article", object_id=obj.id)
+    eng = WorkflowEngine.from_uuid(workflow_uuid)
+    obj = eng.processed_objects[0]
+    obj.status = ObjectStatus.WAITING
+    obj.save()
+    obj_id = obj.id
+    current_search.flush_and_refresh("holdingpen-hep")
+
+    simple_record['workflow_data']['acquisition_source']['source'] = 'elsevier'
+    obj2 = build_workflow(**simple_record)
+    match_non_completed_wf_in_holdingpen(obj2, None)
+
+    assert obj2.extra_data["holdingpen_matches"] == [obj_id]
+
+    handle_matched_holdingpen_wfs(obj2, None)
+
+    matched_wf_with_different_source = workflow_object_class.get(obj_id)
+    # matched wf with different source is not stopped
+    assert matched_wf_with_different_source.status == ObjectStatus.HALTED
+    assert not matched_wf_with_different_source.extra_data.get("stopped-by-wf")
+    assert matched_wf_with_different_source.extra_data.get('halted-by-match-with-different-source')
+
+
+@patch(
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
+    side_effect=fake_classifier_api_request,
+)
+@patch(
+    "inspirehep.modules.workflows.tasks.magpie.json_api_request",
+    side_effect=fake_magpie_api_request,
+)
+def test_handle_matched_holdingpen_wfs_with_same_source(
+    mocked_api_request_magpie, mocked_classifer_api, app, simple_record
+):
+    # need to run a wf in order to assign to it the wf definition and a uuid
+    # for it
+
+    obj = build_workflow(data_type="hep", **simple_record)
+    workflow_uuid = start("article", object_id=obj.id)
+    eng = WorkflowEngine.from_uuid(workflow_uuid)
+    obj = eng.processed_objects[0]
+    obj.status = ObjectStatus.HALTED
+    obj.save()
+    obj_id = obj.id
+    current_search.flush_and_refresh("holdingpen-hep")
+
+    obj2 = build_workflow(**simple_record)
+
+    match_non_completed_wf_in_holdingpen(obj2, None)
+    assert obj2.extra_data["holdingpen_matches"] == [obj_id]
+
+    handle_matched_holdingpen_wfs(obj2, None)
+
+    matched_wf_with_same_source = workflow_object_class.get(obj_id)
+    # matched wf with same source is stopped
+    assert matched_wf_with_same_source.status == ObjectStatus.COMPLETED
+    assert matched_wf_with_same_source.extra_data.get("stopped-by-wf")
 
 
 def test_fuzzy_match_without_math_ml_and_latex(workflow_app):
