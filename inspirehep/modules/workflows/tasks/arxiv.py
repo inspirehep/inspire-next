@@ -255,7 +255,7 @@ def arxiv_author_list(obj, eng):
             if match:
                 obj.log.info('Found a match for author extraction')
 
-            extracted_authors.extend(extract_authors_from_xml(xml_content))
+                extracted_authors.extend(extract_authors_from_xml(xml_content))
 
         if extracted_authors:
             for author in extracted_authors:

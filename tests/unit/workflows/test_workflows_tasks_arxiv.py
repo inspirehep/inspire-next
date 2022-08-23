@@ -1386,3 +1386,38 @@ def test_arxiv_handles_newLines():
 
     arxiv_author_list(obj, eng)
     assert expected_author[0] == obj.data['authors'][0]
+
+
+def test_arxiv_ignores_random_xml_files():
+    schema = load_schema('hep')
+    eprints_subschema = schema['properties']['arxiv_eprints']
+    filename = pkg_resources.resource_filename(
+        __name__, os.path.join('fixtures', '2207.08972.tar.gz'))
+
+    data = {
+        '$schema': 'http://localhost:5000/hep.json',
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'hep-ex',
+                ],
+                'value': '2207.08972',
+            },
+        ],
+    }
+    validate(data['arxiv_eprints'], eprints_subschema)
+
+    extra_data = {}
+    files = MockFiles({
+        '2207.08972.tar.gz': AttrDict({
+            'file': AttrDict({
+                'uri': filename,
+            })
+        })
+    })
+
+    obj = MockObj(data, extra_data, files=files)
+    eng = MockEng()
+
+    arxiv_author_list(obj, eng)
+    assert obj.data.get('authors', None) is None
