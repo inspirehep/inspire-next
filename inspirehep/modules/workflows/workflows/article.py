@@ -90,6 +90,7 @@ from inspirehep.modules.workflows.tasks.magpie import (
     guess_experiments,
 )
 from inspirehep.modules.workflows.tasks.matching import (
+    handle_matched_holdingpen_wfs,
     stop_processing,
     exact_match,
     fuzzy_match,
@@ -97,7 +98,6 @@ from inspirehep.modules.workflows.tasks.matching import (
     set_exact_match_as_approved_in_extradata,
     set_fuzzy_match_approved_in_extradata,
     has_same_source,
-    stop_matched_holdingpen_wfs,
     auto_approve,
     run_next_if_necessary,
     set_core_in_extra_data,
@@ -481,8 +481,12 @@ PROCESS_HOLDINGPEN_MATCH_HARVEST = [
     IF_ELSE(
         is_marked('already-in-holding-pen'),
         [
-            stop_matched_holdingpen_wfs,
-            mark('stopped-matched-holdingpen-wf', True),
+            handle_matched_holdingpen_wfs,
+            IF_ELSE(
+                has_same_source('holdingpen_matches'),
+                mark('stopped-matched-holdingpen-wf', True),
+                mark('stopped-matched-holdingpen-wf', False),
+            )
         ],
         mark('stopped-matched-holdingpen-wf', False),
     ),
@@ -498,8 +502,8 @@ PROCESS_HOLDINGPEN_MATCH_SUBMISSION = [
 
         # stop the matched wf and continue this one
         [
-            stop_matched_holdingpen_wfs,
-            mark('stopped-matched-holdingpen-wf', True),
+            handle_matched_holdingpen_wfs,
+            mark('stopped-matched-holdingpen-wf', False),
             save_workflow
         ],
     )
@@ -570,6 +574,7 @@ INIT_MARKS = [
     mark('stopped-matched-holdingpen-wf', None),
     mark('approved', None),
     mark('unexpected-workflow-path', None),
+    mark('halted-by-match-with-different-source', None),
     do_not_repeat('marks')(mark('restart-count', 0)),
     save_workflow,
 ]

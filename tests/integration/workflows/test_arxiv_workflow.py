@@ -1226,16 +1226,18 @@ def test_match_in_holdingpen_different_sources_continues(
     record['acquisition_source']['source'] = 'but not the source'
     # this workflow matches in the holdingpen and stops
     # because match for the workflow was found
-    workflow_id = build_workflow(record).id
-    eng_uuid = start('article', object_id=workflow_id)
-    eng = WorkflowEngine.from_uuid(eng_uuid)
-    obj = eng.objects[0]
+    workflow_2_id = build_workflow(record).id
+    eng_2_uuid = start('article', object_id=workflow_2_id)
+    eng_2 = WorkflowEngine.from_uuid(eng_2_uuid)
+    obj_2 = eng_2.objects[0]
 
-    assert obj.extra_data['already-in-holding-pen'] is True
-    assert obj.extra_data['holdingpen_matches'] == [wf_to_match]
-    assert obj.extra_data['previously_rejected'] is False
-    assert obj.extra_data.get('stopped-matched-holdingpen-wf')
+    # the first wf from another source is still halted in HP
     assert obj.status == ObjectStatus.HALTED
+    assert obj_2.status == ObjectStatus.HALTED
+    assert eng.status.name == 'HALTED'
+    assert obj_2.extra_data['already-in-holding-pen'] is True
+    assert obj_2.extra_data['holdingpen_matches'] == [wf_to_match]
+    assert obj_2.extra_data['previously_rejected'] is False
 
 
 @mock.patch(
