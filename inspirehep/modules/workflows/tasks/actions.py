@@ -808,16 +808,35 @@ def affiliations_for_hidden_collections(obj):
     return [affiliations_mapping[affiliation] for affiliation in affiliations_set]
 
 
+def reports_for_hidden_collections(obj):
+    hidden_collection_mapping = current_app.config.get(
+        "AFFILIATIONS_TO_HIDDEN_COLLECTIONS_MAPPING", {}
+    )
+    hidden_collections = set()
+    for report_number in obj.data.get("report_numbers", []):
+        hidden_collections.update(
+            [
+                match.upper()
+                for match in re.findall("cern|fermilab", report_number["value"], re.IGNORECASE)
+            ]
+        )
+    return {hidden_collection_mapping[collection] for collection in hidden_collections}
+
+
 @with_debug_logging
 def should_be_hidden(obj, eng):
     """Checks if paper attached to this workflow is affiliated with one of affiliations which interests us."""
-    return bool(affiliations_for_hidden_collections(obj))
+    return bool(affiliations_for_hidden_collections(obj)) or bool(
+        reports_for_hidden_collections(obj)
+    )
 
 
 @with_debug_logging
 def replace_collection_to_hidden(obj, eng):
     """Replaces collection to hidden based on authors affiliations"""
-    obj.data["_collections"] = affiliations_for_hidden_collections(obj)
+    hidden_collections = reports_for_hidden_collections(obj)
+    hidden_collections.update(affiliations_for_hidden_collections(obj))
+    obj.data["_collections"] = list(hidden_collections)
     return obj
 
 

@@ -734,6 +734,36 @@ def test_replace_collection_to_hidden_sets_proper_hidden_collections_on_metadata
     assert wf.data["_collections"] == expected_collections
 
 
+def test_replace_collection_to_hidden_sets_proper_hidden_collections_on_metadata_from_report_number(
+    workflow_app,
+):
+    expected_collections = ["CDS Hidden", "Fermilab"]
+    record = generate_record()
+    record['report_numbers'] = [{"value": "CERN-2019"}, {"value": "FERMILAB-1923"}]
+    workflow = build_workflow(record)
+
+    wf = replace_collection_to_hidden(workflow, None)
+    assert wf.data["_collections"] == expected_collections
+
+
+def test_replace_collection_to_hidden_sets_proper_hidden_collections_on_metadata_from_report_number_and_affiliations(
+    workflow_app,
+):
+    expected_collections = ["CDS Hidden", "Fermilab"]
+    record = generate_record()
+    record["authors"][0]["raw_affiliations"] = [
+        {"value": "Another one but this time with wrong keywords Fermilab"},
+    ]
+    record["authors"][1]["raw_affiliations"] = [
+        {"value": "Blah blah blah fermilab, blah blah"}
+    ]
+    record['report_numbers'] = [{"value": "CERN-2019"}]
+    workflow = build_workflow(record)
+
+    wf = replace_collection_to_hidden(workflow, None)
+    assert wf.data["_collections"] == expected_collections
+
+
 def test_normalize_journal_titles_in_references(workflow_app, insert_journals_in_db):
     record = {
         "_collections": ["Literature"],
