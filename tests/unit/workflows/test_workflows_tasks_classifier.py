@@ -184,9 +184,7 @@ def test_guess_coreness_when_non_core(mocked_get_classifier_url):
         {},
     )
     eng = MockEng()
-
-    assert guess_coreness(obj, eng) is None
-    assert obj.extra_data["relevance_prediction"] == {
+    expected_scores = {
         "decision": "Non-CORE",
         "max_score": 0.9195370078086853,
         "relevance_score": 0.9195370078086853,
@@ -196,6 +194,12 @@ def test_guess_coreness_when_non_core(mocked_get_classifier_url):
             "Non-CORE": 0.9195370078086853,
         },
     }
+    expected_scores["relevance_score"] = (
+        0.5 * expected_scores["scores"]["Non-CORE"] + expected_scores["scores"]["CORE"]
+    )
+
+    assert guess_coreness(obj, eng) is None
+    assert obj.extra_data["relevance_prediction"] == expected_scores
 
 
 @patch("inspirehep.modules.workflows.tasks.classifier.get_classifier_url")
