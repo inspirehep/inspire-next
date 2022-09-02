@@ -87,6 +87,8 @@ def guess_coreness(obj, eng):
     relevance_score = max_score
     if decision == "CORE":
         relevance_score += 1
+    elif decision == "Non-CORE":
+        relevance_score = 0.5 * scores["Non-CORE"] + scores["CORE"]
     elif decision == "Rejected":
         relevance_score *= -1
     # We assume a CORE paper to have the highest relevance so we add a
