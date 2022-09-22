@@ -1132,7 +1132,7 @@ Unidecode = ">=0.04.14"
 
 [[package]]
 name = "hepcrawl"
-version = "13.0.49"
+version = "13.0.50"
 description = "Scrapy project for feeds into INSPIRE-HEP (http://inspirehep.net)."
 category = "main"
 optional = false
@@ -4161,7 +4161,7 @@ xrootd = ["xrootdpyfs", "invenio-xrootd"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=2.7,<3.0"
-content-hash = "5b1d536033cb78ecda6274ee20485d0135014704b746d10ab63927f9a5149c25"
+content-hash = "a1d03c0dadb25d899ac1e077742122eff8a89aee26b66bb9d194fca1fb47355d"
 
 [metadata.files]
 alabaster = [
