@@ -1421,3 +1421,38 @@ def test_arxiv_ignores_random_xml_files():
 
     arxiv_author_list(obj, eng)
     assert obj.data.get('authors', None) is None
+
+
+def test_arxiv_handles_non_ascii_organization_names():
+    schema = load_schema('hep')
+    eprints_subschema = schema['properties']['arxiv_eprints']
+    filename = pkg_resources.resource_filename(
+        __name__, os.path.join('fixtures', '2202.12988.tar.gz'))
+
+    data = {
+        '$schema': 'http://localhost:5000/hep.json',
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'hep-ex',
+                ],
+                'value': '2202.12988',
+            },
+        ],
+    }
+    validate(data['arxiv_eprints'], eprints_subschema)
+
+    extra_data = {}
+    files = MockFiles({
+        '2202.12988.tar.gz': AttrDict({
+            'file': AttrDict({
+                'uri': filename,
+            })
+        })
+    })
+
+    obj = MockObj(data, extra_data, files=files)
+    eng = MockEng()
+
+    arxiv_author_list(obj, eng)
+    assert obj.data.get('authors', None) is not None
