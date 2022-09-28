@@ -800,11 +800,12 @@ def affiliations_for_hidden_collections(obj):
     affiliations_mapping = current_app.config.get("AFFILIATIONS_TO_HIDDEN_COLLECTIONS_MAPPING", {})
     affiliations = flatten_list(get_value(obj.data, 'authors.raw_affiliations.value', []))
 
-    query = "|".join(r"\b{aff}\b".format(aff=aff) for aff in affiliations_mapping.keys())
+    query = u"|".join(ur"\b{aff}\b".format(aff=aff.replace(u" ", ur"\W+")) for aff in affiliations_mapping.keys())
 
     affiliations_set = set()
     for aff in affiliations:
-        affiliations_set.update([match.upper() for match in re.findall(query, aff, re.IGNORECASE)])
+        matches = re.findall(query, aff, re.IGNORECASE | re.UNICODE)
+        affiliations_set.update([re.sub(ur"\W+", u" ", match.upper(), flags=re.UNICODE) for match in matches])
     return [affiliations_mapping[affiliation] for affiliation in affiliations_set]
 
 
