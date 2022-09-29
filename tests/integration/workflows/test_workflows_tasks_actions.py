@@ -700,13 +700,29 @@ def test_workflow_loads_from_source_data_fails_on_no_source_data(
     assert exc.match(r"source_data.*missing")
 
 
-def test_find_interesting_affiliations_works_correctly_for_complex_affiliations_value(
+def test_affiliations_for_hidden_collections_works_correctly_for_complex_affiliations_value(
     workflow_app,
 ):
     expected_affiliations = ["HAL Hidden"]
     record = generate_record()
     record["authors"][0]["raw_affiliations"] = [
         {"value": "Some longer description In2P3. with proper keyword included"},
+        {"value": "Another one but this time with wrong keywords Fremilab included"},
+    ]
+
+    workflow = build_workflow(record)
+
+    affiliations = affiliations_for_hidden_collections(workflow)
+    assert affiliations == expected_affiliations
+
+
+def test_affiliations_for_hidden_collections_works_correctly_with_unicode(
+    workflow_app,
+):
+    expected_affiliations = ["HAL Hidden"]
+    record = generate_record()
+    record["authors"][0]["raw_affiliations"] = [
+        {"value": u"Some longer description grand accélérateur national d'ions lourds. with proper keyword included"},
         {"value": "Another one but this time with wrong keywords Fremilab included"},
     ]
 
