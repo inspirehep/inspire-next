@@ -307,7 +307,7 @@ def extract_authors_from_xml(xml_content):
 
         # Gets all the names for affiliated organizations using the organization ids from author
         for affiliation in author.xpath("./authorAffiliations/authorAffiliation/@organizationid").getall():
-            orgName = content.xpath(u'//organizations/Organization[@id="{}"]/orgName[@source="spiresICN" or @source="INSPIRE" and text()!="" ]/text()'.format(affiliation)).get()
+            orgName = content.xpath(u'string(//organizations/Organization[@id="{}"]/orgName[@source="spiresICN" or @source="INSPIRE" and text()!="" ]/text())'.format(affiliation)).get()
             cleaned_org_name = re.sub(remove_new_line_regex, '', orgName)
             if orgName and not re.match(undefined_or_none_value_regex, cleaned_org_name):
                 affiliations.append(cleaned_org_name)
