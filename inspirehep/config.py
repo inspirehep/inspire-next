@@ -1240,7 +1240,7 @@ AFFILIATIONS_TO_HIDDEN_COLLECTIONS_MAPPING = {
     "CPB": "HAL Hidden",
     "CPPM": "HAL Hidden",
     "GANIL": "HAL Hidden",
-    "IJClab": "HAL Hidden",
+    "IJCLAB": "HAL Hidden",
     "IP2I": "HAL Hidden",
     "IPHC": "HAL Hidden",
     "L2IT": "HAL Hidden",
