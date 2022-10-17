@@ -1489,7 +1489,7 @@ timeexecution = ">=3.3.0,<4"
 
 [[package]]
 name = "inspire-utils"
-version = "3.0.28"
+version = "3.0.29"
 description = "INSPIRE-specific utils."
 category = "main"
 optional = false
@@ -3840,11 +3840,11 @@ windows_platform = ["pywin32", "pyopenssl (>=16.0.0)", "service-identity", "idna
 
 [[package]]
 name = "typing"
-version = "3.7.4.1"
+version = "3.10.0.0"
 description = "Type Hints for Python"
 category = "main"
 optional = true
-python-versions = "*"
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, <3.5"
 
 [[package]]
 name = "ua-parser"
@@ -4161,7 +4161,7 @@ xrootd = ["xrootdpyfs", "invenio-xrootd"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=2.7,<3.0"
-content-hash = "a1d03c0dadb25d899ac1e077742122eff8a89aee26b66bb9d194fca1fb47355d"
+content-hash = "0328fb6bc2bc1aced6284fd27ff927e44b4a0417024bf4074f043c1c418f5ce9"
 
 [metadata.files]
 alabaster = [
@@ -5575,11 +5575,7 @@ traitlets = [
 twisted = [
     {file = "Twisted-18.9.0.tar.bz2", hash = "sha256:294be2c6bf84ae776df2fc98e7af7d6537e1c5e60a46d33c3ce2a197677da395"},
 ]
-typing = [
-    {file = "typing-3.7.4.1-py2-none-any.whl", hash = "sha256:c8cabb5ab8945cd2f54917be357d134db9cc1eb039e59d1606dc1e60cb1d9d36"},
-    {file = "typing-3.7.4.1-py3-none-any.whl", hash = "sha256:f38d83c5a7a7086543a0f649564d661859c5146a85775ab90c0d2f93ffaa9714"},
-    {file = "typing-3.7.4.1.tar.gz", hash = "sha256:91dfe6f3f706ee8cc32d38edbbf304e9b7583fb37108fef38229617f8b3eba23"},
-]
+typing = []
 ua-parser = [
     {file = "ua-parser-0.9.0.tar.gz", hash = "sha256:be17242abcd4f3d11543e9b82826f152b47c724623a32bb94ce02e549b0cfce2"},
     {file = "ua_parser-0.9.0-py2.py3-none-any.whl", hash = "sha256:421999f5e852b458833dd9a74765180f75bffb882cb750909c6a4db6748e4887"},
