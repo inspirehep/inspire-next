@@ -88,7 +88,8 @@ RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/4ec09d4e6b8
     poetry --version && \
     pip install --no-cache-dir --upgrade pip==20.3.4 && \
     pip install --no-cache-dir --upgrade setuptools && \
-    pip install --no-cache-dir --upgrade wheel
+    pip install --no-cache-dir --upgrade wheel && \
+    pip install --no-cache-dir typing==3.7.4.1
 
 COPY . .
 

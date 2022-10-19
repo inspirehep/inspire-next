@@ -130,6 +130,7 @@ OAUTH2SERVER_ALLOWED_URLENCODE_CHARACTERS = '=&;:%+~,*@!()/? '
 # =======
 # To enable file logging set it to e.g. "{sys_prefix}/var/log/inspirehep.log"
 LOGGING_FS_LOGFILE = None
+LOGGING_CONSOLE_LEVEL = 'INFO'
 
 # This configures a logger for the ORCID module
 dictConfig({
