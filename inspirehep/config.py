@@ -29,7 +29,6 @@ import sys
 import pkg_resources
 
 from celery.schedules import crontab
-from logging.config import dictConfig
 
 from invenio_oauthclient.contrib import orcid
 from invenio_records_rest.facets import range_filter, terms_filter
@@ -131,44 +130,6 @@ OAUTH2SERVER_ALLOWED_URLENCODE_CHARACTERS = '=&;:%+~,*@!()/? '
 # To enable file logging set it to e.g. "{sys_prefix}/var/log/inspirehep.log"
 LOGGING_FS_LOGFILE = None
 LOGGING_CONSOLE_LEVEL = 'INFO'
-
-# This configures a logger for the ORCID module
-dictConfig({
-    'version': 1,
-    'formatters': {
-        'default': {
-            'format': '[%(asctime)s: %(levelname)s/%(processName)s] %(name)s: %(message)s',
-        }
-    },
-    'handlers': {
-        'stdout_handler': {
-            'class': 'logging.StreamHandler',
-            'formatter': 'default',
-        }
-    },
-    'loggers': {
-        '': {
-            'level': 'INFO',
-            'handlers': ['stdout_handler'],
-            'propagate': True,
-        },
-        'inspirehep.modules.workflows': {
-            'level': 'INFO',
-            'handlers': ['stdout_handler'],
-            'propagate': True,
-        },
-        'inspirehep.modules.orcid': {
-            'level': 'INFO',
-            'handlers': ['stdout_handler'],
-            'propagate': True,
-        },
-        'gunicorn.access': {
-            'level': 'DEBUG',
-            'handlers': ['stdout_handler'],
-            'propagate': False
-        },
-    }
-})
 
 # Accounts
 # ========
