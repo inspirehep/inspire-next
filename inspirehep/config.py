@@ -147,6 +147,16 @@ dictConfig({
         }
     },
     'loggers': {
+        '': {
+            'level': 'INFO',
+            'handlers': ['stdout_handler'],
+            'propagate': True,
+        },
+        'inspirehep.modules.workflows': {
+            'level': 'INFO',
+            'handlers': ['stdout_handler'],
+            'propagate': True,
+        },
         'inspirehep.modules.orcid': {
             'level': 'INFO',
             'handlers': ['stdout_handler'],

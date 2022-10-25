@@ -26,7 +26,6 @@ from __future__ import absolute_import, division, print_function
 
 import os
 import sys
-import logging
 from invenio_base.app import create_app_factory
 from invenio_base.wsgi import create_wsgi_factory
 from invenio_config import create_config_loader
@@ -41,9 +40,6 @@ def config_loader(app, **kwargs_config):
     invenio_config_loader = create_config_loader(config=config, env_prefix=env_prefix)
     result = invenio_config_loader(app, **kwargs_config)
     app.url_map.strict_slashes = False
-    handler = logging.StreamHandler()
-    app.logger.addHandler(handler)
-    app.logger.setLevel(logging.INFO)
     return result
 
 
