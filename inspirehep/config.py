@@ -125,12 +125,6 @@ FILES_REST_PERMISSION_FACTORY = allow_all
 REST_ENABLE_CORS = True
 OAUTH2SERVER_ALLOWED_URLENCODE_CHARACTERS = '=&;:%+~,*@!()/? '
 
-# Logging
-# =======
-# To enable file logging set it to e.g. "{sys_prefix}/var/log/inspirehep.log"
-LOGGING_FS_LOGFILE = None
-LOGGING_CONSOLE_LEVEL = 'INFO'
-
 # Accounts
 # ========
 DANGEROUSLY_ENABLE_LOCAL_LOGIN = False

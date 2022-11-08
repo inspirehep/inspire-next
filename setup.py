@@ -121,6 +121,7 @@ setup(
             'inspire_disambiguation = inspirehep.modules.disambiguation:InspireDisambiguation',
             'inspire_fixtures = inspirehep.modules.fixtures:InspireFixtures',
             'inspire_forms = inspirehep.modules.forms:InspireForms',
+            'inspirehep_logger = inspirehep.modules.logger:InspireLogger',
             'inspire_literaturesuggest = inspirehep.modules.literaturesuggest:InspireLiteratureSuggest',
             'inspire_migrator = inspirehep.modules.migrator:InspireMigrator',
             'inspire_orcid = inspirehep.modules.orcid:InspireOrcid',
