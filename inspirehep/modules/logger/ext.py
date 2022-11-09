@@ -23,11 +23,11 @@ class InspireLogger:
             self.init_app(app)
 
     def init_app(self, app):
+        # clear default handlers
+        app.logger.handlers = []
         self.init_sentry(app)
         app.extensions["inspirehep-logger"] = self
-        # https://flask.palletsprojects.com/en/1.0.x/logging/#removing-the-default-handler
-        default_handler = logging.StreamHandler()
-        app.logger.removeHandler(default_handler)
+        app.logger.propagate = False
         return self
 
     def init_sentry(self, app):
