@@ -517,6 +517,12 @@ def test_core_selection_wf_removes_arxiv_core_categories_when_marked_as_non_core
             assert core_selection_wf.status == ObjectStatus.COMPLETED
             assert core_selection_wf.data["control_number"] == pid_value
             # Expect inspire_categories to contain only one non-core category
-            assert core_selection_wf.data["inspire_categories"] == [
-                {"source": "arxiv", "term": "Astrophysics"}
-            ]
+            assert len(core_selection_wf.data["inspire_categories"]) == 2
+            assert {
+                "source": "arxiv",
+                "term": "Astrophysics",
+            } in core_selection_wf.data["inspire_categories"]
+            assert {
+                "source": "arxiv",
+                "term": "Quantum Physics",
+            } in core_selection_wf.data["inspire_categories"]
