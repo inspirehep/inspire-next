@@ -135,6 +135,11 @@ setup(
         'invenio_base.blueprints': [
             'inspirehep_editor = inspirehep.modules.editor:blueprint',
         ],
+        'invenio_config.module': [
+            'inspirehep = inspirehep.config',
+            'inspirehep_logger = inspirehep.modules.logger.config',
+            'inspire_workflows = inspirehep.modules.workflows.config'
+        ],
         'invenio_celery.tasks': [
             'inspire_migrator = inspirehep.modules.migrator.tasks',
             'inspire_orcid = inspirehep.modules.orcid.tasks',

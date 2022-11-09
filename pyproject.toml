@@ -197,6 +197,11 @@ inspire_workflows = "inspirehep.modules.workflows:InspireWorkflows"
 [tool.poetry.plugins."invenio_base.blueprints"]
 inspirehep_editor = "inspirehep.modules.editor:blueprint"
 
+[tool.poetry.plugins."invenio_config.module"]
+inspirehep = "inspirehep.config"
+inspirehep_logger = "inspirehep.modules.logger.config"
+inspire_workflows = "inspirehep.modules.workflows.config"
+
 [tool.poetry.plugins."invenio_celery.tasks"]
 inspire_migrator = "inspirehep.modules.migrator.tasks"
 inspire_orcid = "inspirehep.modules.orcid.tasks"

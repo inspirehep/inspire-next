@@ -27,7 +27,7 @@ class InspireLogger:
         app.logger.handlers = []
         self.init_sentry(app)
         app.extensions["inspirehep-logger"] = self
-        app.logger.propagate = False
+        app.logger.propagate = True
         return self
 
     def init_sentry(self, app):
