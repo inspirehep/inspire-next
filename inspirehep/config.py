@@ -1237,8 +1237,7 @@ ARXIV_CATEGORIES = {
         'hep-ex',
         'hep-lat',
         'hep-ph',
-        'hep-th',
-        'quant-ph'
+        'hep-th'
     ],
     'non-core': [
         'astro-ph.CO',
@@ -1248,6 +1247,7 @@ ARXIV_CATEGORIES = {
         'nucl-th',
         'physics.acc-ph',
         'physics.ins-det',
+        'quant-ph'
     ]
 }
 JLAB_ARXIV_CATEGORIES = [
