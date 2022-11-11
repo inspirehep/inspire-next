@@ -23,6 +23,7 @@
 """INSPIREHEP app configuration."""
 
 from __future__ import absolute_import, division, print_function
+from logging.config import dictConfig
 
 import os
 import sys
@@ -1700,3 +1701,35 @@ BATCHUPLOADER_WEB_ROBOT_TOKEN = 'change me'
 # ==========
 FEATURE_FLAG_ENABLE_REFEXTRACT_SERVICE = False
 REFEXTRACT_SERVICE_URL = 'http://example_refextract_url.cern.ch'
+
+# logging
+# ==========
+dictConfig(
+    {
+        "version": 1,
+        "formatters": {
+            "default": {
+                "format": "[%(asctime)s: %(levelname)s/%(processName)s] %(name)s: %(message)s",
+            }
+        },
+        "handlers": {
+            "console": {
+                "level": "INFO",
+                "class": "logging.StreamHandler",
+                "formatter": "default",
+                "stream": sys.stdout
+            }
+        },
+        "loggers": {
+            "inspirehep.modules": {
+                "level": "INFO",
+                "handlers": ["console"],
+                "propagate": True
+            },
+            "": {
+                "level": "INFO",
+                "handlers": ["console"]
+            }
+        },
+    }
+)
