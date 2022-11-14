@@ -8,22 +8,21 @@
 from __future__ import absolute_import, division, print_function
 
 import logging
+import sys
 
-# Logging config
+from celery.signals import setup_logging
+
+# Celery config
 # ==============
-formatter = logging.Formatter(
-    "[%(asctime)s][%(levelname)s] %(name)s "
-    "%(filename)s:%(funcName)s:%(lineno)d | %(message)s",
-)
+@setup_logging.connect
+def setup_basic_logging(*args, **kwargs):
+    logging.basicConfig(
+        format="%(message)s", stream=sys.stdout, level=logging.INFO
+    )
 
-handler = logging.StreamHandler()
-handler.setFormatter(formatter)
-
-root_logger = logging.getLogger()
-root_logger.addHandler(handler)
-root_logger.setLevel(logging.INFO)
 
 # Sentry config
+# ==============
 SENTRY_DSN = None
 """sentry domain"""
 
