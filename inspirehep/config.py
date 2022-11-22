@@ -1726,7 +1726,7 @@ dictConfig(
                 "handlers": ["console"],
                 "propagate": True
             },
-            "inspire_utils": {
+            "inspire_utils.record": {
                 "level": "INFO",
                 "handlers": ["console"],
                 "propagate": True
