@@ -1039,7 +1039,7 @@ def _assign_institution_reference_to_affiliations(author_affiliations, already_m
 def normalize_author_affiliations(obj, eng):
     search = LiteratureSearch()
     normalized_affiliations, ambiguous_affiliations = normalize_affiliations(
-        obj.data, search
+        obj.data, search, wf_id=obj.id
     )
     for author, normalized_affiliation in zip(
         obj.data.get("authors", []), normalized_affiliations
