@@ -80,7 +80,7 @@ from inspirehep.modules.workflows.tasks.refextract import (
 )
 from inspirehep.modules.refextract.matcher import match_references
 from inspirehep.modules.search import InstitutionsSearch, LiteratureSearch
-from inspirehep.modules.workflows.tasks.upload import create_error
+from inspirehep.modules.workflows.utils import create_error
 from inspirehep.modules.workflows.errors import BadGatewayError, CannotFindProperSubgroup, MissingRecordControlNumber
 from inspirehep.modules.workflows.utils import (
     copy_file_to_workflow,
@@ -118,6 +118,11 @@ EXPERIMENTAL_INSPIRE_CATEGORIES = [
     'Experiment-Nucl',
     'Instrumentation',
 ]
+
+GROBID_EXCEPTIONS = (
+    BadGatewayError,
+    requests.exceptions.RequestException,
+)
 
 
 def mark(key, value):
@@ -1116,7 +1121,11 @@ def create_core_selection_wf(obj, eng):
     start.delay("core_selection", object_id=workflow_object.id)
 
 
-@backoff.on_exception(backoff.expo, (BadGatewayError, requests.exceptions.ConnectionError), base=4, max_tries=5)
+@backoff.on_exception(
+    backoff.expo,
+    GROBID_EXCEPTIONS,
+    base=4, max_tries=9
+)
 def post_pdf_to_grobid(obj, grobid_api_path, **kwargs):
     with get_document_in_workflow(obj) as tmp_document:
         if not tmp_document:
@@ -1126,8 +1135,12 @@ def post_pdf_to_grobid(obj, grobid_api_path, **kwargs):
         data = {'input': document}
         data.update(kwargs)
         grobid_url = current_app.config["GROBID_URL"]
-        response = requests.post(urljoin(grobid_url, grobid_api_path), files=data)
-        response.raise_for_status()
+        try:
+            response = requests.post(urljoin(grobid_url, grobid_api_path), files=data)
+            response.raise_for_status()
+        except GROBID_EXCEPTIONS:
+            LOGGER.warning("(%s) Grobid request failed due to the GROBID serivce error!" % str(obj.id))
+            return
     return response
 
 

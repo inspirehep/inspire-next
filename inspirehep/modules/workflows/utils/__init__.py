@@ -45,6 +45,8 @@ from invenio_workflows.errors import WorkflowsError
 from six import text_type
 from six.moves.urllib.parse import unquote
 from timeout_decorator import TimeoutError, timeout
+from simplejson import JSONDecodeError
+from inspirehep.modules.workflows.errors import BadGatewayError
 
 from inspirehep.modules.pidstore.utils import (get_endpoint_from_pid_type,
                                                get_pid_type_from_schema)
@@ -54,6 +56,7 @@ from inspirehep.modules.records.errors import (
 from inspirehep.modules.workflows.errors import InspirehepMissingDataError
 from inspirehep.modules.workflows.models import WorkflowsAudit, WorkflowsRecordSources
 from inspirehep.utils.url import retrieve_uri
+from invenio_workflows import ObjectStatus
 
 LOGGER = getStackTraceLogger(__name__)
 
@@ -328,7 +331,13 @@ def download_file_to_workflow(workflow, name, url):
     might terminate the connection before sending any data. In this case we
     retry 5 times with exponential backoff before giving up.
     """
-    with closing(requests.get(url=url, stream=True)) as req:
+    with closing(
+        requests.get(
+            url=url,
+            stream=True,
+            timeout=current_app.config['DOWNLOAD_FILE_TO_WORKFLOW_TIMEOUT']
+        )
+    ) as req:
         req.raise_for_status()
         if req.status_code == 200:
             req.raw.decode_content = True
@@ -674,4 +683,40 @@ def _get_hep_url_for_document(file_url):
         protocol=protocol,
         server_name=server_name,
         file_url=file_url
+    )
+
+
+def restart_workflow(obj, restarter_id=None, position=[0]):
+    """Restarts workflow
+
+    Args:
+        obj: Workflow to restart
+        original_workflow: Workflow which restarts
+        position: To which position wf should be restarted
+    """
+    obj.callback_pos = position
+    obj.status = ObjectStatus.RUNNING
+    obj.extra_data['source_data']['extra_data'][
+        'delay'] = current_app.config.get("TASK_DELAY_ON_START", 10)
+    if restarter_id:
+        obj.extra_data['source_data']['extra_data'].setdefault(
+            'restarted-by-wf', []).append(restarter_id)
+    obj.save()
+    db.session.commit()
+    obj.continue_workflow('restart_task', delayed=True)
+
+
+def create_error(response):
+    """Raises exception with message from data returned by the server in response object"""
+    if response.status_code == 502:
+        raise BadGatewayError()
+
+    try:
+        error_msg = response.json()
+    except JSONDecodeError:
+        error_msg = response.text
+    raise WorkflowsError(
+        "Error from inspirehep [{code}]: {message}".format(
+            code=response.status_code, message=error_msg
+        )
     )
