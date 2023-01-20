@@ -473,6 +473,7 @@ PROCESS_HOLDINGPEN_MATCH_HARVEST = [
                         mark('approved', False),  # auto-reject
                         save_workflow,
                         stop_processing,
+                        run_next_if_necessary
                     ],
                 )
             ),
