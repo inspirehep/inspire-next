@@ -1213,7 +1213,6 @@ AFFILIATIONS_TO_HIDDEN_COLLECTIONS_MAPPING = {
     "L2IT": "HAL Hidden",
     "LAPP": "HAL Hidden",
     "LLR": "HAL Hidden",
-    "LMA": "HAL Hidden",
     "LNCA": "HAL Hidden",
     "LP2I": "HAL Hidden",
     "LPC": "HAL Hidden",
