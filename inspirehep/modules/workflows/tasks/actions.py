@@ -1055,7 +1055,7 @@ def normalize_author_affiliations(obj, eng):
                 obj.id,
                 author["full_name"],
                 ",".join(raw_affs),
-                author_affiliations,
+                normalized_affiliation,
             )
     for ambiguous_affiliation in ambiguous_affiliations:
         LOGGER.info(

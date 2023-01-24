@@ -1012,7 +1012,12 @@ def test_normalize_affiliations_happy_flow(
         1,
         "Kowal, Michal",
         "Faculty of Physics, University of Warsaw, Pasteura 5 Warsaw",
-        [],
+        [
+            {
+                "record": {"$ref": "http://localhost:5000/api/institutions/903335"},
+                "value": "Warsaw U.",
+            }
+        ],
     )
 
 
