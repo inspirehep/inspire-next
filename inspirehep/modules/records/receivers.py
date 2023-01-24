@@ -40,9 +40,6 @@ from invenio_records.signals import (
     before_record_update,
 )
 
-from inspire_utils.record import get_value
-
-from inspirehep.modules.authors.utils import phonetic_blocks
 from inspirehep.modules.orcid import (
     push_access_tokens,
     tasks as orcid_tasks,
@@ -82,33 +79,6 @@ from inspirehep.modules.records.utils import (
 from invenio_indexer.api import RecordIndexer
 
 LOGGER = logging.getLogger(__name__)
-
-
-@before_record_insert.connect
-@before_record_update.connect
-def assign_phonetic_block(sender, record, *args, **kwargs):
-    """Assign a phonetic block to each signature of a Literature record.
-
-    Uses the NYSIIS algorithm to compute a phonetic block from each
-    signature's full name, skipping those that are not recognized
-    as real names, but logging an error when that happens.
-    """
-    if not is_hep(record):
-        return
-
-    author_names = get_value(record, 'authors.full_name', default=[])
-
-    try:
-        signature_blocks = phonetic_blocks(author_names)
-    except Exception as err:
-        current_app.logger.error(
-            'Cannot extract phonetic blocks for record %d: %s',
-            record.get('control_number'), err)
-        return
-
-    for author in record.get('authors', []):
-        if author['full_name'] in signature_blocks and signature_blocks[author['full_name']]:
-            author['signature_block'] = signature_blocks[author['full_name']]
 
 
 @before_record_insert.connect

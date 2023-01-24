@@ -118,7 +118,6 @@ setup(
             'inspire_arxiv = inspirehep.modules.arxiv:InspireArXiv',
             'inspire_authors = inspirehep.modules.authors:InspireAuthors',
             'inspire_crossref = inspirehep.modules.crossref:InspireCrossref',
-            'inspire_disambiguation = inspirehep.modules.disambiguation:InspireDisambiguation',
             'inspire_fixtures = inspirehep.modules.fixtures:InspireFixtures',
             'inspire_forms = inspirehep.modules.forms:InspireForms',
             'inspirehep_logger = inspirehep.modules.logger:InspireLogger',

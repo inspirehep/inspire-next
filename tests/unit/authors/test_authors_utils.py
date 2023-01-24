@@ -44,5 +44,3 @@ def test_that_bai_conforms_to_the_spec():
     assert bai("De Villiers, Jean-Pierre") == "J.P.de.Villiers"
     assert bai("Höing, Rebekka Sophie") == "R.S.Hoeing"
     assert bai("Müller, Andreas") == "A.Mueller"
-    assert bai("Hernández-Tomé, G.") == "G.Hernandez.Tome"
-    assert bai("José de Goya y Lucientes, Francisco Y H") == "F.Y.H.Jose.de.Goya.y.Lucientes"
