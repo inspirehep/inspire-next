@@ -188,23 +188,6 @@ docs = ["Sphinx (>=1.4.2)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest-runner (>=2.7.0)", "pytest (>=3.6.0)"]
 
 [[package]]
-name = "beard"
-version = "0.2"
-description = "Bibliographic Entity Automatic         Recognition and Disambiguation"
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-fuzzy = "*"
-jellyfish = "*"
-numpy = ">=1.9"
-scikit-learn = ">=0.15.2"
-scipy = ">=0.14"
-six = "*"
-unidecode = "*"
-
-[[package]]
 name = "beautifulsoup4"
 version = "4.8.2"
 description = "Screen-scraping library"
@@ -1358,7 +1341,7 @@ six = ">=1.9.0"
 [package.extras]
 all = ["Sphinx (>=1.5,<1.6)", "check-manifest (>=0.25)", "coverage (>=4.0)", "mock (>=2.0.0,<3.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "requests_mock (>=1.4.0,<2.0)"]
 docs = ["Sphinx (>=1.5,<1.6)"]
-mysql = ["invenio-db[versioning,mysql] (>=1.0.0a9)"]
+mysql = ["invenio-db[mysql,versioning] (>=1.0.0a9)"]
 postgresql = ["invenio-db[versioning,postgresql] (>=1.0.0a9)"]
 sqlite = ["invenio-db[versioning] (>=1.0.0a9)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "mock (>=2.0.0,<3.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "requests_mock (>=1.4.0,<2.0)"]
@@ -1583,7 +1566,7 @@ ua-parser = ">=0.7.3"
 all = ["Sphinx (>=1.4.2,<1.6)", "celery (>=3.1.0,<4.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.0)", "mock (>=2.0.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-flask (>=0.10.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "selenium (>=3.0.1)"]
 celery = ["celery (>=3.1.0,<4.0)"]
 docs = ["Sphinx (>=1.4.2,<1.6)"]
-mysql = ["invenio-db[versioning,mysql] (>=1.0.0)"]
+mysql = ["invenio-db[mysql,versioning] (>=1.0.0)"]
 postgresql = ["invenio-db[versioning,postgresql] (>=1.0.0)"]
 sqlite = ["invenio-db[versioning] (>=1.0.0)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.0)", "mock (>=2.0.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-flask (>=0.10.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "selenium (>=3.0.1)"]
@@ -1988,7 +1971,7 @@ jsonschema = ">=2.5.1"
 admin = ["Flask-Admin (>=1.3.0)"]
 all = ["Flask-Admin (>=1.3.0)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.5.3)", "Flask-Menu (>=0.4.0)", "invenio-admin (>=1.0.0)", "isort (>=4.3.0)", "mock (>=1.0.0)", "pydocstyle (>=3.0.0)", "pytest-cov (>=2.7.1)", "pytest-pep8 (>=1.0.6)", "pytest (>=4.6.4,<5.0.0)", "invenio-pidstore (>=1.0.0)"]
 docs = ["Sphinx (>=1.5.1)"]
-mysql = ["invenio-db[versioning,mysql] (>=1.0.0)"]
+mysql = ["invenio-db[mysql,versioning] (>=1.0.0)"]
 pidstore = ["invenio-pidstore (>=1.0.0)"]
 postgresql = ["invenio-db[versioning,postgresql] (>=1.0.0)"]
 sqlite = ["invenio-db[versioning] (>=1.0.0)"]
@@ -2011,7 +1994,7 @@ invenio-records-rest = ">=1.6.3"
 [package.extras]
 all = ["Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-indexer (>=1.1.0)", "invenio-search[elasticsearch6] (>=1.2.0)", "isort (>=4.3.4)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.7.0)"]
 docs = ["Sphinx (>=1.5.1)"]
-mysql = ["invenio-db[versioning,mysql] (>=1.0.0)"]
+mysql = ["invenio-db[mysql,versioning] (>=1.0.0)"]
 postgresql = ["invenio-db[versioning,postgresql] (>=1.0.0)"]
 sqlite = ["invenio-db[versioning] (>=1.0.0)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-indexer (>=1.1.0)", "invenio-search[elasticsearch6] (>=1.2.0)", "isort (>=4.3.4)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.7.0)"]
@@ -2066,9 +2049,9 @@ invenio-pidstore = ">=1.0.0"
 invenio-records = ">=1.0.0"
 
 [package.extras]
-all = ["Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[versioning,mysql,postgresql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[versioning,mysql,postgresql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+all = ["Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[mysql,versioning,postgresql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[mysql,versioning,postgresql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 docs = ["Sphinx (>=1.5.1)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[versioning,mysql,postgresql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[mysql,versioning,postgresql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
 name = "invenio-rest"
@@ -2330,14 +2313,6 @@ description = "Various helpers to pass data to untrusted environments and back."
 category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
-
-[[package]]
-name = "jellyfish"
-version = "0.6.1"
-description = "a library for doing approximate and phonetic matching of strings."
-category = "main"
-optional = false
-python-versions = "*"
 
 [[package]]
 name = "jinja2"
@@ -3366,32 +3341,6 @@ optional = false
 python-versions = "*"
 
 [[package]]
-name = "scikit-learn"
-version = "0.20.4"
-description = "A set of python modules for machine learning and data mining"
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-numpy = ">=1.8.2"
-scipy = ">=0.13.3"
-
-[package.extras]
-alldeps = ["numpy (>=1.8.2)", "scipy (>=0.13.3)"]
-
-[[package]]
-name = "scipy"
-version = "1.2.3"
-description = "SciPy: Scientific Library for Python"
-category = "main"
-optional = false
-python-versions = ">=2.7,!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*"
-
-[package.dependencies]
-numpy = ">=1.8.2"
-
-[[package]]
 name = "scrapy"
 version = "1.6.0"
 description = "A high-level Web Crawling and Web Scraping framework"
@@ -4145,7 +4094,7 @@ xrootd = ["xrootdpyfs", "invenio-xrootd"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=2.7,<3.0"
-content-hash = "5404ed99f6ce17a18406d9e81c8c843354041dbc57994303600d3d7407a4c942"
+content-hash = "4c00523d5748736cbf9a37b5f00649be916247b25179a0505a08c6b04b5b2d04"
 
 [metadata.files]
 alabaster = [
@@ -4213,9 +4162,6 @@ backoff = [
 base32-lib = [
     {file = "base32-lib-1.0.1.tar.gz", hash = "sha256:470d1f318a3632397d091bb2773500e484489a473f2001df5c0675e72730ddd3"},
     {file = "base32_lib-1.0.1-py2.py3-none-any.whl", hash = "sha256:ebbf80687ef9791580135f372db1c0a09a1a5d02089d57a8a49bf5ef3330221f"},
-]
-beard = [
-    {file = "beard-0.2.tar.gz", hash = "sha256:979567242aa51551fde9efdccc604bf346424ae6fa6e5e87bb268134f323b87e"},
 ]
 beautifulsoup4 = [
     {file = "beautifulsoup4-4.8.2-py2-none-any.whl", hash = "sha256:e1505eeed31b0f4ce2dbb3bc8eb256c04cc2b3b72af7d551a4ab6efd5cbe5dae"},
@@ -4595,7 +4541,10 @@ gunicorn = [
 harvestingkit = [
     {file = "HarvestingKit-0.6.17.tar.gz", hash = "sha256:e55d675e4b9042c6bf73300192e317794a3bd147987a5ed052a0e1a3380aff3e"},
 ]
-hepcrawl = []
+hepcrawl = [
+    {file = "hepcrawl-13.0.52-py2.py3-none-any.whl", hash = "sha256:d38e3241826ebb20ef9127637b8af65d1d01a9fccac0c71d687b450bd764c409"},
+    {file = "hepcrawl-13.0.52.tar.gz", hash = "sha256:6a59ca5921d8ac730e1f7c07fc0993ae43a5e8f4b29e64a7c6c3002e46908a37"},
+]
 honcho = [
     {file = "honcho-1.0.1-py2.py3-none-any.whl", hash = "sha256:af5806bf13e3b20acdcb9ff8c0beb91eee6fe07393c3448dfad89667e6ac7576"},
     {file = "honcho-1.0.1.tar.gz", hash = "sha256:c189402ad2e337777283c6a12d0f4f61dc6dd20c254c9a3a4af5087fc66cea6e"},
@@ -4664,11 +4613,16 @@ inspire-query-parser = [
     {file = "inspire-query-parser-6.0.37.tar.gz", hash = "sha256:7b5e9d30e15952270fefd770824f6a6ebc531e55b8c1cbf2f971cbcfbb245c25"},
     {file = "inspire_query_parser-6.0.37-py2-none-any.whl", hash = "sha256:94124b8e2c1b5a837e73aa35f4311350090eadb357f9faf279342fa822c2725b"},
 ]
-inspire-schemas = []
+inspire-schemas = [
+    {file = "inspire_schemas-61.4.14-py2.py3-none-any.whl", hash = "sha256:17ed075b4a505a3a25ad416106451ddb27ac8bf5d7097ea5c1b35f667e0652a5"},
+]
 inspire-service-orcid = [
     {file = "inspire-service-orcid-9.0.0.tar.gz", hash = "sha256:cacee4fb19224ea2eb8a0e7e943479ef628c47f4b8b51f271263c2816a6814a1"},
 ]
-inspire-utils = []
+inspire-utils = [
+    {file = "inspire-utils-3.0.32.tar.gz", hash = "sha256:f9dc08b5cc797819e99aac0082dfeef5a5e061675c974ef1364e2ef9b45990d3"},
+    {file = "inspire_utils-3.0.32-py2-none-any.whl", hash = "sha256:16be61bdd7f0f0176592ff26cabbcc6183fcc8666c72b5748d7448494175fbb5"},
+]
 intervals = [
     {file = "intervals-0.8.1.tar.gz", hash = "sha256:37921da1407a5e9384e8e1350cfb8500f8d0d69fc43d03d01a4fdc6e7a7c7166"},
 ]
@@ -4816,9 +4770,6 @@ isodate = [
 itsdangerous = [
     {file = "itsdangerous-1.1.0-py2.py3-none-any.whl", hash = "sha256:b12271b2047cb23eeb98c8b5622e2e5c5e9abd9784a153e9d8ef9cb4dd09d749"},
     {file = "itsdangerous-1.1.0.tar.gz", hash = "sha256:321b033d07f2a4136d3ec762eac9f16a10ccd60f53c0c91af90217ace7ba1f19"},
-]
-jellyfish = [
-    {file = "jellyfish-0.6.1.tar.gz", hash = "sha256:5104e45a2b804b48a46a92a5e6d6e86830fe60ae83b1da32c867402c8f4c2094"},
 ]
 jinja2 = [
     {file = "Jinja2-2.11.1-py2.py3-none-any.whl", hash = "sha256:b0eaf100007721b5c16c1fc1eecb87409464edc10469ddc9a22a27a99123be49"},
@@ -5079,7 +5030,10 @@ pickleshare = [
 pkgsettings = [
     {file = "pkgsettings-0.12.0.tar.gz", hash = "sha256:149102d1c3d2179140eaa8acd94b085aaa6ae30605d425b84aa83a3bb1536658"},
 ]
-plotextractor = []
+plotextractor = [
+    {file = "plotextractor-0.3.15-py2-none-any.whl", hash = "sha256:4818c91c6c9249a9c381c009dd1f203b74cf4f18a60c86a9d3a4f4eecf7d8c64"},
+    {file = "plotextractor-0.3.15.tar.gz", hash = "sha256:dc0bc23fa336b46256b21d0d222df4ce028c6b756c9e086cf28fe59516ea7e77"},
+]
 pluggy = [
     {file = "pluggy-0.13.1-py2.py3-none-any.whl", hash = "sha256:966c145cd83c96502c3c3868f50408687b38434af77734af1e9ca461a4081d2d"},
     {file = "pluggy-0.13.1.tar.gz", hash = "sha256:15b2acde666561e1298d71b523007ed7364de07029219b604cf808bfa1c765b0"},
@@ -5361,66 +5315,6 @@ scandir = [
     {file = "scandir-1.10.0-cp37-cp37m-win_amd64.whl", hash = "sha256:b24086f2375c4a094a6b51e78b4cf7ca16c721dcee2eddd7aa6494b42d6d519d"},
     {file = "scandir-1.10.0.tar.gz", hash = "sha256:4d4631f6062e658e9007ab3149a9b914f3548cb38bfb021c64f39a025ce578ae"},
 ]
-scikit-learn = [
-    {file = "scikit-learn-0.20.4.tar.gz", hash = "sha256:dfa8a3f33907614030cdfbc8b6f553dacbecaf09f922244f128af3060a137cfc"},
-    {file = "scikit_learn-0.20.4-cp27-cp27m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl", hash = "sha256:d9019683ec2382e686ecca5377b7c99f059a9b3a7f6a0bf6afddb10aec82b016"},
-    {file = "scikit_learn-0.20.4-cp27-cp27m-manylinux1_i686.whl", hash = "sha256:43a521c6992adf28a78abdb2d18b77c481a7dd86f7bd1de8f3e02231a88904cc"},
-    {file = "scikit_learn-0.20.4-cp27-cp27m-manylinux1_x86_64.whl", hash = "sha256:546a2bf74c07634f65dc8e92ea50c124eb2adde10415cf25a43cf8c0a79671b7"},
-    {file = "scikit_learn-0.20.4-cp27-cp27m-win32.whl", hash = "sha256:3b95e4a693d1d1e91ebc22abcc4e3731f9bfd2be2308b071b19db46a7d0fa6f6"},
-    {file = "scikit_learn-0.20.4-cp27-cp27m-win_amd64.whl", hash = "sha256:b47d865ae832f0d1538f449b0a42cf37121bbcd514eb1d37c0ff0b70b0ac192c"},
-    {file = "scikit_learn-0.20.4-cp27-cp27mu-manylinux1_i686.whl", hash = "sha256:9afeffd7fba365eb8d0603b13d4ea76ee63cacded21556c65e98b4682c2b09bf"},
-    {file = "scikit_learn-0.20.4-cp27-cp27mu-manylinux1_x86_64.whl", hash = "sha256:4de3f1e35c29dac3b1f8afaa6afe1b682dbb19159c5ee5d77f97fa5ceb1d020d"},
-    {file = "scikit_learn-0.20.4-cp34-cp34m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl", hash = "sha256:e380c086e8cae1480365068e57469302a1ee8fae98eb02010c80ef2cb292f7a3"},
-    {file = "scikit_learn-0.20.4-cp34-cp34m-manylinux1_i686.whl", hash = "sha256:3323640ce4ade456f13c4fec97bdeb6a380e6f7005ec6709afb9e554a0b73b02"},
-    {file = "scikit_learn-0.20.4-cp34-cp34m-manylinux1_x86_64.whl", hash = "sha256:25285960a093781b10d7d26484f8e3523b9d23676329862ba66a753bb0b2e632"},
-    {file = "scikit_learn-0.20.4-cp34-cp34m-win32.whl", hash = "sha256:7dbb4c23f2911e81fe607c26f1a1277c6f2798192765a9472c33570f8a843b6b"},
-    {file = "scikit_learn-0.20.4-cp34-cp34m-win_amd64.whl", hash = "sha256:03c721eaed97f4f6b92d1247c64639bb1feea0be968f708b56f9dfb836b9d9ca"},
-    {file = "scikit_learn-0.20.4-cp35-cp35m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl", hash = "sha256:f9553369f246721813f8f6784a40cc39c84ca2c6230272c7c1ec24318aa0a2f9"},
-    {file = "scikit_learn-0.20.4-cp35-cp35m-manylinux1_i686.whl", hash = "sha256:0863989d48ae51ba8803b1daeb936d44f260ee0174f67eee58d6d74280fe6e93"},
-    {file = "scikit_learn-0.20.4-cp35-cp35m-manylinux1_x86_64.whl", hash = "sha256:59b382e02e132b5079d4520f2c9fec8147d1743f0f11bc6e21907906ef23fa29"},
-    {file = "scikit_learn-0.20.4-cp35-cp35m-win32.whl", hash = "sha256:ea42e28bc9f5a3110e77c773a55b3d2b7133ce05c6940cc28a3a554aebd6ab80"},
-    {file = "scikit_learn-0.20.4-cp35-cp35m-win_amd64.whl", hash = "sha256:c42b27bd051af258cb46b7773e031aa52e49e1cc86b769895ca031c35b15a392"},
-    {file = "scikit_learn-0.20.4-cp36-cp36m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl", hash = "sha256:2fd692310890a6137dd8e550496bfb71ef37a2b8d1a89b87418ed25fe454dde4"},
-    {file = "scikit_learn-0.20.4-cp36-cp36m-manylinux1_i686.whl", hash = "sha256:54e6b20c8392d2047470f504822e8141a726949f2c196c1711fef873650f301d"},
-    {file = "scikit_learn-0.20.4-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:994e807f09c8517ad703e5685599ef195cc90e693e203894a66000dc89e1382f"},
-    {file = "scikit_learn-0.20.4-cp36-cp36m-win32.whl", hash = "sha256:73b3da63d35b922fdae378c582326e887d6bdf9282050ef3587d2f96c926bbcd"},
-    {file = "scikit_learn-0.20.4-cp36-cp36m-win_amd64.whl", hash = "sha256:5ede3783e81af866c3d3efbf3d255a88aaebde7d8cb39e6d5c47f9ed5359172b"},
-    {file = "scikit_learn-0.20.4-cp37-cp37m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl", hash = "sha256:2d9b4b551569bcb87fb50bc77d5f3ca30e1856b0e987619c7a266d4372990ba6"},
-    {file = "scikit_learn-0.20.4-cp37-cp37m-manylinux1_i686.whl", hash = "sha256:ea5843a535da2458216ce87084ed51de6de7331e1b6891df9ea29a238a79bb02"},
-    {file = "scikit_learn-0.20.4-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:f04adc9ad6bc252b080b0b48cda769fa47ea7013e5640b0cb67d26f2f9a9fcff"},
-    {file = "scikit_learn-0.20.4-cp37-cp37m-win32.whl", hash = "sha256:2c8b999c739f8af014a2f1fb0577b3a98ab20c375c37274bf3c1f6a3f06f56f7"},
-    {file = "scikit_learn-0.20.4-cp37-cp37m-win_amd64.whl", hash = "sha256:7d0d17789ccf3fd13a6a605f78d586ec4a9b57f94e0e74ce829bc7e7bb796f78"},
-]
-scipy = [
-    {file = "scipy-1.2.3-cp27-cp27m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl", hash = "sha256:2ff82db1393bd5d8ddeb9134e8f77a8e971e635452d7e65f7238f40c71d385a8"},
-    {file = "scipy-1.2.3-cp27-cp27m-manylinux1_i686.whl", hash = "sha256:5d950892a6a2da6dae2b5a3021b329dbf04483a7fb0bd3011685db7f51578ae7"},
-    {file = "scipy-1.2.3-cp27-cp27m-manylinux1_x86_64.whl", hash = "sha256:487a61a7e477923c7a9e8fa06f27e3f2dbc7ce9450a970a2e5d902b0a305d028"},
-    {file = "scipy-1.2.3-cp27-cp27m-win32.whl", hash = "sha256:3397ce30e240e9a543d81f623a9e8e98ae39012cf72e42e95929530a03f20791"},
-    {file = "scipy-1.2.3-cp27-cp27m-win_amd64.whl", hash = "sha256:8533e8c2e467eed913a0aa4fac09c9fb824f32d1ab1121db3a50845f9b347825"},
-    {file = "scipy-1.2.3-cp27-cp27mu-manylinux1_i686.whl", hash = "sha256:b6cbb7125b0c742e0f31fb293d19e9f1a03db58f6ddefc51a2025ee15ae607cb"},
-    {file = "scipy-1.2.3-cp27-cp27mu-manylinux1_x86_64.whl", hash = "sha256:e870dfd006ab657f9cc48b099646c5ceb4e812e59a7d460dc80ac9a659f089dc"},
-    {file = "scipy-1.2.3-cp34-cp34m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl", hash = "sha256:b8b0e81a2b87d68acf4a54aea800edafbb5bc9a04f38256718826f95f625fb75"},
-    {file = "scipy-1.2.3-cp34-cp34m-manylinux1_i686.whl", hash = "sha256:ecc27dda36d7172bb4ed7f245499e28251fa17909b314b4e8956a942f302e1a3"},
-    {file = "scipy-1.2.3-cp34-cp34m-manylinux1_x86_64.whl", hash = "sha256:ee213d8c8eee0540ba91efca61605dc0e2b5bd90ca35ab49c85f0ad7038df00f"},
-    {file = "scipy-1.2.3-cp34-cp34m-win32.whl", hash = "sha256:57a0ee083b94944ba6329e755d112bfd53a98bd9a6a4faf10bc7722c955a7653"},
-    {file = "scipy-1.2.3-cp34-cp34m-win_amd64.whl", hash = "sha256:1bc0720f149fbb69d19156cf91730aa21455c58949aea56bfaa2b74c06868100"},
-    {file = "scipy-1.2.3-cp35-cp35m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl", hash = "sha256:d39ae9cfd7bdea7753fd617e2edfc68b94a019a65c0153c3fced35cf657b79e7"},
-    {file = "scipy-1.2.3-cp35-cp35m-manylinux1_i686.whl", hash = "sha256:7e6c485c3f2789c790fe4cc5c6c3b4554000d284fd05be90479b6fbd8795d064"},
-    {file = "scipy-1.2.3-cp35-cp35m-manylinux1_x86_64.whl", hash = "sha256:92fbdcf9acebf2007502adbed1b22e3a3e9445aceb5e7a568f9759d76461368b"},
-    {file = "scipy-1.2.3-cp35-cp35m-win32.whl", hash = "sha256:b2fad2430232f8c2faeb0abff7ed5191f0a534bd1bd482c71a9616c44e674c76"},
-    {file = "scipy-1.2.3-cp35-cp35m-win_amd64.whl", hash = "sha256:8b3ac1e50188792fdf811e5a747df2b784c65d9a17f59609a73c8285424a48ad"},
-    {file = "scipy-1.2.3-cp36-cp36m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl", hash = "sha256:b38f2e6d53f852ae1de1aacead2c26a69c91b36f833e744557ca370979b81652"},
-    {file = "scipy-1.2.3-cp36-cp36m-manylinux1_i686.whl", hash = "sha256:39bf06b2536e69f08a257b260aaa25d088d755b73cf3751b44e5838ccb1d0a82"},
-    {file = "scipy-1.2.3-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:c08013e0fe1554372da9312d5bad588402f71c0636f0f86a9b9b61d507c59bac"},
-    {file = "scipy-1.2.3-cp36-cp36m-win32.whl", hash = "sha256:cac83647970115dfb6d29dc3b4ab44b3aa11254e8aeba115f88ad0ccbb273085"},
-    {file = "scipy-1.2.3-cp36-cp36m-win_amd64.whl", hash = "sha256:0c23e5b3a314dce4049b969c81ad801cf05e1fe699760846c7567deaa9b8c548"},
-    {file = "scipy-1.2.3-cp37-cp37m-macosx_10_6_intel.macosx_10_9_intel.macosx_10_9_x86_64.macosx_10_10_intel.macosx_10_10_x86_64.whl", hash = "sha256:503e25b8da22b1be6f2f81e1dcf26f42bfb13fe89bccbf8bc48e1b6f2a4789c8"},
-    {file = "scipy-1.2.3-cp37-cp37m-manylinux1_i686.whl", hash = "sha256:19904399501ecf56ead21b307cc52c8ff03a2103343f554f3fbc189bb2cf1609"},
-    {file = "scipy-1.2.3-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:f658f90db1530f70128bbeb2c1e61006de2eb2382408080a211d885f501af3a7"},
-    {file = "scipy-1.2.3-cp37-cp37m-win32.whl", hash = "sha256:7aeb232273b38e74d89181d9165ca47314e1c4269afe7c3a1926aea3e63345a2"},
-    {file = "scipy-1.2.3-cp37-cp37m-win_amd64.whl", hash = "sha256:53353a504ad2181eb27c9d61e91ce29324f8b7550876736a08a36e6b60c43407"},
-    {file = "scipy-1.2.3.tar.gz", hash = "sha256:ecbe6413ca90b8e19f8475bfa303ac001e81b04ec600d17fa7f816271f7cca57"},
-]
 scrapy = [
     {file = "Scrapy-1.6.0-py2.py3-none-any.whl", hash = "sha256:4ec03552c9aed1e82a376488150e904e0213bdee3ca140225105e9b03d0de204"},
     {file = "Scrapy-1.6.0.tar.gz", hash = "sha256:558dfd10ac53cb324ecd7eefd3eac412161c7507c082b01b0bcd2c6e2e9f0766"},
@@ -5555,7 +5449,11 @@ traitlets = [
 twisted = [
     {file = "Twisted-18.9.0.tar.bz2", hash = "sha256:294be2c6bf84ae776df2fc98e7af7d6537e1c5e60a46d33c3ce2a197677da395"},
 ]
-typing = []
+typing = [
+    {file = "typing-3.10.0.0-py2-none-any.whl", hash = "sha256:c7219ef20c5fbf413b4567092adfc46fa6203cb8454eda33c3fc1afe1398a308"},
+    {file = "typing-3.10.0.0-py3-none-any.whl", hash = "sha256:12fbdfbe7d6cca1a42e485229afcb0b0c8259258cfb919b8a5e2a5c953742f89"},
+    {file = "typing-3.10.0.0.tar.gz", hash = "sha256:13b4ad211f54ddbf93e5901a9967b1e07720c1d1b78d596ac6a439641aa1b130"},
+]
 ua-parser = [
     {file = "ua-parser-0.9.0.tar.gz", hash = "sha256:be17242abcd4f3d11543e9b82826f152b47c724623a32bb94ce02e549b0cfce2"},
     {file = "ua_parser-0.9.0-py2.py3-none-any.whl", hash = "sha256:421999f5e852b458833dd9a74765180f75bffb882cb750909c6a4db6748e4887"},

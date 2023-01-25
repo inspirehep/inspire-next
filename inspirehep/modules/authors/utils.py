@@ -27,11 +27,6 @@ from __future__ import absolute_import, division, print_function
 import re
 
 
-import numpy as np
-from beard.utils.strings import asciify
-from beard.clustering import block_phonetic
-
-
 _bai_parentheses_cleaner = \
     re.compile(r"(\([^)]*\))|(\[[^\]]*\])|(\{[^\}]*\})", re.UNICODE)
 _bai_last_name_separator = re.compile(r"[,;]+", re.UNICODE)
@@ -80,8 +75,7 @@ def bai(name):
         last_name = last_name.replace(char, replacement)
         initials = [i.replace(char, replacement) for i in initials]
 
-    last_name = asciify(last_name)
-    initials = _nonempty([asciify(i) for i in initials])
+    initials = _nonempty(initials)
 
     # Capitalize words in last name
     words = _bai_names_separator.split(last_name)
@@ -106,23 +100,3 @@ def bai(name):
     bai = _bai_spaces.sub(".", bai)
 
     return bai
-
-
-def phonetic_blocks(full_names, phonetic_algorithm='nysiis'):
-    """Create a dictionary of phonetic blocks for a given list of names."""
-
-    # The method requires a list of dictionaries with full_name as keys.
-    full_names_formatted = [
-        {"author_name": i} for i in full_names]
-
-    # Create a list of phonetic blocks.
-    phonetic_blocks = list(
-        block_phonetic(np.array(
-            full_names_formatted,
-            dtype=np.object).reshape(-1, 1),
-            threshold=0,
-            phonetic_algorithm=phonetic_algorithm
-        )
-    )
-
-    return dict(zip(full_names, phonetic_blocks))
