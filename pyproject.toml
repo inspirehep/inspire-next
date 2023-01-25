@@ -121,6 +121,7 @@ ipaddress = "1.0.23"
 parsel = "^1.6.0"
 hepcrawl = "^13.0.50"
 PyYAML = "<6.0"
+cryptography = "^3.3.2"
 
 [tool.poetry.extras]
 all = ["coverage", "docutils", "flake8-future-import", "flower", "freezegun", "gunicorn", "hepcrawl", "honcho", "ipdb", "mock", "pytest", "pytest-cov", "pytest-vcr", "requests-mock", "sphinx", "superlance", "tornado"]
