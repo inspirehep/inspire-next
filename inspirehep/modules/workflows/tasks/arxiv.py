@@ -32,14 +32,17 @@ import requests
 from backports.tempfile import TemporaryDirectory
 from flask import current_app
 from requests import HTTPError
-from wand.exceptions import DelegateError
+from wand.exceptions import DelegateError, CoderError, FileOpenError
 from wand.resource import limits
 from werkzeug import secure_filename
 from inspire_schemas.builders import LiteratureBuilder
 from inspire_schemas.readers import LiteratureReader
 from plotextractor.api import process_tarball
 from plotextractor.converter import untar
-from plotextractor.errors import InvalidTarball, NoTexFilesFound
+from plotextractor.errors import (
+    InvalidTarball,
+    NoTexFilesFound,
+)
 
 from inspirehep.utils.latex import decode_latex
 from inspirehep.utils.url import is_pdf_link, retrieve_uri
@@ -59,6 +62,13 @@ REGEXP_REFS = re.compile(
     "<record.*?>.*?<controlfield .*?>.*?</controlfield>(.*?)</record>",
     re.DOTALL)
 NO_PDF_ON_ARXIV = 'The author has provided no source to generate PDF, and no PDF.'
+TARBALL_EXCEPTIONS = (
+    InvalidTarball,
+    NoTexFilesFound,
+    CoderError,
+    FileOpenError,
+    UnicodeDecodeError
+)
 
 
 @with_debug_logging
@@ -160,7 +170,7 @@ def arxiv_plot_extract(obj, eng):
                 tarball_file,
                 output_directory=scratch_space,
             )
-        except (InvalidTarball, NoTexFilesFound):
+        except TARBALL_EXCEPTIONS:
             obj.log.info(
                 'Invalid tarball %s for arxiv_id %s',
                 tarball.file.uri,

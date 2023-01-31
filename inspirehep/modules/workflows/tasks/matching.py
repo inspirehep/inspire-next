@@ -38,6 +38,7 @@ from inspire_matcher.api import match
 from inspire_utils.dedupers import dedupe_list
 from inspirehep.utils.url import get_hep_url_for_recid
 from inspirehep.modules.workflows.tasks.actions import mark, save_workflow
+from inspirehep.modules.workflows.utils import restart_workflow
 from copy import deepcopy, copy
 
 from ..utils import with_debug_logging
@@ -530,22 +531,3 @@ def run_next_if_necessary(obj, eng):
             next_wf = wf
     if next_wf:
         restart_workflow(next_wf, obj.id)
-
-
-def restart_workflow(obj, restarter_id, position=[0]):
-    """Restarts workflow
-
-    Args:
-        obj: Workflow to restart
-        original_workflow: Workflow which restarts
-        position: To which position wf should be restarted
-    """
-    obj.callback_pos = position
-    obj.status = ObjectStatus.RUNNING
-    obj.extra_data['source_data']['extra_data'][
-        'delay'] = current_app.config.get("TASK_DELAY_ON_START", 10)
-    obj.extra_data['source_data']['extra_data'].setdefault(
-        'restarted-by-wf', []).append(restarter_id)
-    obj.save()
-    db.session.commit()
-    obj.continue_workflow('restart_task', delayed=True)
