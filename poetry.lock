@@ -1115,7 +1115,7 @@ Unidecode = ">=0.04.14"
 
 [[package]]
 name = "hepcrawl"
-version = "13.0.53"
+version = "13.0.54"
 description = "Scrapy project for feeds into INSPIRE-HEP (http://inspirehep.net)."
 category = "main"
 optional = false
@@ -2049,9 +2049,9 @@ invenio-pidstore = ">=1.0.0"
 invenio-records = ">=1.0.0"
 
 [package.extras]
-all = ["Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[mysql,postgresql,versioning] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[mysql,postgresql,versioning] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+all = ["Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[postgresql,mysql,versioning] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[postgresql,mysql,versioning] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 docs = ["Sphinx (>=1.5.1)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[mysql,postgresql,versioning] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[postgresql,mysql,versioning] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
 name = "invenio-rest"
@@ -4535,8 +4535,8 @@ harvestingkit = [
     {file = "HarvestingKit-0.6.17.tar.gz", hash = "sha256:e55d675e4b9042c6bf73300192e317794a3bd147987a5ed052a0e1a3380aff3e"},
 ]
 hepcrawl = [
-    {file = "hepcrawl-13.0.53-py2.py3-none-any.whl", hash = "sha256:3bf4259aece7f2bba8e1f5a2cf94fc0e5fe9c56f240600e160cd47a03f94849c"},
-    {file = "hepcrawl-13.0.53.tar.gz", hash = "sha256:b70d6d83ce1f6f7646d2a727da79fd6b3e9da9e2e247ccbc08494de15aa862c1"},
+    {file = "hepcrawl-13.0.54-py2.py3-none-any.whl", hash = "sha256:e99aaae016ed648fe948363e80020bd5d17981490c3ce345160b42da1e9d0540"},
+    {file = "hepcrawl-13.0.54.tar.gz", hash = "sha256:7a1ffdf663d84aa4387433fd250ec39c35e667ec7d185fce2f9c08b342e886a0"},
 ]
 honcho = [
     {file = "honcho-1.0.1-py2.py3-none-any.whl", hash = "sha256:af5806bf13e3b20acdcb9ff8c0beb91eee6fe07393c3448dfad89667e6ac7576"},
