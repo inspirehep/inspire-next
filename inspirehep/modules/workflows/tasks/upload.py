@@ -39,16 +39,13 @@ from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
 from inspirehep.modules.records.api import InspireRecord
 from inspirehep.modules.workflows.errors import BadGatewayError
 from inspirehep.modules.workflows.models import WorkflowsRecordSources
-from invenio_workflows.errors import WorkflowsError
 from inspirehep.modules.workflows.utils import (_get_headers_for_hep_root_table_request, get_record_from_hep,
                                                 get_source_for_root,
                                                 post_record_to_hep,
-                                                put_record_to_hep,
-                                                restart_workflow,
                                                 create_error,
+                                                put_record_to_hep,
                                                 with_debug_logging)
 from inspirehep.utils.schema import ensure_valid_schema
-
 
 logger = logging.getLogger(__name__)
 
@@ -99,10 +96,7 @@ def store_record(obj, eng):
             record.commit()
             obj.save()
     else:
-        try:
-            store_record_inspirehep_api(obj, eng, is_update, is_authors)
-        except WorkflowsError:
-            restart_workflow(obj)
+        store_record_inspirehep_api(obj, eng, is_update, is_authors)
 
 
 @with_debug_logging
@@ -124,10 +118,7 @@ def store_record_inspirehep_api(obj, eng, is_update, is_authors):
             raise ValueError("Control number is missing")
 
     control_number = obj.data.get("control_number")
-    try:
-        send_record_to_hep(obj, pid_type, control_number)
-    except requests.exceptions.HTTPError as err:
-        create_error(err.response)
+    send_record_to_hep(obj, pid_type, control_number)
 
 
 def send_record_to_hep(obj, pid_type, control_number=None):
@@ -142,8 +133,8 @@ def send_record_to_hep(obj, pid_type, control_number=None):
             )
         else:
             response = post_record_to_hep(pid_type, data=obj.data)
-    except requests.exceptions.HTTPError:
-        raise
+    except requests.exceptions.HTTPError as err:
+        raise create_error(err.response)
 
     obj.data["control_number"] = response["metadata"]["control_number"]
     obj.extra_data["recid"] = response["metadata"]["control_number"]
