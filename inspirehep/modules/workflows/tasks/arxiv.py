@@ -335,7 +335,14 @@ def extract_authors_from_xml(xml_content):
 
                 affiliations_identifiers.append([source, value])
 
-        name = normalize_name(u"{}, {}".format(author.xpath('.//familyName/text()').get(), author.xpath('.//givenName/text()').get()))
+        name = u"{}, {}".format(
+            author.xpath('.//familyName/text()').get(),
+            author.xpath('.//givenName/text()').get(),
+        )
+        name_suffix = author.xpath('.//authorSuffix/text()').get()
+        if name_suffix:
+            name += u", {}".format(name_suffix)
+        name = normalize_name(name)
 
         # builds the info to a correct format with litratureBuilder()
         builder.add_author(
