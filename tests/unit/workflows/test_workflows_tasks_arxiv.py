@@ -37,6 +37,7 @@ from inspirehep.modules.workflows.tasks.arxiv import (
     arxiv_package_download,
     arxiv_plot_extract,
     populate_arxiv_document,
+    extract_authors_from_xml
 )
 from plotextractor.errors import InvalidTarball
 from inspirehep.modules.workflows.errors import DownloadError
@@ -1456,3 +1457,40 @@ def test_arxiv_handles_non_ascii_organization_names():
 
     arxiv_author_list(obj, eng)
     assert obj.data.get('authors', None) is not None
+
+
+def test_extract_authors_from_xml_extracts_also_name_suffix():
+    data = """
+    <collaborationauthorlist xmlns:foaf="http://xmlns.com/foaf/0.1/" xmlns:cal="http://inspirehep.net/info/HepNames/tools/authors_xml/">
+    <cal:creationDate>2022-01-25</cal:creationDate>
+    <cal:publicationReference>Fermilab-PUB-2022-01-25</cal:publicationReference>
+    <cal:collaborations>
+    <cal:collaboration id="duneid">
+    <foaf:name>DUNE</foaf:name>
+    <cal:experimentNumber>DUNE</cal:experimentNumber>
+    </cal:collaboration>
+    </cal:collaborations>
+    <cal:authors>
+        <foaf:Person>
+            <foaf:name>Michael Finger</foaf:name>
+            <foaf:givenName>Michael</foaf:givenName>
+            <foaf:familyName>Finger</foaf:familyName>
+            <cal:authorNameNative lang=""/>
+            <cal:authorSuffix>Jr.</cal:authorSuffix>
+            <cal:authorStatus/>
+            <cal:authorNamePaper>M. Finger Jr.</cal:authorNamePaper>
+            <cal:authorAffiliations>
+            <cal:authorAffiliation organizationid="o27" connection=""/>
+            <cal:authorAffiliation organizationid="vo1" connection="AlsoAt"/>
+            </cal:authorAffiliations>
+            <cal:authorIDs>
+            <cal:authorID source="INSPIRE">INSPIRE-00171357</cal:authorID>
+            <cal:authorID source="CCID">391883</cal:authorID>
+            <cal:authorID source="ORCID">0000-0003-3155-2484</cal:authorID>
+            </cal:authorIDs>
+        </foaf:Person>
+    </cal:authors>
+    </collaborationauthorlist>
+    """
+    result = extract_authors_from_xml(data)
+    assert result[0]["full_name"] == "Finger, Michael, Jr."
