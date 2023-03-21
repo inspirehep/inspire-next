@@ -1115,7 +1115,7 @@ Unidecode = ">=0.04.14"
 
 [[package]]
 name = "hepcrawl"
-version = "13.0.56"
+version = "13.0.57"
 description = "Scrapy project for feeds into INSPIRE-HEP (http://inspirehep.net)."
 category = "main"
 optional = false
@@ -4534,7 +4534,10 @@ gunicorn = [
 harvestingkit = [
     {file = "HarvestingKit-0.6.17.tar.gz", hash = "sha256:e55d675e4b9042c6bf73300192e317794a3bd147987a5ed052a0e1a3380aff3e"},
 ]
-hepcrawl = []
+hepcrawl = [
+    {file = "hepcrawl-13.0.57-py2.py3-none-any.whl", hash = "sha256:c4066d1f903781814ec389d1fd82348d9b7b1c29a3015fff8a60f38fdd135c76"},
+    {file = "hepcrawl-13.0.57.tar.gz", hash = "sha256:9bf7dbaad8f750429c3e1316a82e6e5043dd3e61a2006a7ec9e79448a2fd621b"},
+]
 honcho = [
     {file = "honcho-1.0.1-py2.py3-none-any.whl", hash = "sha256:af5806bf13e3b20acdcb9ff8c0beb91eee6fe07393c3448dfad89667e6ac7576"},
     {file = "honcho-1.0.1.tar.gz", hash = "sha256:c189402ad2e337777283c6a12d0f4f61dc6dd20c254c9a3a4af5087fc66cea6e"},
