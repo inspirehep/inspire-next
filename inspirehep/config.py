@@ -59,6 +59,7 @@ FEATURE_FLAG_ENABLE_UPDATE_TO_LEGACY = False
 FEATURE_FLAG_ENABLE_SEND_TO_LEGACY = True
 """This feature flag will prevent to send a ``replace`` update to legacy."""
 FEATURE_FLAG_USE_ROOT_TABLE_ON_HEP = False
+FEATURE_FLAG_ENABLE_SNOW = False
 # Default language and timezone
 # =============================
 BABEL_DEFAULT_LANGUAGE = 'en'
@@ -1738,3 +1739,15 @@ dictConfig(
         },
     }
 )
+
+# SNOW
+QUEUE_TO_FUNCTIONAL_CATEGORY_MAPPING = {
+    "HEP_add_user": "Literature submissions",
+    "HAL_curation": "HAL curation",
+    "HEP_curation": "arXiv curation",
+    "HEP_curation_jlab": "arXiv curation",
+    "HEP_publishing": "Publisher curation",
+    "AUTHORS_curation": "Author curation",
+    "Authors_cor_user": "Author updates",
+    "Authors_add_user": "Author submissions"
+}

@@ -21,9 +21,11 @@
 # or submit itself to any jurisdiction.
 
 from __future__ import absolute_import, division, print_function
+from inspirehep.modules.literaturesuggest.tasks import get_user_name
 
 from inspirehep.modules.workflows.utils import with_debug_logging
 from inspirehep.utils.url import get_legacy_url_for_recid
+from flask import url_for
 
 
 @with_debug_logging
@@ -39,7 +41,7 @@ def new_ticket_context(user, obj):
     )
     return dict(
         email=user.email,
-        object=obj,
+        obj_url=url_for('invenio_workflows_ui.details', objectid=obj.id, _external=True),
         subject=subject,
         user_comment=obj.extra_data.get('formdata', {}).get('extra_comments', ''),
     )
@@ -63,8 +65,7 @@ def update_ticket_context(user, obj):
 def reply_ticket_context(user, obj):
     """Context for authornew replies."""
     return dict(
-        object=obj,
-        user=user,
+        user_name=get_user_name(user),
         author_name=obj.data.get("name").get("preferred_name"),
         reason=obj.extra_data.get("reason", ""),
         record_url=obj.extra_data.get("url", ""),
@@ -84,7 +85,6 @@ def curation_ticket_context(user, obj):
     )
     return dict(
         email=user.email,
-        object=obj,
         recid=recid,
         subject=subject,
         record_url=record_url,

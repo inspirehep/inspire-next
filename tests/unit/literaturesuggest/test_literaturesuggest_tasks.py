@@ -139,11 +139,10 @@ def test_reply_ticket_context():
     user = MockUser('user@example.com')
 
     expected = {
-        'object': obj,
-        'user': user,
-        'title': 'foo',
         'reason': 'bar',
         'record_url': 'baz',
+        'user_name': 'user@example.com',
+        'title': 'foo'
     }
     result = reply_ticket_context(user, obj)
 

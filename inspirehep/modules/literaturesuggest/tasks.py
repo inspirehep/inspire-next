@@ -224,11 +224,17 @@ def new_ticket_context(user, obj):
     )
 
 
+def get_user_name(user):
+    if hasattr(user, 'given_names'):
+        return user.given_names
+    else:
+        return user.email
+
+
 def reply_ticket_context(user, obj):
     """Context for literature replies."""
     return dict(
-        object=obj,
-        user=user,
+        user_name=get_user_name(user),
         title=LiteratureReader(obj.data).title,
         reason=obj.extra_data.get("reason", ""),
         record_url=obj.extra_data.get("url", ""),
