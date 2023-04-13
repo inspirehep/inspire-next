@@ -22,6 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 from flask import current_app
+from inspirehep.modules.literaturesuggest.tasks import get_user_name
 
 from inspirehep.modules.workflows.utils import with_debug_logging
 from inspirehep.utils.url import get_legacy_url_for_recid, get_hep_url_for_recid
@@ -40,7 +41,6 @@ def new_ticket_context(user, obj):
     )
     return dict(
         email=user.email,
-        object=obj,
         subject=subject,
         user_comment=obj.extra_data.get('formdata', {}).get('extra_comments', ''),
     )
@@ -66,8 +66,7 @@ def update_ticket_context(user, obj):
 def reply_ticket_context(user, obj):
     """Context for authornew replies."""
     return dict(
-        object=obj,
-        user=user,
+        user_name=get_user_name(user),
         author_name=obj.data.get("name").get("preferred_name"),
         reason=obj.extra_data.get("reason", ""),
         record_url=obj.extra_data.get("url", ""),
@@ -88,7 +87,6 @@ def curation_ticket_context(user, obj):
     )
     return dict(
         email=user.email,
-        object=obj,
         recid=recid,
         subject=subject,
         record_url=record_url,

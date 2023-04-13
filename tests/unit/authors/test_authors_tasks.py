@@ -89,7 +89,6 @@ def test_new_ticket_context(data, extra_data, user):
     obj = MockObj(data, extra_data)
     ctx = new_ticket_context(user, obj)
 
-    assert isinstance(ctx['object'], MockObj)
     assert ctx['email'] == 'foo@bar.com'
     assert ctx['subject'] == 'Your suggestion to INSPIRE: author John Doe'
     assert ctx['user_comment'] == 'Foo bar'
@@ -99,7 +98,6 @@ def test_new_ticket_context_handles_unicode(unicode_data, extra_data, user):
     obj = MockObj(unicode_data, extra_data)
     ctx = new_ticket_context(user, obj)
 
-    assert isinstance(ctx['object'], MockObj)
     assert ctx['email'] == 'foo@bar.com'
     assert ctx['subject'] == u'Your suggestion to INSPIRE: author Diego Martínez'
     assert ctx['user_comment'] == 'Foo bar'
@@ -140,8 +138,7 @@ def test_update_ticket_context_fail_no_recid(data_no_recid, extra_data, user):
 def test_reply_ticket_context(data, extra_data, user):
     obj = MockObj(data, extra_data)
     ctx = reply_ticket_context(user, obj)
-    assert isinstance(ctx['object'], MockObj)
-    assert isinstance(ctx['user'], User)
+    assert ctx['user_name'] == 'foo@bar.com'
     assert ctx['author_name'] == 'John Doe'
     assert ctx['reason'] == 'Test reason'
     assert ctx['record_url'] == 'http://example.com'
@@ -150,7 +147,6 @@ def test_reply_ticket_context(data, extra_data, user):
 def test_curation_ticket_context(data, extra_data, user):
     obj = MockObj(data, extra_data)
     ctx = curation_ticket_context(user, obj)
-    assert isinstance(ctx['object'], MockObj)
     assert ctx['recid'] == 123
     assert ctx['user_comment'] == 'Foo bar'
     assert ctx['subject'] == 'Curation needed for author John Doe [John.Doe.1]'
@@ -161,7 +157,6 @@ def test_curation_ticket_context(data, extra_data, user):
 def test_curation_ticket_context_handles_unicode(unicode_data, extra_data, user):
     obj = MockObj(unicode_data, extra_data)
     ctx = curation_ticket_context(user, obj)
-    assert isinstance(ctx['object'], MockObj)
     assert ctx['user_comment'] == 'Foo bar'
     assert ctx['subject'] == u'Curation needed for author Diego Martínez [Diego.Martinez.Santos.1]'
     assert ctx['email'] == 'foo@bar.com'
