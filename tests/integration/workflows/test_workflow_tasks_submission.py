@@ -125,5 +125,5 @@ def test_create_ticket_calls_tickets_create_with_template(workflow_app):
 
             assert (
                 request_mocker.request_history[0]._request.body
-                == '{"template_context": {}, "template": "template_path"}'
+                == '{"functional_element": "arXiv curation", "template_context": {}, "caller_email": "admin@inspirehep.net", "template": "template_path"}'
             )

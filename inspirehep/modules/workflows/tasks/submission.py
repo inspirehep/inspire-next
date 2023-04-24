@@ -87,7 +87,7 @@ def submit_snow_ticket(obj, queue, template, context, caller, recid, ticket_id_k
             inspirehep_url=current_app.config["INSPIREHEP_URL"]
         ),
         headers=_get_headers_for_hep_root_table_request(),
-        data=json.dumps({"template": template, "template_context": context}),
+        data=json.dumps(ticket_payload),
     )
     response.raise_for_status()
     ticket_id = response.json()["ticket_id"]
