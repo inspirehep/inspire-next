@@ -354,6 +354,16 @@ def validate_record(schema):
 
 
 @with_debug_logging
+def remove_empty_data_keys(obj, eng):
+    obj_data_without_empty_keys = dict(
+        (key, val) for key, val in obj.data.iteritems() if val
+    )
+    obj.data = obj_data_without_empty_keys
+    obj.save()
+    db.session.commit()
+
+
+@with_debug_logging
 def populate_journal_coverage(obj, eng):
     """Populate ``journal_coverage`` from the Journals DB.
 

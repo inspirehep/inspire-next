@@ -50,6 +50,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     preserve_root,
     reject_record,
     refextract,
+    remove_empty_data_keys,
     set_refereed_and_fix_document_type,
     shall_halt_workflow,
     validate_record,
@@ -1365,3 +1366,25 @@ def test_url_is_correctly_escaped():
 
         assert 1 == len(documents)
         assert expected_document_url == documents[0]['url']
+
+
+def test_remove_empty_keys():
+
+    data = {
+        'document_type': [
+            'article',
+        ],
+        'titles': [
+            {'title': 'Partial Symmetries of Weak Interactions'},
+        ],
+        "documents": [],
+        "figures": []
+    }
+    extra_data = {}
+
+    obj = MockObj(data, extra_data)
+    eng = MockEng()
+
+    remove_empty_data_keys(obj, eng)
+    assert 'documents' not in obj.data
+    assert 'figures' not in obj.data
