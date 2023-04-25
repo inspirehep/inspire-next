@@ -139,6 +139,7 @@ def create_ticket(
             new_ticket_id = submit_rt_ticket(
                 obj, queue, template, context, requestor, recid, ticket_id_key
             )
+        obj.save()
         return {ticket_id_key: new_ticket_id}
 
     return _create_ticket
