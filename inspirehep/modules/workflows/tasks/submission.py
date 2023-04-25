@@ -77,11 +77,12 @@ def submit_snow_ticket(obj, queue, template, context, caller, recid, ticket_id_k
     ticket_payload = {
         "template": template,
         "template_context": context,
-        "functional_element": current_app.config['QUEUE_TO_FUNCTIONAL_CATEGORY_MAPPING'][queue],
+        "functional_category": current_app.config['QUEUE_TO_FUNCTIONAL_CATEGORY_MAPPING'][queue],
         "caller_email": caller,
     }
     if recid:
-        ticket_payload["recid"] = recid
+        ticket_payload["recid"] = str(recid)
+    ticket_payload['subject'] = context.get('subject', 'No subject')
     response = requests.post(
         "{inspirehep_url}/tickets/create-with-template".format(
             inspirehep_url=current_app.config["INSPIREHEP_URL"]
