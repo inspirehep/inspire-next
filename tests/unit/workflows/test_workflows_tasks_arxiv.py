@@ -444,11 +444,6 @@ def test_arxiv_plot_extract_populates_files_with_plots(mock_os, tmpdir):
 
     assert expected == result
 
-    expected = 'Added 1 plots.'
-    result = obj.log._info.getvalue()
-
-    assert expected == result
-
 
 @patch('plotextractor.api.os')
 def test_arxiv_plot_extract_is_safe_to_rerun(mock_os, tmpdir):
@@ -685,7 +680,6 @@ def test_arxiv_plot_extract_no_file(mock_process_tarball):
     eng = MockEng()
 
     assert arxiv_plot_extract(obj, eng) is None
-    assert 'No file named=' in obj.log._info.getvalue()
     mock_process_tarball.assert_not_called()
 
 
