@@ -219,7 +219,6 @@ def new_ticket_context(user, obj):
         identifier=identifiers or "",
         user_comment=user_comment,
         references=obj.extra_data.get('formdata', {}).get('references'),
-        object=obj,
         subject=subject
     )
 
