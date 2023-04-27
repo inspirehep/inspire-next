@@ -75,7 +75,6 @@ def test_new_ticket_context():
         'references': [
             'qux',
         ],
-        'object': obj,
         'subject': 'Your suggestion to INSPIRE: foo',
     }
     result = new_ticket_context(user, obj)
@@ -110,7 +109,6 @@ def test_new_ticket_context_handles_unicode():
         'identifier': '',
         'user_comment': '',
         'references': None,
-        'object': obj,
         'subject': (
             u'Your suggestion to INSPIRE: Chocs caractéristiques et ondes '
             u'simples exceptionnelles pour les systèmes conservatifs à '
