@@ -23,6 +23,7 @@
 """Tasks used in OAI harvesting for arXiv record manipulation."""
 
 from __future__ import absolute_import, division, print_function
+import logging
 from inspire_utils.name import normalize_name
 import os
 import re
@@ -43,7 +44,6 @@ from plotextractor.errors import (
     InvalidTarball,
     NoTexFilesFound,
 )
-
 from inspirehep.utils.latex import decode_latex
 from inspirehep.utils.url import is_pdf_link, retrieve_uri
 from inspirehep.modules.workflows.errors import DownloadError
@@ -55,6 +55,9 @@ from inspirehep.modules.workflows.utils import (
 )
 # import lxml.html
 from parsel import Selector
+
+
+LOGGER = logging.getLogger(__name__)
 
 REGEXP_AUTHLIST = re.compile(
     "<collaborationauthorlist.*?>.*?</collaborationauthorlist>", re.DOTALL)
@@ -160,7 +163,7 @@ def arxiv_plot_extract(obj, eng):
     try:
         tarball = obj.files[filename]
     except KeyError:
-        obj.log.info('No file named=%s for arxiv_id %s', filename, arxiv_id)
+        LOGGER.info('No file named=%s for arxiv_id %s', filename, arxiv_id)
         return
 
     with TemporaryDirectory(prefix='plot_extract') as scratch_space, \
@@ -192,6 +195,7 @@ def arxiv_plot_extract(obj, eng):
             del obj.data['figures']
 
         lb = LiteratureBuilder(source='arxiv', record=obj.data)
+        LOGGER.info("Processing plots. Number of plots: %s" % len(plots))
         for index, plot in enumerate(plots):
             plot_name = os.path.basename(plot.get('url'))
             key = plot_name
@@ -215,11 +219,7 @@ def arxiv_plot_extract(obj, eng):
             )
 
         obj.data = lb.record
-
-    if 'figures' in obj.data and len(obj.data['figures']) == 0:
-        del obj.data['figures']
-    else:
-        obj.log.info('Added {0} plots.'.format(len(plots)))
+    LOGGER.info('Added {0} plots.'.format(len(plots)))
 
 
 @with_debug_logging

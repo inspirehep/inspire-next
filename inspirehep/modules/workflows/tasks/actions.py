@@ -421,9 +421,10 @@ def populate_submission_document(obj, eng):
         )
 
         obj.data = lb.record
-
-    if 'documents' in obj.data and len(obj.data['documents']) == 0:
-        del obj.data['documents']
+        LOGGER.info('Workflow data updated with %s new documents' % len(obj.data.get('documents', [])))
+    else:
+        LOGGER.info('Submission document not found or in an incorrect format (%s)' % submission_pdf)
+    save_workflow(obj, eng)
 
 
 @with_debug_logging
@@ -449,6 +450,7 @@ def download_documents(obj, eng):
             obj.log.error(
                 'Cannot download document from %s', url)
     save_workflow(obj, eng)
+    LOGGER.info('Documents downloaded: %s' % len(obj.data.get('documents', [])))
 
 
 @backoff.on_exception(backoff.expo, (BadGatewayError, requests.exceptions.ConnectionError), base=4, max_tries=5)
