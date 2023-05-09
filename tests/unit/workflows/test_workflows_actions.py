@@ -38,7 +38,7 @@ from mocks import MockEng, MockObj
 
 from inspirehep.modules.workflows.tasks.actions import jlab_ticket_needed, load_from_source_data, \
     extract_authors_from_pdf, is_suitable_for_pdf_authors_extraction, is_fermilab_report, add_collection, \
-    prepare_collaboration_multi_search, check_if_france_in_fulltext, check_if_france_in_raw_affiliations
+    check_if_france_in_fulltext, check_if_france_in_raw_affiliations
 
 
 def test_match_approval_gets_match_recid():
@@ -454,29 +454,6 @@ def test_extract_authors_from_pdf_do_not_run_when_there_is_more_authors_than_max
     obj.data = {'authors': [i for i in range(max_authors_parameter)]}
     # Should not raise exception
     extract_authors_from_pdf(obj, None)
-
-
-def test_prepare_collaboration_multi_search():
-    collaborations = [
-        {"record": {"$ref": "blah"}, "value": "SHOULD NOT BE THERE"},
-        {"value": " SHOULD  BE THERE "},
-    ]
-
-    expected_multi_search_dict = [
-        {}, {'query': {'match_all': {}}, '_source': False},
-        {}, {'query': {'match_all': {}}, '_source': False},
-        {}, {'query': {
-            'bool': {'filter': [{'exists': {'field': 'collaboration'}}],
-                     'must': [{'term': {'normalized_name_variants': {'value': 'SHOULD BE THERE'}}}]}}, '_source': [
-            'collaboration', 'self', 'legacy_name', 'control_number']},
-        {}, {'query': {'bool': {'filter': [{'exists': {'field': 'collaboration'}}],
-                                'must': [{'term': {'normalized_subgroups': {'value': 'SHOULD BE THERE'}}}]}},
-             '_source': ['collaboration', 'self', 'legacy_name', 'control_number']}
-    ]
-
-    multi_search = prepare_collaboration_multi_search(collaborations)
-
-    assert multi_search.to_dict() == expected_multi_search_dict
 
 
 @patch("inspirehep.modules.workflows.tasks.actions.get_document_in_workflow")

@@ -25,6 +25,7 @@
 from __future__ import absolute_import, division, print_function
 
 import mock
+from inspirehep.modules.workflows.utils import _get_headers_for_hep_root_table_request
 import pytest
 import requests_mock
 from calls import generate_record, insert_citing_record
@@ -67,62 +68,12 @@ def insert_journals_in_db(workflow_app):
 
 
 @pytest.fixture(scope="function")
-def insert_experiments_into_db(workflow_app):
-    TestRecordMetadata.create_from_file(
-        __name__,
-        "experiment_without_collaboration.json",
-        pid_type="exp",
-        index_name="records-experiments",
-    )
-    TestRecordMetadata.create_from_file(
-        __name__,
-        "experiment_with_collaboration.json",
-        pid_type="exp",
-        index_name="records-experiments",
-    )
-    TestRecordMetadata.create_from_file(
-        __name__,
-        "experiment_with_collaboration_and_subgroups.json",
-        pid_type="exp",
-        index_name="records-experiments",
-    )
-
-
-@pytest.fixture(scope="function")
 def insert_hep_records_into_db(workflow_app):
     TestRecordMetadata.create_from_file(
         __name__,
         "record_lit_to_match_extracted_refs.json",
         pid_type="exp",
         index_name="records-hep",
-    )
-
-
-@pytest.fixture(scope="function")
-def insert_ambiguous_experiments_into_db(workflow_app):
-    TestRecordMetadata.create_from_file(
-        __name__,
-        "experiment_with_ambiguous_collaboration_1.json",
-        pid_type="exp",
-        index_name="records-experiments",
-    )
-    TestRecordMetadata.create_from_file(
-        __name__,
-        "experiment_with_ambiguous_collaboration_2.json",
-        pid_type="exp",
-        index_name="records-experiments",
-    )
-    TestRecordMetadata.create_from_file(
-        __name__,
-        "experiment_with_subgroup_1.json",
-        pid_type="exp",
-        index_name="records-experiments",
-    )
-    TestRecordMetadata.create_from_file(
-        __name__,
-        "experiment_with_subgroup_2.json",
-        pid_type="exp",
-        index_name="records-experiments",
     )
 
 
@@ -820,7 +771,7 @@ def test_normalize_journal_titles_in_references(workflow_app, insert_journals_in
     )
 
 
-def test_normalize_collaborations(workflow_app, insert_experiments_into_db):
+def test_normalize_collaborations(workflow_app):
     record = {
         "_collections": ["Literature"],
         "titles": ["A title"],
@@ -850,15 +801,26 @@ def test_normalize_collaborations(workflow_app, insert_experiments_into_db):
     expected_accelerator_experiments = [
         {"record": {u"$ref": u"https://inspirehep.net/api/experiments/1800050"}}
     ]
+    with requests_mock.Mocker() as request_mocker:
+        request_mocker.register_uri(
+            "GET",
+            "http://web:8000/curation/literature/collaborations-normalization",
+            json={
+                "normalized_collaborations": expected_collaborations,
+                "accelerator_experiments": expected_accelerator_experiments
+            },
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
 
-    obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
-    obj = normalize_collaborations(obj, None)
-    assert obj.data["collaborations"] == expected_collaborations
-    assert obj.data["accelerator_experiments"] == expected_accelerator_experiments
+        obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
+        obj = normalize_collaborations(obj, None)
+        assert obj.data["collaborations"] == expected_collaborations
+        assert obj.data["accelerator_experiments"] == expected_accelerator_experiments
 
 
 def test_normalize_collaborations_no_collaboration(
-    workflow_app, insert_experiments_into_db
+    workflow_app
 ):
     record = {
         "_collections": ["Literature"],
@@ -874,97 +836,53 @@ def test_normalize_collaborations_no_collaboration(
     assert obj.data["collaborations"] == expected_collaborations
 
 
-def test_normalize_collaborations_with_different_name_variants(
-    workflow_app, insert_experiments_into_db
-):
+def test_normalize_collaborations_in_workflow_with_already_existing_accelerator_experiments(workflow_app):
     record = {
         "_collections": ["Literature"],
         "titles": ["A title"],
         "document_type": ["report"],
+        "accelerator_experiments": [{"record": {u"$ref": u"https://inspirehep.net/api/experiments/1800050"}}],
         "collaborations": [
-            {"value": "ATLAS Muon"},
-            {"value": "ATLAS Liquid   Argon"},
+            {
+                "value": "Atlas II",
+                "record": {"$ref": "https://inspirebeta.net/api/experiments/9999"},
+            },
             {"value": "Particle Data Group"},
+            {"value": "Unknown"},
         ],
     }
 
     expected_collaborations = [
         {
-            "record": {u"$ref": u"https://inspirehep.net/api/experiments/1108541"},
-            "value": u"ATLAS Muon",
+            "value": "Atlas II",
+            "record": {"$ref": "https://inspirebeta.net/api/experiments/9999"},
         },
         {
-            "record": {u"$ref": u"https://inspirehep.net/api/experiments/1108541"},
-            "value": u"ATLAS Liquid Argon",
+            "value": "Particle Data Group",
+            "record": {"$ref": "https://inspirehep.net/api/experiments/1800050"},
         },
-        {
-            "record": {u"$ref": u"https://inspirehep.net/api/experiments/1800050"},
-            "value": u"Particle Data Group",
-        },
+        {"value": "Unknown"},
     ]
 
     expected_accelerator_experiments = [
-        {
-            "record": {u"$ref": u"https://inspirehep.net/api/experiments/1108541"},
-            "legacy_name": "CERN-LHC-ATLAS",
-        },
-        {"record": {u"$ref": u"https://inspirehep.net/api/experiments/1800050"}},
+        {"record": {u"$ref": u"https://inspirehep.net/api/experiments/1800050"}}
     ]
 
-    obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
-    obj = normalize_collaborations(obj, None)
-    assert obj.data["collaborations"] == expected_collaborations
-    assert obj.data["accelerator_experiments"] == expected_accelerator_experiments
-
-
-@mock.patch("inspirehep.modules.workflows.tasks.actions.logging.Logger.info")
-def test_normalize_collaborations_doesnt_link_experiment_when_ambiguous_collaboration_names(
-    mock_logger, workflow_app, insert_ambiguous_experiments_into_db
-):
-    record = {
-        "_collections": ["Literature"],
-        "titles": ["A title"],
-        "document_type": ["report"],
-        "collaborations": [{"value": "SHIP"}],
-    }
-
-    expected_collaborations = [{"value": "SHIP"}]
-
-    obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
-
-    obj = normalize_collaborations(obj, None)
-
-    assert obj.data["collaborations"] == expected_collaborations
-    assert not obj.data.get("accelerator_experiments")
-    assert (
-        mock_logger.mock_calls[-1][1][0]
-        == u"(wf: 1) ambiguous match for collaboration SHIP. Matched collaborations: SHIP, SHiP"
-    )
-
-
-@mock.patch("inspirehep.modules.workflows.tasks.actions.logging.Logger.info")
-def test_normalize_collaborations_doesnt_link_experiment_when_ambiguous_subgroup(
-    mock_logger, workflow_app, insert_ambiguous_experiments_into_db
-):
-    record = {
-        "_collections": ["Literature"],
-        "titles": ["A title"],
-        "document_type": ["report"],
-        "collaborations": [{"value": "Belle SVD"}],
-    }
-
-    expected_collaborations = [{"value": "Belle SVD"}]
-
-    obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
-
-    obj = normalize_collaborations(obj, None)
-
-    assert obj.data["collaborations"] == expected_collaborations
-    assert not obj.data.get("accelerator_experiments")
-    assert (
-        mock_logger.mock_calls[-1][1][0]
-        == u"(wf: 1) ambiguous match for collaboration Belle SVD. Matches for collaboration subgroup: Belle-II, Belle"
-    )
+    with requests_mock.Mocker() as request_mocker:
+        request_mocker.register_uri(
+            "GET",
+            "http://web:8000/curation/literature/collaborations-normalization",
+            json={
+                "normalized_collaborations": expected_collaborations,
+                "accelerator_experiments": expected_accelerator_experiments
+            },
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
+        obj = normalize_collaborations(obj, None)
+        assert obj.data["collaborations"] == expected_collaborations
+        assert obj.data["accelerator_experiments"] == expected_accelerator_experiments
 
 
 @mock.patch("inspirehep.modules.workflows.tasks.actions.logging.Logger.info")
@@ -1271,31 +1189,42 @@ def test_core_selection_wf_already_created_show_created_wf(
         "collaborations": [{"value": "SHIP"}],
         "control_number": 123456,
     }
+    with requests_mock.Mocker() as request_mocker:
+        request_mocker.register_uri(
+            "GET",
+            "http://web:8000/curation/literature/collaborations-normalization",
+            json={
+                "normalized_collaborations": [],
+                "accelerator_experiments": []
+            },
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
 
-    workflow_object = workflow_object_class.create(
-        data=record, id_user=None, data_type="hep"
-    )
-    workflow_object.extra_data["source_data"] = {
-        "data": record,
-        "extra_data": {"source_data": {"data": record}},
-    }
-    workflow_object.save()
-    start("article", object_id=workflow_object.id)
-    current_search.flush_and_refresh("holdingpen-hep")
-    assert len(core_selection_wf_already_created(123456)) == 0
+        workflow_object = workflow_object_class.create(
+            data=record, id_user=None, data_type="hep"
+        )
+        workflow_object.extra_data["source_data"] = {
+            "data": record,
+            "extra_data": {"source_data": {"data": record}},
+        }
+        workflow_object.save()
+        start("article", object_id=workflow_object.id)
+        current_search.flush_and_refresh("holdingpen-hep")
+        assert len(core_selection_wf_already_created(123456)) == 0
 
-    workflow_object = workflow_object_class.create(
-        data=record, id_user=None, data_type="hep"
-    )
-    start("core_selection", object_id=workflow_object.id)
-    workflow_object.save()
-    current_search.flush_and_refresh("holdingpen-hep")
-    assert len(core_selection_wf_already_created(123456)) == 1
+        workflow_object = workflow_object_class.create(
+            data=record, id_user=None, data_type="hep"
+        )
+        start("core_selection", object_id=workflow_object.id)
+        workflow_object.save()
+        current_search.flush_and_refresh("holdingpen-hep")
+        assert len(core_selection_wf_already_created(123456)) == 1
 
-    workflow_object.status = ObjectStatus.COMPLETED
-    workflow_object.save()
-    current_search.flush_and_refresh("holdingpen-hep")
-    assert len(core_selection_wf_already_created(123456)) == 1
+        workflow_object.status = ObjectStatus.COMPLETED
+        workflow_object.save()
+        current_search.flush_and_refresh("holdingpen-hep")
+        assert len(core_selection_wf_already_created(123456)) == 1
 
 
 def test_create_core_selection_workflow_task(workflow_app):

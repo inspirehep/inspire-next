@@ -27,7 +27,7 @@ from __future__ import absolute_import, division, print_function
 import logging
 
 import re
-from elasticsearch_dsl import Q, MultiSearch, Search
+from elasticsearch_dsl import Q, Search
 from invenio_search import current_search_client
 from inspirehep.modules.refextract.tasks import create_journal_kb_dict
 from urlparse import urljoin
@@ -64,7 +64,7 @@ from inspire_json_merger.api import merge
 from inspire_json_merger.config import GrobidOnArxivAuthorsOperations
 from inspire_schemas.builders import LiteratureBuilder
 from inspire_schemas.readers import LiteratureReader
-from inspire_schemas.utils import normalize_collaboration_name, validate, classify_field
+from inspire_schemas.utils import validate, classify_field
 from inspire_utils.record import get_value, normalize_affiliations
 from inspire_utils.dedupers import dedupe_list
 
@@ -80,8 +80,8 @@ from inspirehep.modules.workflows.tasks.refextract import (
 )
 from inspirehep.modules.refextract.matcher import match_references
 from inspirehep.modules.search import InstitutionsSearch, LiteratureSearch
-from inspirehep.modules.workflows.utils import create_error
-from inspirehep.modules.workflows.errors import BadGatewayError, CannotFindProperSubgroup, MissingRecordControlNumber
+from inspirehep.modules.workflows.utils import _get_headers_for_hep_root_table_request, create_error
+from inspirehep.modules.workflows.errors import BadGatewayError, MissingRecordControlNumber
 from inspirehep.modules.workflows.utils import (
     copy_file_to_workflow,
     download_file_to_workflow,
@@ -917,107 +917,36 @@ def extract_authors_from_pdf(obj, eng):
     return obj
 
 
-def prepare_collaboration_multi_search(collaborations):
-    multi_search = MultiSearch(index="records-experiments", using=current_search_client)
-    for collaboration in collaborations:
-        full_collaboration_string = collaboration.get('value', '')
-        normalized_collaboration_string = normalize_collaboration_name(full_collaboration_string)
-        if collaboration.get('record'):
-            # Add dummy search so multisearch will stay in sync with collaborations
-            multi_search = multi_search.add(Search().query().source(False))
-            multi_search = multi_search.add(Search().query().source(False))
-            continue
-        name_search, subgroup_search = build_collaboration_search(normalized_collaboration_string)
-        multi_search = multi_search.add(name_search)
-        multi_search = multi_search.add(subgroup_search)
-
-    return multi_search
-
-
-def build_collaboration_search(normalized_collaboration_string):
-    name_search = Q("term", normalized_name_variants={"value": normalized_collaboration_string})
-    subgroup_search = Q("term", normalized_subgroups={"value": normalized_collaboration_string})
-    source = ['collaboration', 'self', 'legacy_name', 'control_number']
-    filters_ = Q("exists", field="collaboration")
-    return Search().query(name_search).filter(filters_).source(source),\
-        Search().query(subgroup_search).filter(filters_).source(source),
-
-
-def find_subgroup(subgroup, experiment):
-    clean_special_characters = re.compile(r"[^\w\d_]", re.UNICODE)
-    normalized_subgroup = normalize_collaboration_name(clean_special_characters.sub(' ', subgroup.lower()))
-    subgroups = experiment.collaboration.subgroup_names
-    normalized_subgroups = [normalize_collaboration_name(clean_special_characters.sub(' ', element.lower())) for element in subgroups]
-    for subgroup, normalized_subgroup_from_list in zip(subgroups, normalized_subgroups):
-        if normalized_subgroup_from_list == normalized_subgroup:
-            return subgroup
-    raise CannotFindProperSubgroup(experiment['control_number'], subgroup)
-
-
 @with_debug_logging
+@backoff.on_exception(backoff.expo, (BadGatewayError, requests.exceptions.ConnectionError), base=4, max_tries=5)
 def normalize_collaborations(obj, eng):
     collaborations = obj.data.get('collaborations', [])
     if not isinstance(collaborations, list):
-        LOGGER.exception("Metadata are malformed for record %s. Collaborations key is not a list.", obj.id)
+        LOGGER.exception(
+            "Metadata are malformed for record %s. Collaborations key is not a list.",
+            obj.id
+        )
         return obj
     if len(collaborations) < 1:
         return obj
-    multi_search = prepare_collaboration_multi_search(collaborations)
-    try:
-        search_responses = multi_search.execute()
-    except ValueError as er:
-        # Ignore normalization on ES errors
-        LOGGER.exception("Cannot perform collaborations normalization due to ES error: %s", er)
-        return obj
-    if not len(search_responses) == len(collaborations) * 2:
-        LOGGER.exception("Results count does not match collaborations count: %s : %s. wf id: %s", len(collaborations), len(search_responses), obj.id)
-        return obj
-
-    for collaboration, collaboration_response, subgroup_response in zip(collaborations, search_responses[::2], search_responses[1::2]):
-        if 'record' in collaboration:
-            continue
-        response = collaboration_response
-        if not response:
-            # Search in collaboration.subgroup_names
-            response = subgroup_response
-            if not response:
-                LOGGER.info(u"(wf: %s) collaboration normalization: no match for: %s", obj.id, collaboration['value'])
-                continue
-            elif len(response.hits) > 1:
-                matched_collaboration_names = [
-                    matched_collaboration.collaboration.value for matched_collaboration in response
-                ]
-                LOGGER.info(
-                    u"(wf: {0}) ambiguous match for collaboration {1}. Matches for collaboration subgroup: {2}".format(
-                        obj.id, collaboration['value'], ', '.join(matched_collaboration_names)
-                    )
-                )
-                continue
-            else:
-                collaboration_normalized_name = find_subgroup(collaboration.get('value', ''), response[0])
-        else:
-            collaboration_normalized_name = response[0].collaboration.value
-        LOGGER.info(u"(%s) collaboration normalization: normalized: %s ==> %s", obj.id, collaboration['value'], collaboration_normalized_name)
-        if len(response.hits) > 1:
-            matched_collaboration_names = [
-                matched_collaboration.collaboration.value for matched_collaboration in response
-            ]
-            LOGGER.info(
-                u"(wf: {0}) ambiguous match for collaboration {1}. Matched collaborations: {2}".format(
-                    obj.id, collaboration['value'], ', '. join(matched_collaboration_names)
-                )
-            )
-            continue
-        accelerator_experiment = {"record": response[0].self.to_dict()}
-        if 'legacy_name' in response[0]:
-            accelerator_experiment['legacy_name'] = response[0].legacy_name
-        obj.data.setdefault('accelerator_experiments', [])
-
-        if accelerator_experiment not in obj.data['accelerator_experiments']:
-            obj.data['accelerator_experiments'].append(accelerator_experiment)
-
-        collaboration['value'] = collaboration_normalized_name
-        collaboration['record'] = response[0].self.to_dict()
+    normalized_collaborations_response = requests.get(
+        "{inspirehep_url}/curation/literature/collaborations-normalization".format(
+            inspirehep_url=current_app.config["INSPIREHEP_URL"]
+        ),
+        headers=_get_headers_for_hep_root_table_request(),
+        data=json.dumps({
+            "collaborations": collaborations,
+            "workflow_id": obj.id,
+        }),
+    )
+    normalized_collaborations_response.raise_for_status()
+    obj_accelerator_experiments = obj.data.get('accelerator_experiments', [])
+    normalized_accelerator_experiments = normalized_collaborations_response.json()['accelerator_experiments']
+    if normalized_accelerator_experiments or obj_accelerator_experiments:
+        obj.data['accelerator_experiments'] = dedupe_list(
+            obj_accelerator_experiments + normalized_accelerator_experiments
+        )
+        obj.data['collaborations'] = normalized_collaborations_response.json()['normalized_collaborations']
     return obj
 
 
