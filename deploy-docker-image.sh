@@ -46,6 +46,8 @@ deploy() {
     -H "Accept: application/vnd.github.v3+json" \
     -d '{"event_type":"deploy", "client_payload":{ "project": "inspire", "application": "next", "namespace":"'${environment}'", "image":"'${image}'", "new_tag":"'${TAG}'"}}' \
     https://api.github.com/repos/cern-sis/kubernetes/dispatches
+
+    echo "${TAG}"
 }
 
 main() {
