@@ -91,6 +91,7 @@ from inspirehep.modules.workflows.utils import (
     get_validation_errors,
     log_workflows_action,
     with_debug_logging, check_mark, set_mark, get_mark, get_record_from_hep,
+    delete_empty_key
 )
 from inspirehep.modules.workflows.utils.grobid_authors_parser import GrobidAuthors
 from inspirehep.utils.normalizers import normalize_journal_title
@@ -423,7 +424,8 @@ def populate_submission_document(obj, eng):
         obj.data = lb.record
         LOGGER.info('Workflow data updated with %s new documents' % len(obj.data.get('documents', [])))
     else:
-        LOGGER.info('Submission document not found or in an incorrect format (%s)' % submission_pdf)
+        LOGGER.info('Submission document not found or in an incorrect format (%s)', submission_pdf)
+    delete_empty_key(obj, 'documents')
     save_workflow(obj, eng)
 
 
@@ -449,8 +451,9 @@ def download_documents(obj, eng):
         else:
             obj.log.error(
                 'Cannot download document from %s', url)
+    delete_empty_key(obj, 'documents')
     save_workflow(obj, eng)
-    LOGGER.info('Documents downloaded: %s' % len(obj.data.get('documents', [])))
+    LOGGER.info('Documents downloaded: %s', len(obj.data.get('documents', [])))
 
 
 @backoff.on_exception(backoff.expo, (BadGatewayError, requests.exceptions.ConnectionError), base=4, max_tries=5)

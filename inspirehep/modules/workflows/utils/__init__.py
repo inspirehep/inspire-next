@@ -720,3 +720,9 @@ def create_error(response):
             code=response.status_code, message=error_msg
         )
     )
+
+
+def delete_empty_key(obj, key):
+    if key in obj.data and len(obj.data[key]) == 0:
+        LOGGER.info('Deleting %s from workflow. Key is empty.', key)
+        del obj.data[key]

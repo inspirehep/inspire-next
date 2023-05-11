@@ -52,6 +52,7 @@ from inspirehep.modules.workflows.utils import (
     ignore_timeout_error,
     timeout_with_config,
     with_debug_logging, set_mark,
+    delete_empty_key
 )
 # import lxml.html
 from parsel import Selector
@@ -146,7 +147,6 @@ def arxiv_plot_extract(obj, eng):
     :param obj: Workflow Object to process
     :param eng: Workflow Engine processing the object
     """
-
     # Crude way to set memory limits for wand globally.
     mem_limit = current_app.config.get("WAND_MEMORY_LIMIT")
     if mem_limit and limits['memory'] != mem_limit:
@@ -179,6 +179,7 @@ def arxiv_plot_extract(obj, eng):
                 tarball.file.uri,
                 arxiv_id,
             )
+            delete_empty_key(obj, 'figures')
             return
         except DelegateError as err:
             obj.log.error(
@@ -186,6 +187,7 @@ def arxiv_plot_extract(obj, eng):
                 arxiv_id,
             )
             current_app.logger.exception(err)
+            delete_empty_key(obj, 'figures')
             return
 
         if 'figures' in obj.data:
@@ -195,7 +197,7 @@ def arxiv_plot_extract(obj, eng):
             del obj.data['figures']
 
         lb = LiteratureBuilder(source='arxiv', record=obj.data)
-        LOGGER.info("Processing plots. Number of plots: %s" % len(plots))
+        LOGGER.info("Processing plots. Number of plots: %s", len(plots))
         for index, plot in enumerate(plots):
             plot_name = os.path.basename(plot.get('url'))
             key = plot_name
@@ -220,6 +222,7 @@ def arxiv_plot_extract(obj, eng):
 
         obj.data = lb.record
     LOGGER.info('Added {0} plots.'.format(len(plots)))
+    delete_empty_key(obj, 'figures')
 
 
 @with_debug_logging

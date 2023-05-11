@@ -1333,3 +1333,35 @@ def test_url_is_correctly_escaped():
 
         assert 1 == len(documents)
         assert expected_document_url == documents[0]['url']
+
+
+def test_populate_submission_document_without_documents():
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'GET', 'http://export.arxiv.org/pdf/1605.03844',
+            content=pkg_resources.resource_string(
+                __name__, os.path.join('fixtures', '1605.03844.pdf')),
+        )
+
+        schema = load_schema('hep')
+        subschema = schema['properties']['acquisition_source']
+        data = {
+            'acquisition_source': {
+                'datetime': '2017-11-30T16:38:43.352370',
+                'email': 'david.caro@cern.ch',
+                'internal_uid': 54252,
+                'method': 'submitter',
+                'orcid': '0000-0002-2174-4493',
+                'source': 'submitter',
+                'submission_number': '1'
+            },
+            'documents': []
+        }
+        assert validate(data['acquisition_source'], subschema) is None
+        extra_data = {}
+        files = MockFiles({})
+        obj = MockObj(data, extra_data, files=files)
+        eng = MockEng()
+
+        assert populate_submission_document(obj, eng) is None
+        assert 'documents' not in obj.data
