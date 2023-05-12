@@ -100,6 +100,19 @@ def test_core_selection_wf_starts_after_article_wf_when_no_core(
                 headers=_get_headers_for_hep_root_table_request(),
                 status_code=200,
             )
+            mock.register_uri(
+                "GET",
+                "http://web:8000/curation/literature/affiliations-normalization",
+                json={
+                    "normalized_affiliations": [
+                        [],
+                        [],
+                    ],
+                    "ambiguous_affiliations": [],
+                },
+                headers=_get_headers_for_hep_root_table_request(),
+                status_code=200,
+            )
 
             start("article", object_id=workflow_object.id)
 
@@ -134,9 +147,9 @@ def test_core_selection_wf_starts_after_article_wf_when_no_core(
     expected_record_data = load_json_record("hep_record_no_core.json")["metadata"]
     expected_record_data["core"] = True
 
-    assert len(mock.request_history) == 3
+    assert len(mock.request_history) == 4
     # Check is record sent to HEP is correct (only core has changed)
-    assert mock.request_history[2].json() == expected_record_data
+    assert mock.request_history[3].json() == expected_record_data
 
 
 @mock.patch("inspirehep.modules.workflows.tasks.submission.send_robotupload")
@@ -304,6 +317,19 @@ def test_core_selection_wf_works_when_there_is_record_redirection_on_hep(
                 headers=_get_headers_for_hep_root_table_request(),
                 status_code=200,
             )
+            mock.register_uri(
+                "GET",
+                "http://web:8000/curation/literature/affiliations-normalization",
+                json={
+                    "normalized_affiliations": [
+                        [],
+                        [],
+                    ],
+                    "ambiguous_affiliations": [],
+                },
+                headers=_get_headers_for_hep_root_table_request(),
+                status_code=200,
+            )
 
             start("article", object_id=workflow_object.id)
 
@@ -335,9 +361,9 @@ def test_core_selection_wf_works_when_there_is_record_redirection_on_hep(
     expected_record_data = load_json_record("hep_record_no_core.json")["metadata"]
     expected_record_data["core"] = True
 
-    assert len(mock.request_history) == 3
+    assert len(mock.request_history) == 4
     # Check is record sent to HEP is correct (only core has changed)
-    assert mock.request_history[2].json() == expected_record_data
+    assert mock.request_history[3].json() == expected_record_data
 
 
 @mock.patch("inspirehep.modules.workflows.tasks.submission.send_robotupload")
@@ -412,6 +438,19 @@ def test_core_selection_wf_still_runs_when_there_is_core_on_hep_already(
                 headers=_get_headers_for_hep_root_table_request(),
                 status_code=200,
             )
+            mock.register_uri(
+                "GET",
+                "http://web:8000/curation/literature/affiliations-normalization",
+                json={
+                    "normalized_affiliations": [
+                        [],
+                        [],
+                    ],
+                    "ambiguous_affiliations": [],
+                },
+                headers=_get_headers_for_hep_root_table_request(),
+                status_code=200,
+            )
             start("article", object_id=workflow_object.id)
 
             assert (
@@ -438,8 +477,8 @@ def test_core_selection_wf_still_runs_when_there_is_core_on_hep_already(
             core_selection_wf = workflow_object_class.get(core_selection_wf_object_id)
             assert core_selection_wf.status == ObjectStatus.COMPLETED
 
-    assert len(mock.request_history) == 3
-    assert mock.request_history[2].json() == expected_hep_record["metadata"]
+    assert len(mock.request_history) == 4
+    assert mock.request_history[3].json() == expected_hep_record["metadata"]
 
 
 @mock.patch(
@@ -613,7 +652,10 @@ def test_core_selection_wf_removes_arxiv_core_categories_when_marked_as_non_core
             mock.register_uri(
                 "GET",
                 "http://web:8000/curation/literature/collaborations-normalization",
-                json={"normalized_collaborations": [{"value": "SHIP"}], "accelerator_experiments": []},
+                json={
+                    "normalized_collaborations": [{"value": "SHIP"}],
+                    "accelerator_experiments": [],
+                },
                 headers=_get_headers_for_hep_root_table_request(),
                 status_code=200,
             )
