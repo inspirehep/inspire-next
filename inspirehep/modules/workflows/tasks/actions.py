@@ -79,7 +79,6 @@ from inspirehep.modules.workflows.tasks.refextract import (
     extract_references_from_text_data,
 )
 from inspirehep.modules.refextract.matcher import match_references
-from inspirehep.modules.search import InstitutionsSearch
 from inspirehep.modules.workflows.utils import _get_headers_for_hep_root_table_request, create_error
 from inspirehep.modules.workflows.errors import BadGatewayError, MissingRecordControlNumber
 from inspirehep.modules.workflows.utils import (
@@ -953,28 +952,6 @@ def normalize_collaborations(obj, eng):
     return obj
 
 
-def _assign_institution(matched_affiliation):
-    query = Q("match", legacy_ICN=matched_affiliation["value"])
-    result = InstitutionsSearch().query(query).params(size=1).execute()
-    if result:
-        matched_affiliation["record"] = result.hits[0].to_dict()["self"]
-        return matched_affiliation
-
-
-def _assign_institution_reference_to_affiliations(author_affiliations, already_matched_affiliations_refs):
-    for affiliation in author_affiliations:
-        if "record" in affiliation:
-            continue
-        if affiliation['value'] in already_matched_affiliations_refs:
-            affiliation['record'] = already_matched_affiliations_refs[affiliation['value']]
-        else:
-            complete_affiliation = _assign_institution(
-                affiliation
-            )
-            if complete_affiliation:
-                already_matched_affiliations_refs[complete_affiliation['value']] = complete_affiliation['record']
-
-
 @backoff.on_exception(backoff.expo, (BadGatewayError, requests.exceptions.ConnectionError), base=4, max_tries=5)
 def normalize_author_affiliations(obj, eng):
     normalized_affiliation_response = requests.get(
@@ -1018,11 +995,22 @@ def normalize_author_affiliations(obj, eng):
 
 
 def link_institutions_with_affiliations(obj, eng):
-    affiliations = {}
-    for author in obj.data.get("authors", []):
-        author_affiliations = author.get("affiliations", [])
-        if author_affiliations:
-            _assign_institution_reference_to_affiliations(author_affiliations, affiliations)
+    if not obj.data.get('authors'):
+        LOGGER.info('wf {}: No authors found, skipping institution linking'.format(obj.id))
+    else:
+        authors_with_linked_institutions_response = requests.get(
+            "{inspirehep_url}/curation/literature/assign-institutions".format(
+                inspirehep_url=current_app.config["INSPIREHEP_URL"]
+            ),
+            headers=_get_headers_for_hep_root_table_request(),
+            data=json.dumps({
+                "authors": obj.data['authors']
+            }),
+        )
+        authors_with_linked_institutions_response.raise_for_status()
+        authors_with_linked_institutions_response.raise_for_status()
+        authors = authors_with_linked_institutions_response.json()['authors']
+        obj.data['authors'] = authors
 
     return obj
 
