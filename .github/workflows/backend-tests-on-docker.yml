@@ -1,14 +1,11 @@
 name: Build on docker
 
 on:
-  push:
-    branches:
-      - master
-    tags:
-      - "*"
-  pull_request:
-    branches:
-      - master
+  workflow_call:
+    outputs:
+      tag:
+        description: The id of the image that has been buit
+        value: ${{ jobs.Release.outputs.tag }}
 
 jobs:
   Build:
@@ -181,15 +178,18 @@ jobs:
     if: github.event_name == 'push'
     needs: [Unit, Integration-async, Integration, Workflows-I, Workflows-II]
     runs-on: ubuntu-latest
+    outputs:
+      tag: ${{ steps.deploy-docker-images.outputs.tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
       - name: deploy docker images
+        id: deploy-docker-images
         shell: bash
         env:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           INSPIRE_BOT_TOKEN: ${{ secrets.INSPIRE_BOT_TOKEN }}
-        run: sh deploy-docker-image.sh
+        run: sh deploy-docker-image.sh && echo "::set-output name=tag::${TAG}"
