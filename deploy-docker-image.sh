@@ -2,6 +2,8 @@
 RELEASE_TAG="$(git tag --points-at HEAD)"
 TAG="${RELEASE_TAG:-$(git describe --always --tags)}"
 
+export TAG
+
 retry() {
     "${@}" || "${@}" || exit 2
 }
