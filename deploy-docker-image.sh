@@ -1,5 +1,5 @@
 #!/bin/bash -e
-RELEASE_TAG=$1
+RELEASE=$1
 TAG=$2
 
 export TAG
@@ -58,7 +58,7 @@ main() {
   buildPush "inspirehep/next-assets" Dockerfile
   buildPush "inspirehep/next-scrapyd" Dockerfile.scrapyd
   logout
-  if [ -z "${RELEASE_TAG}" ]; then
+  if [ -z "${RELEASE}" ]; then
     deploy "inspire-qa" "inspirehep/next"
     deploy "inspire-qa" "inspirehep/next-assets"
     deploy "inspire-qa" "inspirehep/next-scrapyd"
