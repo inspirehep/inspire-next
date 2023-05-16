@@ -179,12 +179,17 @@ jobs:
     needs: [Unit, Integration-async, Integration, Workflows-I, Workflows-II]
     runs-on: ubuntu-latest
     outputs:
-      tag: ${{ steps.deploy-docker-images.outputs.tag }}
+      tag: ${{ env.TAG }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      - name: set tag environment
+        shell: bash
+        run: |
+          echo "TAG=$(git tag --points-at HEAD)" >> $GITHUB_ENV
+          echo "RELEASE=$(git describe --always --tags)" >> $GITHUB_ENV
       - name: deploy docker images
         id: deploy-docker-images
         shell: bash
@@ -192,4 +197,4 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           INSPIRE_BOT_TOKEN: ${{ secrets.INSPIRE_BOT_TOKEN }}
-        run: sh deploy-docker-image.sh && echo "::set-output name=tag::${TAG}"
+        run: sh deploy-docker-image.sh $RELEASE_TAG $TAG
