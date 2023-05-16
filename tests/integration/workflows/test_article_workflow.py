@@ -26,7 +26,6 @@ import os
 
 import mock
 import pkg_resources
-from inspirehep.modules.workflows.utils import _get_headers_for_hep_root_table_request
 import requests_mock
 from invenio_search import current_search
 from invenio_workflows import ObjectStatus, start, workflow_object_class
@@ -37,6 +36,8 @@ from workflow_utils import build_workflow, check_wf_state
 from inspirehep.modules.workflows.tasks.actions import mark
 from inspirehep.modules.workflows.tasks.matching import \
     set_wf_not_completed_ids_to_wf
+from inspirehep.modules.workflows.utils import \
+    _get_headers_for_hep_root_table_request
 
 PUBLISHING_RECORD = {
     "$schema": "https://labs.inspirehep.net/schemas/records/hep.json",
@@ -94,13 +95,13 @@ def test_create_ticket_when_source_is_publishing(
     workflow_id = build_workflow(PUBLISHING_RECORD).id
     start("article", object_id=workflow_id)
     wf = workflow_object_class.get(workflow_id)
-    ticket_publishing_content = u"content=Queue%3A+HEP_publishing"
+    ticket_publishing_content = "content=Queue%3A+HEP_publishing"
     wf.continue_workflow()
 
-    assert ticket_publishing_content in mocked_external_services.request_history[2].text
+    assert ticket_publishing_content in mocked_external_services.request_history[4].text
     assert wf.extra_data["curation_ticket_id"]
     assert (
-        mocked_external_services.request_history[2].url
+        mocked_external_services.request_history[4].url
         == "http://rt.inspire/ticket/new"
     )
 
@@ -128,13 +129,13 @@ def test_create_ticket_when_source_is_not_publishing(
     workflow_id = build_workflow(CURATION_RECORD).id
     start("article", object_id=workflow_id)
     wf = workflow_object_class.get(workflow_id)
-    ticket_curation_content = u"content=Queue%3A+HEP_curation"
+    ticket_curation_content = "content=Queue%3A+HEP_curation"
     wf.continue_workflow()
 
-    assert ticket_curation_content in mocked_external_services.request_history[2].text
+    assert ticket_curation_content in mocked_external_services.request_history[4].text
     assert wf.extra_data["curation_ticket_id"]
     assert (
-        mocked_external_services.request_history[2].url
+        mocked_external_services.request_history[4].url
         == "http://rt.inspire/ticket/new"
     )
 
@@ -156,26 +157,59 @@ def test_set_fermilab_collection_from_report_number(
     mocked_api_request_magpie,
     mocked_api_request_classifier,
     mocked_robotupload,
+    mocked_external_services,
     workflow_app,
 ):
-    record = {
-        "$schema": "https://labs.inspirehep.net/schemas/records/hep.json",
-        "titles": [
-            {"title": "Update without conflicts title."},
-        ],
-        "document_type": ["article"],
-        "_collections": ["Literature"],
-        "report_numbers": [
-            {"value": "FERMILAB-SOMETHING-11"},
-        ],
-    }
-    expected_collections = ["Literature", "Fermilab"]
-    workflow = build_workflow(record)
-    start("article", object_id=workflow.id)
-    wf = workflow_object_class.get(workflow.id)
-    mark("approved", True)(workflow, None)
-    wf.continue_workflow()
-    assert workflow.data["_collections"] == expected_collections
+    with requests_mock.Mocker() as mock:
+        mock.register_uri(
+            "GET",
+            "http://web:8000/curation/literature/affiliations-normalization",
+            json={
+                "normalized_affiliations": [
+                    [],
+                    [],
+                ],
+                "ambiguous_affiliations": [],
+            },
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        mock.register_uri(
+            "GET",
+            "{inspirehep_url}/matcher/exact-match".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={"matched_ids": []},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        mock.register_uri(
+            "GET",
+            "{inspirehep_url}/matcher/fuzzy-match".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={"matched_data": {}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        record = {
+            "$schema": "https://labs.inspirehep.net/schemas/records/hep.json",
+            "titles": [
+                {"title": "Update without conflicts title."},
+            ],
+            "document_type": ["article"],
+            "_collections": ["Literature"],
+            "report_numbers": [
+                {"value": "FERMILAB-SOMETHING-11"},
+            ],
+        }
+        expected_collections = ["Literature", "Fermilab"]
+        workflow = build_workflow(record)
+        start("article", object_id=workflow.id)
+        wf = workflow_object_class.get(workflow.id)
+        mark("approved", True)(workflow, None)
+        wf.continue_workflow()
+        assert workflow.data["_collections"] == expected_collections
 
 
 @mock.patch(
@@ -191,6 +225,7 @@ def test_set_fermilab_collection_not_added_when_no_report_number_from_fermilab(
     mocked_api_request_magpie,
     mocked_api_request_classifier,
     mocked_robotupload,
+    mocked_external_services,
     workflow_app,
 ):
     record = {
@@ -226,6 +261,7 @@ def test_set_fermilab_collection_even_when_record_is_hidden_and_affiliations_are
     mocked_api_request_magpie,
     mocked_api_request_classifier,
     mocked_robotupload,
+    mocked_external_services,
     workflow_app,
 ):
     record = {
@@ -250,25 +286,40 @@ def test_set_fermilab_collection_even_when_record_is_hidden_and_affiliations_are
         ],
     }
     expected_collections = ["CDS Hidden", "Fermilab"]
-    with requests_mock.Mocker() as requests_mocker:
-        requests_mocker.register_uri(
-            "GET",
-            "{inspirehep_url}/curation/literature/assign-institutions".format(
-                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
-            ),
-            json={
-                "authors": record['authors']
-            },
-            headers=_get_headers_for_hep_root_table_request(),
-            status_code=200,
-        )
+    mocked_external_services.register_uri(
+        "GET",
+        "{inspirehep_url}/curation/literature/assign-institutions".format(
+            inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+        ),
+        json={"authors": record["authors"]},
+        headers=_get_headers_for_hep_root_table_request(),
+        status_code=200,
+    )
+    mocked_external_services.register_uri(
+        "GET",
+        "{inspirehep_url}/matcher/exact-match".format(
+            inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+        ),
+        json={"matched_ids": []},
+        headers=_get_headers_for_hep_root_table_request(),
+        status_code=200,
+    )
+    mocked_external_services.register_uri(
+        "GET",
+        "{inspirehep_url}/matcher/fuzzy-match".format(
+            inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+        ),
+        json={"matched_data": {}},
+        headers=_get_headers_for_hep_root_table_request(),
+        status_code=200,
+    )
 
-        workflow = build_workflow(record)
-        start("article", object_id=workflow.id)
-        wf = workflow_object_class.get(workflow.id)
-        mark("approved", False)(workflow, None)
-        wf.continue_workflow()
-        assert workflow.data["_collections"] == expected_collections
+    workflow = build_workflow(record)
+    start("article", object_id=workflow.id)
+    wf = workflow_object_class.get(workflow.id)
+    mark("approved", False)(workflow, None)
+    wf.continue_workflow()
+    assert workflow.data["_collections"] == expected_collections
 
 
 @mock.patch(
@@ -291,6 +342,7 @@ def test_keywords_are_stored_in_record_when_record_is_core(
     mocked_robotupload,
     mocked_create_ticket,
     mocked_store_record,
+    mocked_external_services,
     workflow_app,
 ):
     record = {
@@ -322,38 +374,15 @@ def test_keywords_are_stored_in_record_when_record_is_core(
     }
 
     expected_keywords = [
-        {u"value": u"Higgs particle", u"schema": u"INSPIRE", u"source": u"classifier"}
+        {"value": "Higgs particle", "schema": "INSPIRE", "source": "classifier"}
     ]
-    with requests_mock.Mocker() as mock:
-        mock.register_uri(
-            "GET",
-            "http://web:8000/curation/literature/affiliations-normalization",
-            json={
-                "normalized_affiliations": [
-                    [],
-                    [],
-                ],
-                "ambiguous_affiliations": [],
-            },
-            headers=_get_headers_for_hep_root_table_request(),
-            status_code=200,
-        )
-        mock.register_uri(
-            "GET",
-            "http://web:8000/curation/literature/assign-institutions",
-            json={
-                "authors": [{'full_name': 'test author'}]
-            },
-            headers=_get_headers_for_hep_root_table_request(),
-            status_code=200,
-        )
-        workflow = build_workflow(record)
-        start("article", object_id=workflow.id)
-        wf = workflow_object_class.get(workflow.id)
-        mark("approved", True)(workflow, None)
-        mark("core", True)(workflow, None)
-        wf.continue_workflow()
-        assert wf.data["keywords"] == expected_keywords
+    workflow = build_workflow(record)
+    start("article", object_id=workflow.id)
+    wf = workflow_object_class.get(workflow.id)
+    mark("approved", True)(workflow, None)
+    mark("core", True)(workflow, None)
+    wf.continue_workflow()
+    assert wf.data["keywords"] == expected_keywords
 
 
 @mock.patch(
@@ -403,28 +432,45 @@ def test_run_next_wf_is_not_starting_core_selection_wfs(
     }
 
     workflow = build_workflow(record, extra_data={"delay": 10})
-    with requests_mock.Mocker() as requests_mocker:
-        requests_mocker.register_uri(
-            "GET",
-            "http://export.arxiv.org/pdf/1802.08709.pdf",
-            content=pkg_resources.resource_string(
-                __name__, os.path.join("fixtures", "1802.08709.pdf")
-            ),
-        )
-        requests_mocker.register_uri(
-            "GET", "http://arxiv.org/pdf/1802.08709.pdf", text=""
-        )
-        requests_mocker.register_uri(
-            "GET",
-            "http://export.arxiv.org/e-print/1802.08709.pdf",
-            content=pkg_resources.resource_string(
-                __name__, os.path.join("fixtures", "1802.08709.pdf")
-            ),
-        )
-        requests_mocker.register_uri(
-            "POST", "http://grobid_url.local/api/processHeaderDocument"
-        )
-        start("article", object_id=workflow.id)
+    mocked_external_services.register_uri(
+        "GET",
+        "http://export.arxiv.org/pdf/1802.08709.pdf",
+        content=pkg_resources.resource_string(
+            __name__, os.path.join("fixtures", "1802.08709.pdf")
+        ),
+    )
+    mocked_external_services.register_uri(
+        "GET", "http://arxiv.org/pdf/1802.08709.pdf", text=""
+    )
+    mocked_external_services.register_uri(
+        "GET",
+        "http://export.arxiv.org/e-print/1802.08709.pdf",
+        content=pkg_resources.resource_string(
+            __name__, os.path.join("fixtures", "1802.08709.pdf")
+        ),
+    )
+    mocked_external_services.register_uri(
+        "POST", "http://grobid_url.local/api/processHeaderDocument"
+    )
+    mocked_external_services.register_uri(
+        "GET",
+        "{inspirehep_url}/matcher/exact-match".format(
+            inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+        ),
+        json={"matched_ids": []},
+        headers=_get_headers_for_hep_root_table_request(),
+        status_code=200,
+    )
+    mocked_external_services.register_uri(
+        "GET",
+        "{inspirehep_url}/matcher/fuzzy-match".format(
+            inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+        ),
+        json={"matched_data": {}},
+        headers=_get_headers_for_hep_root_table_request(),
+        status_code=200,
+    )
+    start("article", object_id=workflow.id)
 
     wf = workflow_object_class.get(workflow.id)
     mark("auto-approved", True)(workflow, None)
@@ -433,28 +479,28 @@ def test_run_next_wf_is_not_starting_core_selection_wfs(
     check_wf_state(wf.id, ObjectStatus.COMPLETED)
 
     workflow = build_workflow(record)
-    with requests_mock.Mocker() as requests_mocker:
-        requests_mocker.register_uri(
-            "GET",
-            "http://export.arxiv.org/pdf/1802.08709.pdf",
-            content=pkg_resources.resource_string(
-                __name__, os.path.join("fixtures", "1802.08709.pdf")
-            ),
-        )
-        requests_mocker.register_uri(
-            "GET", "http://arxiv.org/pdf/1802.08709.pdf", text=""
-        )
-        requests_mocker.register_uri(
-            "GET",
-            "http://export.arxiv.org/e-print/1802.08709.pdf",
-            content=pkg_resources.resource_string(
-                __name__, os.path.join("fixtures", "1802.08709.pdf")
-            ),
-        )
-        requests_mocker.register_uri(
-            "POST", "http://grobid_url.local/api/processHeaderDocument"
-        )
-        current_search.flush_and_refresh("holdingpen-hep")
-        start("article", object_id=workflow.id)
+
+    mocked_external_services.register_uri(
+        "GET",
+        "http://export.arxiv.org/pdf/1802.08709.pdf",
+        content=pkg_resources.resource_string(
+            __name__, os.path.join("fixtures", "1802.08709.pdf")
+        ),
+    )
+    mocked_external_services.register_uri(
+        "GET", "http://arxiv.org/pdf/1802.08709.pdf", text=""
+    )
+    mocked_external_services.register_uri(
+        "GET",
+        "http://export.arxiv.org/e-print/1802.08709.pdf",
+        content=pkg_resources.resource_string(
+            __name__, os.path.join("fixtures", "1802.08709.pdf")
+        ),
+    )
+    mocked_external_services.register_uri(
+        "POST", "http://grobid_url.local/api/processHeaderDocument"
+    )
+    current_search.flush_and_refresh("holdingpen-hep")
+    start("article", object_id=workflow.id)
     matched = set_wf_not_completed_ids_to_wf(workflow)
     assert matched == []

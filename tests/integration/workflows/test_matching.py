@@ -25,8 +25,7 @@ from __future__ import absolute_import, division, print_function
 from copy import deepcopy
 
 import pytest
-from factories.db.invenio_records import TestRecordMetadata
-from inspire_utils.record import get_value
+import requests_mock
 from invenio_search import current_search
 from invenio_workflows import (ObjectStatus, WorkflowEngine, start,
                                workflow_object_class)
@@ -35,9 +34,11 @@ from mocks import fake_classifier_api_request, fake_magpie_api_request
 from workflow_utils import build_workflow
 
 from inspirehep.modules.workflows.tasks.matching import (
-    fuzzy_match, has_same_source, match_non_completed_wf_in_holdingpen,
-    match_previously_rejected_wf_in_holdingpen,
-    handle_matched_holdingpen_wfs)
+    exact_match, fuzzy_match, handle_matched_holdingpen_wfs, has_same_source,
+    match_non_completed_wf_in_holdingpen,
+    match_previously_rejected_wf_in_holdingpen)
+from inspirehep.modules.workflows.utils import \
+    _get_headers_for_hep_root_table_request
 
 
 @pytest.fixture
@@ -144,7 +145,11 @@ def test_has_same_source(app, simple_record):
     side_effect=fake_magpie_api_request,
 )
 def test_stop_matched_holdingpen_wfs(
-    mocked_api_request_magpie, mocked_classifer_api, app, simple_record
+    mocked_api_request_magpie,
+    mocked_classifer_api,
+    app,
+    mocked_external_services,
+    simple_record,
 ):
     # need to run a wf in order to assign to it the wf definition and a uuid
     # for it
@@ -180,7 +185,11 @@ def test_stop_matched_holdingpen_wfs(
     side_effect=fake_magpie_api_request,
 )
 def test_handle_matched_holdingpen_wfs(
-    mocked_api_request_magpie, mocked_classifer_api, app, simple_record
+    mocked_api_request_magpie,
+    mocked_classifer_api,
+    mocked_external_services,
+    app,
+    simple_record,
 ):
     # need to run a wf in order to assign to it the wf definition and a uuid
     # for it
@@ -194,7 +203,7 @@ def test_handle_matched_holdingpen_wfs(
     obj_id = obj.id
     current_search.flush_and_refresh("holdingpen-hep")
 
-    simple_record['workflow_data']['acquisition_source']['source'] = 'elsevier'
+    simple_record["workflow_data"]["acquisition_source"]["source"] = "elsevier"
     obj2 = build_workflow(**simple_record)
     match_non_completed_wf_in_holdingpen(obj2, None)
 
@@ -206,7 +215,9 @@ def test_handle_matched_holdingpen_wfs(
     # matched wf with different source is not stopped
     assert matched_wf_with_different_source.status == ObjectStatus.HALTED
     assert not matched_wf_with_different_source.extra_data.get("stopped-by-wf")
-    assert matched_wf_with_different_source.extra_data.get('halted-by-match-with-different-source')
+    assert matched_wf_with_different_source.extra_data.get(
+        "halted-by-match-with-different-source"
+    )
 
 
 @patch(
@@ -218,7 +229,11 @@ def test_handle_matched_holdingpen_wfs(
     side_effect=fake_magpie_api_request,
 )
 def test_handle_matched_holdingpen_wfs_with_same_source(
-    mocked_api_request_magpie, mocked_classifer_api, app, simple_record
+    mocked_api_request_magpie,
+    mocked_classifer_api,
+    mocked_external_services,
+    app,
+    simple_record,
 ):
     # need to run a wf in order to assign to it the wf definition and a uuid
     # for it
@@ -245,172 +260,78 @@ def test_handle_matched_holdingpen_wfs_with_same_source(
     assert matched_wf_with_same_source.extra_data.get("stopped-by-wf")
 
 
-def test_fuzzy_match_without_math_ml_and_latex(workflow_app):
-    correct_match = {
-        "$schema": "https://inspirehep.net/schemas/records/hep.json",
-        "_collections": ["Literature"],
-        "titles": [
-            {
-                "title": "Search for the limits on anomalous neutral triple gauge couplings via ZZ production in the $\\ell\\ell\\nu\\nu$ channel at FCC-hh",
-            }
-        ],
-        "authors": [
-            {"full_name": "Yilmaz, Ali"},
-        ],
-        "document_type": ["article"],
-        "abstracts": [
-            {
-                "value": "This paper presents the projections on the anomalous neutral triple gauge couplings via production in the 2ℓ2ν final state at a 100 TeV proton-proton collider, FCC-hh. The realistic FCC-hh detector environments and its effects taken into account in the analysis. The study is carried out in the mode where one Z boson decays into a pair of same-flavor, opposite-sign leptons (electrons or muons) and the other one decays to the two neutrinos. The new bounds on the charge-parity (CP)-conserving couplings and CP-violating couplings and achieved at 95% Confidence Level (C.L.) using the transverse momentum of the dilepton system, respectively.",
-                "source": "Elsevier B.V.",
-            }
-        ],
-    }
-
-    record_match_1 = TestRecordMetadata.create_from_kwargs(
-        json=correct_match, index_name="records-hep"
-    )
-    record_1 = record_match_1.record_metadata
-
-    incorrect_match = {
-        "$schema": "https://inspirehep.net/schemas/records/hep.json",
-        "_collections": ["Literature"],
-        "titles": [
-            {
-                "title": "Search for the limits on anomalous neutral triple gauge couplings via ZZ production in the $\\ell\\ell\\nu\\nu$ channel at FCC-hh",
-            },
-        ],
-        "authors": [
-            {"full_name": "Yilmaz, Ali"},
-        ],
-        "document_type": ["article"],
-        "abstracts": [
-            {
-                "value": 'Wrong content (<math altimg="si1.svg"><mi>a</mi><mi>N</mi><mi>T</mi><mi>G</mi><mi>C</mi></math>) via <math altimg="si2.svg"><mi>p</mi><mi>p</mi><mo stretchy="false">→</mo><mi>Z</mi><mi>Z</mi></math> production in the 2ℓ2ν final state at a 100 TeV proton-proton collider, FCC-hh. The realistic FCC-hh detector environments and its effects taken into account in the analysis. osite-sign leptons (electrons or muons) and the other one very very incorrect decayn the charge-parity (CP)-conserving couplings <math altimg="si3.svg"><msub><mrow><mi>C</mi></mrow><mrow><mover accent="true"><mrow><mi>B</mi></mrow><mrow><mo>˜</mo></mrow></mover><mi>W</mi></mrow></msub><mo stretchy="false">/</mo><msup><mrow><mi mathvariant="normal">Λ</mi></mrow><mrow><mn>4</mn></mrow></msup></math> and CP-violating couplings <math altimg="si4.svg"><msub><mrow><mi>C</mi></mrow><mrow><mi>W</mi><mi>W</mi></mrow></msub><mo stretchy="false">/</mo><msup><mrow><mi mathvariant="normal">Λ</mi></mrow><mrow><mn>4</mn></mrow></msup></math>, <math altimg="si5.svg"><msub><mrow><mi>C</mi></mrow><mrow><mi>B</mi><mi>W</mi></mrow></msub><mo stretchy="false">/</mo><msup><mrow><mi mathvariant="normal">Λ</mi></mrow><mrow><mn>4</mn></mrow></msup></math> and <math altimg="si6.svg"><msub><mrow><mi>C</mi></mrow><mrow><mi>B</mi><mi>B</mi></mrow></msub><mo stretchy="false">/</mo><msup><mrow><mi mathvariant="normal">Λ</mi></mrow><mrow><mn>4</mn></mrow></msup></math> achievedfakey fakesystem (<math altimg="si7.svg"><msubsup><mrow><mi>p</mi></mrow><mrow><mi>T</mi></mrow><mrow><mi>ℓ</mi><mi>ℓ</mi></mrow></msubsup></math>) are <math altimg="si8.svg"><mo stretchy="false">[</mo><mo linebreak="badbreak" linebreakstyle="after">−</mo><mspace width="0.2em"/><mn>0.042</mn><mo>,</mo><mspace width="0.2em"/><mspace width="0.2em"/><mo linebreak="badbreak" linebreakstyle="after">+</mo><mspace width="0.2em"/><mn>0.042</mn><mo stretchy="false">]</mo></math>, <math altimg="si9.svg"><mo stretchy="false">[</mo><mo linebreak="badbreak" linebreakstyle="after">−</mo><mspace width="0.2em"/><mn>0.049</mn><mo>,</mo><mspace width="0.2em"/><mspace width="0.2em"/><mo linebreak="badbreak" linebreakstyle="after">+</mo><mspace width="0.2em"/><mn>0.049</mn><mo stretchy="false">]</mo></math>, <math altimg="si10.svg"><mo stretchy="false">[</mo><mo linebreak="badbreak" linebreakstyle="after">−</mo><mspace width="0.2em"/><mn>0.048</mn><mo>,</mo><mspace width="0.2em"/><mspace width="0.2em"/><mo linebreak="badbreak" linebreakstyle="after">+</mo><mspace width="0.2em"/><mn>0.048</mn><mo stretchy="false">]</mo></math>, and <math altimg="si11.svg"><mo stretchy="false">[</mo><mo linebreak="badbreak" linebreakstyle="after">−</mo><mspace width="0.2em"/><mn>0.047</mn><mo>,</mo><mspace width="0.2em"/><mspace width="0.2em"/><mo linebreak="badbreak" linebreakstyle="after">+</mo><mspace width="0.2em"/><mn>0.047</mn><mo stretchy="false">]</mo></math> in units of TeV<sup loc="post">−4</sup>, respectively.',
-                "source": "Elsevier B.V.",
-            }
-        ],
-    }
-
-    record_match_2 = TestRecordMetadata.create_from_kwargs(
-        json=incorrect_match, index_name="records-hep"
-    )
-    record_match_2.record_metadata
-
+def test_exact_match(workflow_app):
     record = {
         "_collections": ["Literature"],
+        "abstracts": [{"value": "An abstract", "source": "Springer"}],
         "titles": [
-            {
-                "title": "Search for the limits on anomalous neutral triple gauge couplings via ZZ production in the $\\ell\\ell\\nu\\nu$ channel at FCC-hh",
-            },
-        ],
-        "authors": [
-            {"full_name": "Yilmaz, Ali"},
+            {"title": "A title"},
         ],
         "document_type": ["article"],
-        "abstracts": [
-            {
-                "value": 'This paper presents the projections on the anomalous neutral triple gauge couplings (<math altimg="si1.svg"><mi>a</mi><mi>N</mi><mi>T</mi><mi>G</mi><mi>C</mi></math>) via <math altimg="si2.svg"><mi>p</mi><mi>p</mi><mo stretchy="false">→</mo><mi>Z</mi><mi>Z</mi></math> production in the 2ℓ2ν final state at a 100 TeV proton-proton collider, FCC-hh. The realistic FCC-hh detector environments and its effects taken into account in the analysis. The study is carried out in the mode where one Z boson decays into a pair of same-flavor, opposite-sign leptons (electrons or muons) and the other one decays to the two neutrinos. The new bounds on the charge-parity (CP)-conserving couplings <math altimg="si3.svg"><msub><mrow><mi>C</mi></mrow><mrow><mover accent="true"><mrow><mi>B</mi></mrow><mrow><mo>˜</mo></mrow></mover><mi>W</mi></mrow></msub><mo stretchy="false">/</mo><msup><mrow><mi mathvariant="normal">Λ</mi></mrow><mrow><mn>4</mn></mrow></msup></math> and CP-violating couplings <math altimg="si4.svg"><msub><mrow><mi>C</mi></mrow><mrow><mi>W</mi><mi>W</mi></mrow></msub><mo stretchy="false">/</mo><msup><mrow><mi mathvariant="normal">Λ</mi></mrow><mrow><mn>4</mn></mrow></msup></math>, <math altimg="si5.svg"><msub><mrow><mi>C</mi></mrow><mrow><mi>B</mi><mi>W</mi></mrow></msub><mo stretchy="false">/</mo><msup><mrow><mi mathvariant="normal">Λ</mi></mrow><mrow><mn>4</mn></mrow></msup></math> and <math altimg="si6.svg"><msub><mrow><mi>C</mi></mrow><mrow><mi>B</mi><mi>B</mi></mrow></msub><mo stretchy="false">/</mo><msup><mrow><mi mathvariant="normal">Λ</mi></mrow><mrow><mn>4</mn></mrow></msup></math> achieved at 95% Confidence Level (C.L.) using the transverse momentum of the dilepton system (<math altimg="si7.svg"><msubsup><mrow><mi>p</mi></mrow><mrow><mi>T</mi></mrow><mrow><mi>ℓ</mi><mi>ℓ</mi></mrow></msubsup></math>) are <math altimg="si8.svg"><mo stretchy="false">[</mo><mo linebreak="badbreak" linebreakstyle="after">−</mo><mspace width="0.2em"/><mn>0.042</mn><mo>,</mo><mspace width="0.2em"/><mspace width="0.2em"/><mo linebreak="badbreak" linebreakstyle="after">+</mo><mspace width="0.2em"/><mn>0.042</mn><mo stretchy="false">]</mo></math>, <math altimg="si9.svg"><mo stretchy="false">[</mo><mo linebreak="badbreak" linebreakstyle="after">−</mo><mspace width="0.2em"/><mn>0.049</mn><mo>,</mo><mspace width="0.2em"/><mspace width="0.2em"/><mo linebreak="badbreak" linebreakstyle="after">+</mo><mspace width="0.2em"/><mn>0.049</mn><mo stretchy="false">]</mo></math>, <math altimg="si10.svg"><mo stretchy="false">[</mo><mo linebreak="badbreak" linebreakstyle="after">−</mo><mspace width="0.2em"/><mn>0.048</mn><mo>,</mo><mspace width="0.2em"/><mspace width="0.2em"/><mo linebreak="badbreak" linebreakstyle="after">+</mo><mspace width="0.2em"/><mn>0.048</mn><mo stretchy="false">]</mo></math>, and <math altimg="si11.svg"><mo stretchy="false">[</mo><mo linebreak="badbreak" linebreakstyle="after">−</mo><mspace width="0.2em"/><mn>0.047</mn><mo>,</mo><mspace width="0.2em"/><mspace width="0.2em"/><mo linebreak="badbreak" linebreakstyle="after">+</mo><mspace width="0.2em"/><mn>0.047</mn><mo stretchy="false">]</mo></math> in units of TeV<sup loc="post">−4</sup>, respectively.',
-                "source": "Elsevier B.V.",
-            }
-        ],
     }
+    with requests_mock.Mocker() as request_mocker:
+        request_mocker.register_uri(
+            "GET",
+            "http://web:8000/matcher/exact-match",
+            json={"matched_ids": [1, 2, 3]},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        workflow_object = workflow_object_class.create(
+            data=record, id_user=None, data_type="hep"
+        )
+        match = exact_match(workflow_object, None)
+        assert workflow_object.extra_data["matches"]["exact"] == [1, 2, 3]
+        assert match
 
-    obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
-    eng = object()
 
-    original_abstract = obj.data["abstracts"][0]["value"]
-    assert fuzzy_match(obj, eng)
-    assert "matches" in obj.extra_data
-
-    matches = get_value(obj.extra_data, "matches.fuzzy")
-
-    # assert the result with correct abstract comes as a first result
-    assert matches[0]["control_number"] == record_1.json["control_number"]
-    assert obj.data["abstracts"][0]["value"] == original_abstract
-
-
-def test_matching(workflow_app):
-    correct_match = {
-        "$schema": "https://inspirehep.net/schemas/records/hep.json",
-        "_collections": ["Literature"],
-        "titles": [
-            {
-                "title": "Search for the limits on anomalous neutral triple gauge couplings via ZZ production in the $\\ell\\ell\\nu\\nu$ channel at FCC-hh",
-            }
-        ],
-        "authors": [
-            {"full_name": "Yilmaz, Ali"},
-        ],
-        "document_type": ["article"],
-        "abstracts": [
-            {
-                "value": "This paper presents the projections on the anomalous neutral triple gauge couplings via production in the 2ℓ2ν final state at a 100 TeV proton-proton collider, FCC-hh. The realistic FCC-hh detector environments and its effects taken into account in the analysis. The study is carried out in the mode where one Z boson decays into a pair of same-flavor, opposite-sign leptons (electrons or muons) and the other one decays to the two neutrinos. The new bounds on the charge-parity (CP)-conserving couplings and CP-violating couplings and achieved at 95% Confidence Level (C.L.) using the transverse momentum of the dilepton system, respectively.",
-                "source": "Elsevier B.V.",
-            }
-        ],
-        "arxiv_eprints": [{"categories": ["hep-lat"], "value": "1205.1659"}],
-    }
-
-    record_match_1 = TestRecordMetadata.create_from_kwargs(
-        json=correct_match, index_name="records-hep"
-    )
-    record_1 = record_match_1.record_metadata
-
-    incorrect_match = {
-        "$schema": "https://inspirehep.net/schemas/records/hep.json",
-        "_collections": ["Literature"],
-        "titles": [
-            {
-                "title": "Search for the limits on anomalous neutral triple gauge couplings via ZZ production in the $\\ell\\ell\\nu\\nu$ channel at FCC-hh",
-            },
-        ],
-        "authors": [
-            {"full_name": "Yilmaz, Ali"},
-        ],
-        "document_type": ["article"],
-        "abstracts": [
-            {
-                "value": 'This paper presents the projections on the anomalous neutral triple gauge couplings (<math altimg="si1.svg"><mi>a</mi><mi>N</mi><mi>T</mi><mi>G</mi><mi>C</mi></math>) via <math altimg="si2.svg"><mi>p</mi><mi>p</mi><mo stretchy="false">→</mo><mi>Z</mi><mi>Z</mi></math> production in the 2ℓ2ν final state at a 100 TeV proton-proton collider, FCC-hh. The realistic FCC-hh detector environments and its effects taken into account in the analysis. The study is carried out in the mode where one Z boson decays into a pair of same-flavor, opposite-sign leptons (electrons or muons) and the other one decays to the two neutrinos. The new bounds on the charge-parity (CP)-conserving couplings <math altimg="si3.svg"><msub><mrow><mi>C</mi></mrow><mrow><mover accent="true"><mrow><mi>B</mi></mrow><mrow><mo>˜</mo></mrow></mover><mi>W</mi></mrow></msub><mo stretchy="false">/</mo><msup><mrow><mi mathvariant="normal">Λ</mi></mrow><mrow><mn>4</mn></mrow></msup></math> and CP-violating couplings <math altimg="si4.svg"><msub><mrow><mi>C</mi></mrow><mrow><mi>W</mi><mi>W</mi></mrow></msub><mo stretchy="false">/</mo><msup><mrow><mi mathvariant="normal">Λ</mi></mrow><mrow><mn>4</mn></mrow></msup></math>, <math altimg="si5.svg"><msub><mrow><mi>C</mi></mrow><mrow><mi>B</mi><mi>W</mi></mrow></msub><mo stretchy="false">/</mo><msup><mrow><mi mathvariant="normal">Λ</mi></mrow><mrow><mn>4</mn></mrow></msup></math> and <math altimg="si6.svg"><msub><mrow><mi>C</mi></mrow><mrow><mi>B</mi><mi>B</mi></mrow></msub><mo stretchy="false">/</mo><msup><mrow><mi mathvariant="normal">Λ</mi></mrow><mrow><mn>4</mn></mrow></msup></math> achieved at 95% Confidence Level (C.L.) using the transverse momentum of the dilepton system (<math altimg="si7.svg"><msubsup><mrow><mi>p</mi></mrow><mrow><mi>T</mi></mrow><mrow><mi>ℓ</mi><mi>ℓ</mi></mrow></msubsup></math>) are <math altimg="si8.svg"><mo stretchy="false">[</mo><mo linebreak="badbreak" linebreakstyle="after">−</mo><mspace width="0.2em"/><mn>0.042</mn><mo>,</mo><mspace width="0.2em"/><mspace width="0.2em"/><mo linebreak="badbreak" linebreakstyle="after">+</mo><mspace width="0.2em"/><mn>0.042</mn><mo stretchy="false">]</mo></math>, <math altimg="si9.svg"><mo stretchy="false">[</mo><mo linebreak="badbreak" linebreakstyle="after">−</mo><mspace width="0.2em"/><mn>0.049</mn><mo>,</mo><mspace width="0.2em"/><mspace width="0.2em"/><mo linebreak="badbreak" linebreakstyle="after">+</mo><mspace width="0.2em"/><mn>0.049</mn><mo stretchy="false">]</mo></math>, <math altimg="si10.svg"><mo stretchy="false">[</mo><mo linebreak="badbreak" linebreakstyle="after">−</mo><mspace width="0.2em"/><mn>0.048</mn><mo>,</mo><mspace width="0.2em"/><mspace width="0.2em"/><mo linebreak="badbreak" linebreakstyle="after">+</mo><mspace width="0.2em"/><mn>0.048</mn><mo stretchy="false">]</mo></math>, and <math altimg="si11.svg"><mo stretchy="false">[</mo><mo linebreak="badbreak" linebreakstyle="after">−</mo><mspace width="0.2em"/><mn>0.047</mn><mo>,</mo><mspace width="0.2em"/><mspace width="0.2em"/><mo linebreak="badbreak" linebreakstyle="after">+</mo><mspace width="0.2em"/><mn>0.047</mn><mo stretchy="false">]</mo></math> in units of TeV<sup loc="post">−4</sup>, respectively.',
-                "source": "Elsevier B.V.",
-            }
-        ],
-        "arxiv_eprints": [{"categories": ["hep-ph", "astro-ph.CO"], "value": "1811.12764"}],
-    }
-
-    record_match_2 = TestRecordMetadata.create_from_kwargs(
-        json=incorrect_match, index_name="records-hep"
-    )
-    record_match_2.record_metadata
-
+def test_fuzzy_match(workflow_app):
     record = {
         "_collections": ["Literature"],
+        "abstracts": [{"value": "An abstract", "source": "Springer"}],
         "titles": [
-            {
-                "title": "Search for the limits on anomalous neutral triple gauge couplings via ZZ production in the $\\ell\\ell\\nu\\nu$ channel at FCC-hh",
-            },
-        ],
-        "authors": [
-            {"full_name": "Yilmaz, Ali"},
+            {"title": "A title"},
         ],
         "document_type": ["article"],
-        "abstracts": [
-            {
-                "value": 'This paper presents the projections on the anomalous neutral triple gauge couplings (<math altimg="si1.svg"><mi>a</mi><mi>N</mi><mi>T</mi><mi>G</mi><mi>C</mi></math>) via <math altimg="si2.svg"><mi>p</mi><mi>p</mi><mo stretchy="false">→</mo><mi>Z</mi><mi>Z</mi></math> production in the 2ℓ2ν final state at a 100 TeV proton-proton collider, FCC-hh. The realistic FCC-hh detector environments and its effects taken into account in the analysis. The study is carried out in the mode where one Z boson decays into a pair of same-flavor, opposite-sign leptons (electrons or muons) and the other one decays to the two neutrinos. The new bounds on the charge-parity (CP)-conserving couplings <math altimg="si3.svg"><msub><mrow><mi>C</mi></mrow><mrow><mover accent="true"><mrow><mi>B</mi></mrow><mrow><mo>˜</mo></mrow></mover><mi>W</mi></mrow></msub><mo stretchy="false">/</mo><msup><mrow><mi mathvariant="normal">Λ</mi></mrow><mrow><mn>4</mn></mrow></msup></math> and CP-violating couplings <math altimg="si4.svg"><msub><mrow><mi>C</mi></mrow><mrow><mi>W</mi><mi>W</mi></mrow></msub><mo stretchy="false">/</mo><msup><mrow><mi mathvariant="normal">Λ</mi></mrow><mrow><mn>4</mn></mrow></msup></math>, <math altimg="si5.svg"><msub><mrow><mi>C</mi></mrow><mrow><mi>B</mi><mi>W</mi></mrow></msub><mo stretchy="false">/</mo><msup><mrow><mi mathvariant="normal">Λ</mi></mrow><mrow><mn>4</mn></mrow></msup></math> and <math altimg="si6.svg"><msub><mrow><mi>C</mi></mrow><mrow><mi>B</mi><mi>B</mi></mrow></msub><mo stretchy="false">/</mo><msup><mrow><mi mathvariant="normal">Λ</mi></mrow><mrow><mn>4</mn></mrow></msup></math> achieved at 95% Confidence Level (C.L.) using the transverse momentum of the dilepton system (<math altimg="si7.svg"><msubsup><mrow><mi>p</mi></mrow><mrow><mi>T</mi></mrow><mrow><mi>ℓ</mi><mi>ℓ</mi></mrow></msubsup></math>) are <math altimg="si8.svg"><mo stretchy="false">[</mo><mo linebreak="badbreak" linebreakstyle="after">−</mo><mspace width="0.2em"/><mn>0.042</mn><mo>,</mo><mspace width="0.2em"/><mspace width="0.2em"/><mo linebreak="badbreak" linebreakstyle="after">+</mo><mspace width="0.2em"/><mn>0.042</mn><mo stretchy="false">]</mo></math>, <math altimg="si9.svg"><mo stretchy="false">[</mo><mo linebreak="badbreak" linebreakstyle="after">−</mo><mspace width="0.2em"/><mn>0.049</mn><mo>,</mo><mspace width="0.2em"/><mspace width="0.2em"/><mo linebreak="badbreak" linebreakstyle="after">+</mo><mspace width="0.2em"/><mn>0.049</mn><mo stretchy="false">]</mo></math>, <math altimg="si10.svg"><mo stretchy="false">[</mo><mo linebreak="badbreak" linebreakstyle="after">−</mo><mspace width="0.2em"/><mn>0.048</mn><mo>,</mo><mspace width="0.2em"/><mspace width="0.2em"/><mo linebreak="badbreak" linebreakstyle="after">+</mo><mspace width="0.2em"/><mn>0.048</mn><mo stretchy="false">]</mo></math>, and <math altimg="si11.svg"><mo stretchy="false">[</mo><mo linebreak="badbreak" linebreakstyle="after">−</mo><mspace width="0.2em"/><mn>0.047</mn><mo>,</mo><mspace width="0.2em"/><mspace width="0.2em"/><mo linebreak="badbreak" linebreakstyle="after">+</mo><mspace width="0.2em"/><mn>0.047</mn><mo stretchy="false">]</mo></math> in units of TeV<sup loc="post">−4</sup>, respectively.',
-                "source": "Elsevier B.V.",
-            }
-        ],
-        "arxiv_eprints": [{"categories": ["hep-lat"], "value": "1205.1659"}],
     }
-
-    obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
-    eng = object()
-
-    original_abstract = obj.data["abstracts"][0]["value"]
-    assert fuzzy_match(obj, eng)
-    assert "matches" in obj.extra_data
-    matches = get_value(obj.extra_data, "matches.fuzzy")
-
-    # assert the result with correct abstract and not with the incorrect one
-    assert matches[0]["control_number"] == record_1.json["control_number"]
-    assert obj.data["abstracts"][0]["value"] == original_abstract
-    assert len(matches) == 1
+    with requests_mock.Mocker() as request_mocker:
+        request_mocker.register_uri(
+            "GET",
+            "http://web:8000/matcher/fuzzy-match",
+            json={
+                "matched_data": [
+                    {
+                        "abstract": "test",
+                        "title": "test",
+                        "number_of_pages": 12,
+                        "earliest_date": 1999,
+                        "authors": [{"full_name": "Jedrych, M."}],
+                    }
+                ]
+            },
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        request_mocker.register_uri(
+            "GET",
+            "{inspirehep_url}/matcher/exact-match".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={"matched_ids": []},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        workflow_object = workflow_object_class.create(
+            data=record, id_user=None, data_type="hep"
+        )
+        match = fuzzy_match(workflow_object, None)
+        assert workflow_object.extra_data["matches"]["fuzzy"] == [
+            {
+                "abstract": "test",
+                "title": "test",
+                "number_of_pages": 12,
+                "earliest_date": 1999,
+                "authors": [{"full_name": "Jedrych, M."}],
+            }
+        ]
+        assert match
