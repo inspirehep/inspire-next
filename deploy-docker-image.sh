@@ -1,6 +1,6 @@
 #!/bin/bash -e
-RELEASE_TAG="$(git tag --points-at HEAD)"
-TAG="${RELEASE_TAG:-$(git describe --always --tags)}"
+RELEASE_TAG=$1
+TAG=$2
 
 export TAG
 

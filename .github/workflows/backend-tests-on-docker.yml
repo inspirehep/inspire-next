@@ -178,8 +178,11 @@ jobs:
     if: github.event_name == 'push'
     needs: [Unit, Integration-async, Integration, Workflows-I, Workflows-II]
     runs-on: ubuntu-latest
+    env:
+      RELEASE_TAG: ${{ env.RELEASE_TAG || `$(git tag --points-at HEAD)` }}
+      TAG: ${{ env.TAG || `$(git describe --always --tags)` }}
     outputs:
-      tag: ${{ steps.deploy-docker-images.outputs.tag }}
+      tag: ${{ env.TAG }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -192,4 +195,4 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           INSPIRE_BOT_TOKEN: ${{ secrets.INSPIRE_BOT_TOKEN }}
-        run: sh deploy-docker-image.sh && && echo "${TAG}" && echo "::set-output name=tag::${TAG}"
+        run: sh deploy-docker-image.sh $RELEASE_TAG $TAG
