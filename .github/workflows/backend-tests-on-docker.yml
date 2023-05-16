@@ -179,17 +179,19 @@ jobs:
     needs: [Unit, Integration-async, Integration, Workflows-I, Workflows-II]
     runs-on: ubuntu-latest
     outputs:
-      tag: ${{ env.TAG }}
+      tag: ${{ steps.set-env.outputs.tag }}
     steps:
       - name: Checkout
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
       - name: set tag environment
+        id: set-env
         shell: bash
         run: |
           echo "RELEASE=$(git tag --points-at HEAD)" >> $GITHUB_ENV
           echo "TAG=${RELEASE:-$(git describe --always --tags)}" >> $GITHUB_ENV
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
       - name: deploy docker images
         id: deploy-docker-images
         shell: bash
