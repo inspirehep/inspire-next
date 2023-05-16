@@ -188,8 +188,8 @@ jobs:
       - name: set tag environment
         shell: bash
         run: |
-          echo "TAG=$(git tag --points-at HEAD)" >> $GITHUB_ENV
-          echo "RELEASE=$(git describe --always --tags)" >> $GITHUB_ENV
+          echo "RELEASE=$(git tag --points-at HEAD)" >> $GITHUB_ENV
+          echo "TAG=$RELEASE:-$(git describe --always --tags)" >> $GITHUB_ENV
       - name: deploy docker images
         id: deploy-docker-images
         shell: bash
