@@ -178,9 +178,6 @@ jobs:
     if: github.event_name == 'push'
     needs: [Unit, Integration-async, Integration, Workflows-I, Workflows-II]
     runs-on: ubuntu-latest
-    env:
-      RELEASE_TAG: ${{ env.RELEASE_TAG || `$(git tag --points-at HEAD)` }}
-      TAG: ${{ env.TAG || `$(git describe --always --tags)` }}
     outputs:
       tag: ${{ env.TAG }}
     steps:
@@ -188,6 +185,11 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 0
+      - name: set tag environment
+        shell: bash
+        run: |
+          echo "TAG=$(git tag --points-at HEAD)" >> $GITHUB_ENV
+          echo "RELEASE=$(git describe --always --tags)" >> $GITHUB_ENV
       - name: deploy docker images
         id: deploy-docker-images
         shell: bash
