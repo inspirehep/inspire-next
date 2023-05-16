@@ -199,4 +199,4 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           INSPIRE_BOT_TOKEN: ${{ secrets.INSPIRE_BOT_TOKEN }}
-        run: sh deploy-docker-image.sh $RELEASE $TAG
+        run: ./deploy-docker-image.sh $RELEASE $TAG
