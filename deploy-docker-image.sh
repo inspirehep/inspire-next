@@ -1,8 +1,6 @@
 #!/bin/bash -e
-RELEASE=$1
-TAG=$2
-
-export TAG
+TAG=$1
+RELEASE=$2
 
 retry() {
     "${@}" || "${@}" || exit 2
