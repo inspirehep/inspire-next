@@ -20,83 +20,105 @@ from invenio_workflows.models import WorkflowObjectModel
 from mocks import fake_classifier_api_request, fake_magpie_api_request
 from utils import override_config
 
+from inspirehep.modules.workflows.utils import \
+    _get_headers_for_hep_root_table_request
+
 
 def load_json_record(record_file):
-    return json.loads(pkg_resources.resource_string(
-        __name__,
-        os.path.join(
-            'fixtures',
-            record_file
-        )
-    ))
+    return json.loads(
+        pkg_resources.resource_string(__name__, os.path.join("fixtures", record_file))
+    )
 
 
-@mock.patch('inspirehep.modules.workflows.tasks.submission.send_robotupload')
-@mock.patch('inspirehep.modules.workflows.tasks.submission.submit_rt_ticket', return_value="1234")
+@mock.patch("inspirehep.modules.workflows.tasks.submission.send_robotupload")
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    "inspirehep.modules.workflows.tasks.submission.submit_rt_ticket",
+    return_value="1234",
+)
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
     side_effect=fake_classifier_api_request,
 )
 @mock.patch(
     "inspirehep.modules.workflows.tasks.magpie.json_api_request",
     side_effect=fake_magpie_api_request,
 )
-def test_core_selection_wf_starts_after_article_wf_when_no_core(mocked_api_request_magpie, mocked_api_request_classifier, mocked_rt, mocked_send_robotupload, workflow_app, mocked_external_services):
+def test_core_selection_wf_starts_after_article_wf_when_no_core(
+    mocked_api_request_magpie,
+    mocked_api_request_classifier,
+    mocked_rt,
+    mocked_send_robotupload,
+    workflow_app,
+    mocked_external_services,
+):
     pid_value = 123456
     mocked_url = "{inspirehep_url}/{endpoint}/{control_number}".format(
         inspirehep_url=current_app.config.get("INSPIREHEP_URL"),
-        endpoint='literature',
-        control_number=pid_value
+        endpoint="literature",
+        control_number=pid_value,
     )
     record = {
-        "_collections": [
-            "Literature"
-        ],
+        "_collections": ["Literature"],
         "titles": [
             {"title": "A title"},
         ],
-        "document_type": [
-            "report"
-        ],
-        "collaborations": [
-            {"value": "SHIP"}
-        ],
+        "document_type": ["report"],
+        "collaborations": [{"value": "SHIP"}],
         "control_number": pid_value,
     }
 
     workflow_object = workflow_object_class.create(
-        data=record,
-        id_user=None,
-        data_type='hep'
+        data=record, id_user=None, data_type="hep"
     )
-    workflow_object.extra_data['source_data'] = {"data": record, "extra_data": {"source_data": {"data": record}}}
+    workflow_object.extra_data["source_data"] = {
+        "data": record,
+        "extra_data": {"source_data": {"data": record}},
+    }
     workflow_object.save()
 
     with override_config(FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT=True):
         with requests_mock.Mocker() as mock:
-            mock.register_uri('GET', mocked_url, json=load_json_record('hep_record_no_core.json'))
+            mock.register_uri(
+                "GET", mocked_url, json=load_json_record("hep_record_no_core.json")
+            )
             # It's update so it should be PUT
             mock.register_uri(
-                'PUT',
-                "http://web:8000/literature/{control_number}".format(control_number=pid_value),
+                "PUT",
+                "http://web:8000/literature/{control_number}".format(
+                    control_number=pid_value
+                ),
                 json={
                     "metadata": {"control_number": pid_value},
-                    'uuid': "4915b428-618e-40f9-a289-b01e11a2cb87",
-                    'revision_id': 3
-                }
+                    "uuid": "4915b428-618e-40f9-a289-b01e11a2cb87",
+                    "revision_id": 3,
+                },
+            )
+            mock.register_uri(
+                "GET",
+                "http://web:8000/curation/literature/collaborations-normalization",
+                json={"normalized_collaborations": [], "accelerator_experiments": []},
+                headers=_get_headers_for_hep_root_table_request(),
+                status_code=200,
             )
 
             start("article", object_id=workflow_object.id)
 
-            assert WorkflowObjectModel.query.filter(WorkflowObjectModel.workflow.has(name="core_selection")).count() == 0
+            assert (
+                WorkflowObjectModel.query.filter(
+                    WorkflowObjectModel.workflow.has(name="core_selection")
+                ).count()
+                == 0
+            )
 
             workflow_object.callback_pos = [34, 1, 13]
             #  Run task for creating core_selection wf
-            workflow_object.extra_data['auto-approved'] = True
+            workflow_object.extra_data["auto-approved"] = True
             workflow_object.save()
-            workflow_object.continue_workflow('restart_task')
+            workflow_object.continue_workflow("restart_task")
 
-            core_selection_wf = WorkflowObjectModel.query.filter(WorkflowObjectModel.workflow.has(name="core_selection")).one()
+            core_selection_wf = WorkflowObjectModel.query.filter(
+                WorkflowObjectModel.workflow.has(name="core_selection")
+            ).one()
             assert core_selection_wf.status == ObjectStatus.HALTED
             core_selection_wf_object = WorkflowObject(model=core_selection_wf)
             core_selection_wf_object_id = core_selection_wf_object.id
@@ -105,92 +127,121 @@ def test_core_selection_wf_starts_after_article_wf_when_no_core(mocked_api_reque
             core_selection_wf = workflow_object_class.get(core_selection_wf_object_id)
 
             assert core_selection_wf.status == ObjectStatus.COMPLETED
-            assert core_selection_wf.data['control_number'] == pid_value
-            assert 3 == core_selection_wf.extra_data['head_version_id']
-            assert 'head_uuid' in core_selection_wf.extra_data
+            assert core_selection_wf.data["control_number"] == pid_value
+            assert 3 == core_selection_wf.extra_data["head_version_id"]
+            assert "head_uuid" in core_selection_wf.extra_data
 
-    expected_record_data = load_json_record('hep_record_no_core.json')['metadata']
-    expected_record_data['core'] = True
+    expected_record_data = load_json_record("hep_record_no_core.json")["metadata"]
+    expected_record_data["core"] = True
 
-    assert len(mock.request_history) == 2
+    assert len(mock.request_history) == 3
     # Check is record sent to HEP is correct (only core has changed)
-    assert mock.request_history[1].json() == expected_record_data
+    assert mock.request_history[2].json() == expected_record_data
 
 
-@mock.patch('inspirehep.modules.workflows.tasks.submission.send_robotupload')
-@mock.patch('inspirehep.modules.workflows.tasks.submission.submit_rt_ticket', return_value="1234")
+@mock.patch("inspirehep.modules.workflows.tasks.submission.send_robotupload")
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    "inspirehep.modules.workflows.tasks.submission.submit_rt_ticket",
+    return_value="1234",
+)
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
     side_effect=fake_classifier_api_request,
 )
 @mock.patch(
     "inspirehep.modules.workflows.tasks.magpie.json_api_request",
     side_effect=fake_magpie_api_request,
 )
-def test_core_selection_wf_is_not_created_when_wf_is_record_update(mocked_api_request_magpie, mocked_api_request_classifier, mocked_rt, mocked_send_robotupload, workflow_app, mocked_external_services):
+def test_core_selection_wf_is_not_created_when_wf_is_record_update(
+    mocked_api_request_magpie,
+    mocked_api_request_classifier,
+    mocked_rt,
+    mocked_send_robotupload,
+    workflow_app,
+    mocked_external_services,
+):
     pid_value = 123456
     mocked_url = "{inspirehep_url}/{endpoint}/{control_number}".format(
         inspirehep_url=current_app.config.get("INSPIREHEP_URL"),
-        endpoint='literature',
-        control_number=pid_value
+        endpoint="literature",
+        control_number=pid_value,
     )
     record = {
-        "_collections": [
-            "Literature"
-        ],
+        "_collections": ["Literature"],
         "titles": [
             {"title": "A title"},
         ],
-        "document_type": [
-            "report"
-        ],
-        "collaborations": [
-            {"value": "SHIP"}
-        ],
+        "document_type": ["report"],
+        "collaborations": [{"value": "SHIP"}],
         "control_number": pid_value,
     }
 
     workflow_object = workflow_object_class.create(
-        data=record,
-        id_user=None,
-        data_type='hep'
+        data=record, id_user=None, data_type="hep"
     )
-    workflow_object.extra_data['source_data'] = {"data": record, "extra_data": {"source_data": {"data": record}}}
+    workflow_object.extra_data["source_data"] = {
+        "data": record,
+        "extra_data": {"source_data": {"data": record}},
+    }
     workflow_object.save()
 
     with override_config(FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT=True):
         with requests_mock.Mocker() as mock:
-            mock.register_uri('GET', mocked_url, json=load_json_record('hep_record_no_core.json'))
             mock.register_uri(
-                'PUT',
-                "http://web:8000/literature/{control_number}".format(control_number=pid_value),
+                "GET", mocked_url, json=load_json_record("hep_record_no_core.json")
+            )
+            mock.register_uri(
+                "PUT",
+                "http://web:8000/literature/{control_number}".format(
+                    control_number=pid_value
+                ),
                 json={
                     "metadata": {"control_number": pid_value},
-                    'uuid': "4915b428-618e-40f9-a289-b01e11a2cb87",
-                    'revision_id': 3
-                }
+                    "uuid": "4915b428-618e-40f9-a289-b01e11a2cb87",
+                    "revision_id": 3,
+                },
+            )
+            mock.register_uri(
+                "GET",
+                "http://web:8000/curation/literature/collaborations-normalization",
+                json={"normalized_collaborations": [], "accelerator_experiments": []},
+                headers=_get_headers_for_hep_root_table_request(),
+                status_code=200,
             )
 
             start("article", object_id=workflow_object.id)
 
-            assert WorkflowObjectModel.query.filter(WorkflowObjectModel.workflow.has(name="core_selection")).count() == 0
+            assert (
+                WorkflowObjectModel.query.filter(
+                    WorkflowObjectModel.workflow.has(name="core_selection")
+                ).count()
+                == 0
+            )
 
             workflow_object.callback_pos = [34, 1, 13]
             #  Run task for creating core_selection wf
-            workflow_object.extra_data['auto-approved'] = True
-            workflow_object.extra_data['is-update'] = True
+            workflow_object.extra_data["auto-approved"] = True
+            workflow_object.extra_data["is-update"] = True
             workflow_object.save()
 
-            workflow_object.continue_workflow('restart_task')
+            workflow_object.continue_workflow("restart_task")
 
-            assert WorkflowObjectModel.query.filter(WorkflowObjectModel.workflow.has(name="core_selection")).count() == 0
+            assert (
+                WorkflowObjectModel.query.filter(
+                    WorkflowObjectModel.workflow.has(name="core_selection")
+                ).count()
+                == 0
+            )
             assert workflow_object.status == ObjectStatus.COMPLETED
 
 
-@mock.patch('inspirehep.modules.workflows.tasks.submission.send_robotupload')
-@mock.patch('inspirehep.modules.workflows.tasks.submission.submit_rt_ticket', return_value="1234")
+@mock.patch("inspirehep.modules.workflows.tasks.submission.send_robotupload")
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    "inspirehep.modules.workflows.tasks.submission.submit_rt_ticket",
+    return_value="1234",
+)
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
     side_effect=fake_classifier_api_request,
 )
 @mock.patch(
@@ -209,56 +260,69 @@ def test_core_selection_wf_works_when_there_is_record_redirection_on_hep(
     redirected_pid = 123456
     mocked_url = "{inspirehep_url}/{endpoint}/{control_number}".format(
         inspirehep_url=current_app.config.get("INSPIREHEP_URL"),
-        endpoint='literature',
-        control_number=original_pid_value
+        endpoint="literature",
+        control_number=original_pid_value,
     )
     record = {
-        "_collections": [
-            "Literature"
-        ],
+        "_collections": ["Literature"],
         "titles": [
             {"title": "A title"},
         ],
-        "document_type": [
-            "report"
-        ],
-        "collaborations": [
-            {"value": "SHIP"}
-        ],
+        "document_type": ["report"],
+        "collaborations": [{"value": "SHIP"}],
         "control_number": original_pid_value,
     }
     workflow_object = workflow_object_class.create(
-        data=record,
-        id_user=None,
-        data_type='hep'
+        data=record, id_user=None, data_type="hep"
     )
-    workflow_object.extra_data['source_data'] = {"data": record, "extra_data": {"source_data": {"data": record}}}
+    workflow_object.extra_data["source_data"] = {
+        "data": record,
+        "extra_data": {"source_data": {"data": record}},
+    }
     workflow_object.save()
     with override_config(FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT=True):
         with requests_mock.Mocker() as mock:
-            mock.register_uri('GET', mocked_url, json=load_json_record('hep_record_no_core.json'))
+            mock.register_uri(
+                "GET", mocked_url, json=load_json_record("hep_record_no_core.json")
+            )
             # It's update so it should be PUT
             mock.register_uri(
-                'PUT',
-                "http://web:8000/literature/{control_number}".format(control_number=redirected_pid),
+                "PUT",
+                "http://web:8000/literature/{control_number}".format(
+                    control_number=redirected_pid
+                ),
                 json={
                     "metadata": {"control_number": redirected_pid},
-                    'uuid': "4915b428-618e-40f9-a289-b01e11a2cb87",
-                    'revision_id': 3
-                }
+                    "uuid": "4915b428-618e-40f9-a289-b01e11a2cb87",
+                    "revision_id": 3,
+                },
+            )
+            mock.register_uri(
+                "GET",
+                "http://web:8000/curation/literature/collaborations-normalization",
+                json={"normalized_collaborations": [], "accelerator_experiments": []},
+                headers=_get_headers_for_hep_root_table_request(),
+                status_code=200,
             )
 
             start("article", object_id=workflow_object.id)
 
-            assert WorkflowObjectModel.query.filter(WorkflowObjectModel.workflow.has(name="core_selection")).count() == 0
+            assert (
+                WorkflowObjectModel.query.filter(
+                    WorkflowObjectModel.workflow.has(name="core_selection")
+                ).count()
+                == 0
+            )
 
             workflow_object.callback_pos = [34, 1, 13]
             #  Run task for creating core_selection wf
-            workflow_object.extra_data['auto-approved'] = True
+            workflow_object.extra_data["auto-approved"] = True
             workflow_object.save()
-            workflow_object.continue_workflow('restart_task')
+            workflow_object.continue_workflow("restart_task")
 
-            core_selection_wf = WorkflowObjectModel.query.filter(WorkflowObjectModel.workflow.has(name="core_selection")).one()
+            core_selection_wf = WorkflowObjectModel.query.filter(
+                WorkflowObjectModel.workflow.has(name="core_selection")
+            ).one()
             assert core_selection_wf.status == ObjectStatus.HALTED
             core_selection_wf_object = WorkflowObject(model=core_selection_wf)
             core_selection_wf_object_id = core_selection_wf_object.id
@@ -266,85 +330,106 @@ def test_core_selection_wf_works_when_there_is_record_redirection_on_hep(
             do_accept_core(app=workflow_app, workflow_id=core_selection_wf_object.id)
             core_selection_wf = workflow_object_class.get(core_selection_wf_object_id)
             assert core_selection_wf.status == ObjectStatus.COMPLETED
-            assert core_selection_wf.data['control_number'] == redirected_pid
+            assert core_selection_wf.data["control_number"] == redirected_pid
 
-    expected_record_data = load_json_record('hep_record_no_core.json')['metadata']
-    expected_record_data['core'] = True
+    expected_record_data = load_json_record("hep_record_no_core.json")["metadata"]
+    expected_record_data["core"] = True
 
-    assert len(mock.request_history) == 2
+    assert len(mock.request_history) == 3
     # Check is record sent to HEP is correct (only core has changed)
-    assert mock.request_history[1].json() == expected_record_data
+    assert mock.request_history[2].json() == expected_record_data
 
 
-@mock.patch('inspirehep.modules.workflows.tasks.submission.send_robotupload')
-@mock.patch('inspirehep.modules.workflows.tasks.submission.submit_rt_ticket', return_value="1234")
+@mock.patch("inspirehep.modules.workflows.tasks.submission.send_robotupload")
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    "inspirehep.modules.workflows.tasks.submission.submit_rt_ticket",
+    return_value="1234",
+)
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
     side_effect=fake_classifier_api_request,
 )
 @mock.patch(
     "inspirehep.modules.workflows.tasks.magpie.json_api_request",
     side_effect=fake_magpie_api_request,
 )
-def test_core_selection_wf_still_runs_when_there_is_core_on_hep_already(mocked_api_request_magpie, mocked_api_request_classifier, mocked_rt, mocked_send_robotupload, workflow_app, mocked_external_services):
+def test_core_selection_wf_still_runs_when_there_is_core_on_hep_already(
+    mocked_api_request_magpie,
+    mocked_api_request_classifier,
+    mocked_rt,
+    mocked_send_robotupload,
+    workflow_app,
+    mocked_external_services,
+):
     pid_value = 123456
     mocked_url = "{inspirehep_url}/{endpoint}/{control_number}".format(
         inspirehep_url=current_app.config.get("INSPIREHEP_URL"),
-        endpoint='literature',
-        control_number=pid_value
+        endpoint="literature",
+        control_number=pid_value,
     )
     record = {
-        "_collections": [
-            "Literature"
-        ],
+        "_collections": ["Literature"],
         "titles": [
             {"title": "A title"},
         ],
-        "document_type": [
-            "report"
-        ],
-        "collaborations": [
-            {"value": "SHIP"}
-        ],
+        "document_type": ["report"],
+        "collaborations": [{"value": "SHIP"}],
         "control_number": pid_value,
     }
     expected_hep_record = {
-        'metadata': dict(record),
-        'uuid': "4915b428-618e-40f9-a289-b01e11a2cb87",
-        'revision_id': 2
+        "metadata": dict(record),
+        "uuid": "4915b428-618e-40f9-a289-b01e11a2cb87",
+        "revision_id": 2,
     }
-    expected_hep_record['metadata']['core'] = True
+    expected_hep_record["metadata"]["core"] = True
 
     workflow_object = workflow_object_class.create(
-        data=record,
-        id_user=None,
-        data_type='hep'
+        data=record, id_user=None, data_type="hep"
     )
-    workflow_object.extra_data['source_data'] = {"data": record, "extra_data": {"source_data": {"data": record}}}
+    workflow_object.extra_data["source_data"] = {
+        "data": record,
+        "extra_data": {"source_data": {"data": record}},
+    }
     workflow_object.save()
     with override_config(FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT=True):
         with requests_mock.Mocker() as mock:
-            mock.register_uri('GET', mocked_url, json=expected_hep_record)
+            mock.register_uri("GET", mocked_url, json=expected_hep_record)
             mock.register_uri(
-                'PUT',
-                "http://web:8000/literature/{control_number}".format(control_number=pid_value),
+                "PUT",
+                "http://web:8000/literature/{control_number}".format(
+                    control_number=pid_value
+                ),
                 json={
                     "metadata": {"control_number": pid_value},
-                    'uuid': "4915b428-618e-40f9-a289-b01e11a2cb87",
-                    'revision_id': 3
-                }
+                    "uuid": "4915b428-618e-40f9-a289-b01e11a2cb87",
+                    "revision_id": 3,
+                },
+            )
+            mock.register_uri(
+                "GET",
+                "http://web:8000/curation/literature/collaborations-normalization",
+                json={"normalized_collaborations": [], "accelerator_experiments": []},
+                headers=_get_headers_for_hep_root_table_request(),
+                status_code=200,
             )
             start("article", object_id=workflow_object.id)
 
-            assert WorkflowObjectModel.query.filter(WorkflowObjectModel.workflow.has(name="core_selection")).count() == 0
+            assert (
+                WorkflowObjectModel.query.filter(
+                    WorkflowObjectModel.workflow.has(name="core_selection")
+                ).count()
+                == 0
+            )
 
             workflow_object.callback_pos = [34, 1, 13]
             #  Run task for creating core_selection wf
-            workflow_object.extra_data['auto-approved'] = True
+            workflow_object.extra_data["auto-approved"] = True
             workflow_object.save()
-            workflow_object.continue_workflow('restart_task')
+            workflow_object.continue_workflow("restart_task")
 
-            core_selection_wf = WorkflowObjectModel.query.filter(WorkflowObjectModel.workflow.has(name="core_selection")).one()
+            core_selection_wf = WorkflowObjectModel.query.filter(
+                WorkflowObjectModel.workflow.has(name="core_selection")
+            ).one()
             assert core_selection_wf.status == ObjectStatus.HALTED
             core_selection_wf_object = WorkflowObject(model=core_selection_wf)
             core_selection_wf_object_id = core_selection_wf_object.id
@@ -353,72 +438,91 @@ def test_core_selection_wf_still_runs_when_there_is_core_on_hep_already(mocked_a
             core_selection_wf = workflow_object_class.get(core_selection_wf_object_id)
             assert core_selection_wf.status == ObjectStatus.COMPLETED
 
-    assert len(mock.request_history) == 2
-    assert mock.request_history[1].json() == expected_hep_record['metadata']
+    assert len(mock.request_history) == 3
+    assert mock.request_history[2].json() == expected_hep_record["metadata"]
 
 
-@mock.patch('inspirehep.modules.workflows.tasks.submission.submit_rt_ticket', return_value="1234")
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    "inspirehep.modules.workflows.tasks.submission.submit_rt_ticket",
+    return_value="1234",
+)
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
     side_effect=fake_classifier_api_request,
 )
 @mock.patch(
     "inspirehep.modules.workflows.tasks.magpie.json_api_request",
     side_effect=fake_magpie_api_request,
 )
-def test_core_selection_wf_skipped_if_record_was_manually_approved(mocked_api_request_magpie, mocked_api_request_classifier, mocked_rt, workflow_app, mocked_external_services):
+def test_core_selection_wf_skipped_if_record_was_manually_approved(
+    mocked_api_request_magpie,
+    mocked_api_request_classifier,
+    mocked_rt,
+    workflow_app,
+    mocked_external_services,
+):
     pid_value = 123456
     mocked_url = "{inspirehep_url}/{endpoint}/{control_number}".format(
         inspirehep_url=current_app.config.get("INSPIREHEP_URL"),
-        endpoint='literature',
-        control_number=pid_value
+        endpoint="literature",
+        control_number=pid_value,
     )
     record = {
-        "_collections": [
-            "Literature"
-        ],
+        "_collections": ["Literature"],
         "titles": [
             {"title": "A title"},
         ],
-        "document_type": [
-            "report"
-        ],
-        "collaborations": [
-            {"value": "SHIP"}
-        ],
+        "document_type": ["report"],
+        "collaborations": [{"value": "SHIP"}],
         "control_number": pid_value,
     }
     workflow_object = workflow_object_class.create(
-        data=record,
-        id_user=None,
-        data_type='hep'
+        data=record, id_user=None, data_type="hep"
     )
-    workflow_object.extra_data['source_data'] = {"data": record, "extra_data": {"source_data": {"data": record}}}
+    workflow_object.extra_data["source_data"] = {
+        "data": record,
+        "extra_data": {"source_data": {"data": record}},
+    }
     workflow_object.save()
 
     with override_config(FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT=True):
         with requests_mock.Mocker() as mock:
-            mock.register_uri('GET', mocked_url, json=load_json_record('hep_record_no_core.json'))
+            mock.register_uri(
+                "GET", mocked_url, json=load_json_record("hep_record_no_core.json")
+            )
             # It's update so it should be PUT
             mock.register_uri(
-                'PUT',
-                "http://web:8000/literature/{control_number}".format(control_number=pid_value),
+                "PUT",
+                "http://web:8000/literature/{control_number}".format(
+                    control_number=pid_value
+                ),
                 json={
                     "metadata": {"control_number": pid_value},
-                    'uuid': "4915b428-618e-40f9-a289-b01e11a2cb87",
-                    'revision_id': 3
-                }
+                    "uuid": "4915b428-618e-40f9-a289-b01e11a2cb87",
+                    "revision_id": 3,
+                },
             )
-
+            mock.register_uri(
+                "GET",
+                "http://web:8000/curation/literature/collaborations-normalization",
+                json={"normalized_collaborations": [], "accelerator_experiments": []},
+                headers=_get_headers_for_hep_root_table_request(),
+                status_code=200,
+            )
             start("article", object_id=workflow_object.id)
 
             workflow_object.callback_pos = [34, 1, 13]
             #  Run task for creating core_selection wf
-            workflow_object.extra_data['auto-approved'] = False
+            workflow_object.extra_data["auto-approved"] = False
             workflow_object.save()
-            workflow_object.continue_workflow('restart_task')
+            workflow_object.continue_workflow("restart_task")
 
-            assert WorkflowObjectModel.query.filter(WorkflowObjectModel.workflow.has(name="core_selection")).count() == 0
+            assert (
+                WorkflowObjectModel.query.filter(
+                    WorkflowObjectModel.workflow.has(name="core_selection")
+                ).count()
+                == 0
+            )
 
 
 @mock.patch("inspirehep.modules.workflows.tasks.submission.send_robotupload")
@@ -504,6 +608,14 @@ def test_core_selection_wf_removes_arxiv_core_categories_when_marked_as_non_core
                     "uuid": "c1b958b6-39e4-4aaf-aea1-ee676176f7fc",
                     "revision_id": 4,
                 },
+            )
+
+            mock.register_uri(
+                "GET",
+                "http://web:8000/curation/literature/collaborations-normalization",
+                json={"normalized_collaborations": [{"value": "SHIP"}], "accelerator_experiments": []},
+                headers=_get_headers_for_hep_root_table_request(),
+                status_code=200,
             )
 
             start("article", object_id=workflow_object.id)
