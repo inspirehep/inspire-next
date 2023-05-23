@@ -37,7 +37,6 @@ fs = "==0.*,>=0.0.0,>=0.5.4"
 gunicorn = {version = "==19.*,>=19.0.0,>=19.7.1", optional = true}
 honcho = {version = "==1.*,>=1.0.0,>=1.0.1", optional = true}
 idutils = "==1.*,>=1.0.0,>=1.0.1"
-inspire-crawler = "==3.*,>=3.0.0"
 inspire-dojson = "==63.*,>=63.1.0"
 inspire-json-merger = "^11.0.26"
 inspire-matcher = "^9.0.15"
@@ -122,6 +121,7 @@ parsel = "^1.6.0"
 hepcrawl = "^13.0.50"
 PyYAML = "<6.0"
 cryptography = "^3.3.2"
+inspire-crawler = {git = "git@github.com:inspirehep/inspire-crawler.git", rev = "5d9f17a982fb7ae2d38c432453693147705243c3"}
 
 [tool.poetry.extras]
 all = ["coverage", "docutils", "flake8-future-import", "flower", "freezegun", "gunicorn", "hepcrawl", "honcho", "ipdb", "mock", "pytest", "pytest-cov", "pytest-vcr", "requests-mock", "sphinx", "superlance", "tornado"]
