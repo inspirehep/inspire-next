@@ -11,6 +11,8 @@ defaults:
 jobs:
   test:
     uses: ./.github/workflows/backend-tests-on-docker.yml
+    with:
+      ref: ${{ github.ref }}
     secrets: inherit
 
   deploy:

@@ -2,6 +2,11 @@ name: Build on docker
 
 on:
   workflow_call:
+    inputs:
+      ref:
+        description: The reference to build
+        type: string
+        required: true
     outputs:
       tag:
         description: The id of the image that has been buit
@@ -12,8 +17,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
+          ref: ${{ inputs.ref }}
           fetch-depth: 0
       - name: Cache docker image
         uses: actions/cache@v2.1.3
