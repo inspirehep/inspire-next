@@ -1369,9 +1369,9 @@ tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "mock (>=2.0,<3.0)", "py
 
 [package.source]
 type = "git"
-url = "git@github.com:inspirehep/inspire-crawler.git"
-reference = "5d9f17a982fb7ae2d38c432453693147705243c3"
-resolved_reference = "5d9f17a982fb7ae2d38c432453693147705243c3"
+url = "https://github.com/inspirehep/inspire-crawler.git"
+reference = "master"
+resolved_reference = "459b9d3f569362a1c3079cf527a4d3a5b6c82641"
 
 [[package]]
 name = "inspire-dojson"
@@ -4121,7 +4121,7 @@ xrootd = ["xrootdpyfs", "invenio-xrootd"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=2.7,<3.0"
-content-hash = "3848c58d7befa5088560b3a1762967da225aceaddde374aef9b0b631666260e2"
+content-hash = "4fd04536ba3454b7888642115b1ccff8d0cc793467547624860c216e87eb88c2"
 
 [metadata.files]
 alabaster = [
