@@ -28,3 +28,4 @@ jobs:
             inspirehep/next-assets@${{ needs.test.outputs.tag }}
             inspirehep/next-scrapyd@${{ needs.test.outputs.tag }}
           token: ${{ secrets.PAT_FIRE_EVENTS_ON_CERN_SIS_KUBERNETES }}
+
