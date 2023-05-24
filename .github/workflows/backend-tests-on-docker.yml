@@ -48,6 +48,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
+          ref: ${{ inputs.ref }}
           fetch-depth: 0
       - name: Cache docker image
         uses: actions/cache@v2.1.3
@@ -82,6 +83,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
+          ref: ${{ inputs.ref }}
           fetch-depth: 0
       - name: Cache docker image
         uses: actions/cache@v2.1.3
@@ -119,6 +121,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
+          ref: ${{ inputs.ref }}
           fetch-depth: 0
       - name: Cache docker image
         uses: actions/cache@v2.1.3
@@ -143,6 +146,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
+          ref: ${{ inputs.ref }}
           fetch-depth: 0
       - name: Cache docker image
         uses: actions/cache@v2.1.3
@@ -167,6 +171,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
+          ref: ${{ inputs.ref }}
           fetch-depth: 0
       - name: Cache docker image
         uses: actions/cache@v2.1.3
@@ -190,6 +195,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
         with:
+          ref: ${{ inputs.ref }}
           fetch-depth: 0
       - name: set tag environment
         id: set-env
