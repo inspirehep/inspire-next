@@ -43,6 +43,9 @@
   </ul>
 
   <div class="pull-right">
+    <button onClick="redirectToApi();" class="api-button">
+      <i class="fa fa-plug" aria-hidden="true"></i> API
+    </button>
     <form action="/holdingpen/list" class="hp-search-form">
       <input type="text" name="q" placeholder="Search the holding pen">
     </form>
@@ -59,3 +62,14 @@
 </div>
 {%- endblock -%}
 
+{%- block additional_javascript -%}
+  <script>
+    function redirectToApi() {
+      const parsedUrl = new URL(window.location.href);
+      const { pathname } = parsedUrl;
+      const newPathname = `/api${pathname}`;
+      parsedUrl.pathname = newPathname;
+      window.open(parsedUrl.href);
+    };
+  </script>
+{%- endblock additional_javascript -%}

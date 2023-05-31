@@ -78,9 +78,20 @@ $hp_table_bg: #fff;
         }
       }
     }
+    .api-button {
+      padding: 0px 7px;
+      margin-top: -5px;
+      color: #777;
+      margin-right: 10px;
+      background-color: #ecf0f1;
+      border: none;
+      border-radius: 3px;
+      font-size: .9em;
+    }
 
     .pull-right {
       padding-right: 3%;
+      display: flex;
     }
 
     @media screen and (max-width: 992px) {
