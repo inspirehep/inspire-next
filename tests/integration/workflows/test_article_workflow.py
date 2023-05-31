@@ -26,6 +26,7 @@ import os
 
 import mock
 import pkg_resources
+from inspirehep.modules.workflows.utils import _get_headers_for_hep_root_table_request
 import requests_mock
 from invenio_search import current_search
 from invenio_workflows import ObjectStatus, start, workflow_object_class
@@ -96,10 +97,10 @@ def test_create_ticket_when_source_is_publishing(
     ticket_publishing_content = u"content=Queue%3A+HEP_publishing"
     wf.continue_workflow()
 
-    assert ticket_publishing_content in mocked_external_services.request_history[1].text
+    assert ticket_publishing_content in mocked_external_services.request_history[2].text
     assert wf.extra_data["curation_ticket_id"]
     assert (
-        mocked_external_services.request_history[1].url
+        mocked_external_services.request_history[2].url
         == "http://rt.inspire/ticket/new"
     )
 
@@ -130,10 +131,10 @@ def test_create_ticket_when_source_is_not_publishing(
     ticket_curation_content = u"content=Queue%3A+HEP_curation"
     wf.continue_workflow()
 
-    assert ticket_curation_content in mocked_external_services.request_history[1].text
+    assert ticket_curation_content in mocked_external_services.request_history[2].text
     assert wf.extra_data["curation_ticket_id"]
     assert (
-        mocked_external_services.request_history[1].url
+        mocked_external_services.request_history[2].url
         == "http://rt.inspire/ticket/new"
     )
 
@@ -310,14 +311,27 @@ def test_keywords_are_stored_in_record_when_record_is_core(
     expected_keywords = [
         {u"value": u"Higgs particle", u"schema": u"INSPIRE", u"source": u"classifier"}
     ]
-
-    workflow = build_workflow(record)
-    start("article", object_id=workflow.id)
-    wf = workflow_object_class.get(workflow.id)
-    mark("approved", True)(workflow, None)
-    mark("core", True)(workflow, None)
-    wf.continue_workflow()
-    assert wf.data["keywords"] == expected_keywords
+    with requests_mock.Mocker() as mock:
+        mock.register_uri(
+            "GET",
+            "http://web:8000/curation/literature/affiliations-normalization",
+            json={
+                "normalized_affiliations": [
+                    [],
+                    [],
+                ],
+                "ambiguous_affiliations": [],
+            },
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        workflow = build_workflow(record)
+        start("article", object_id=workflow.id)
+        wf = workflow_object_class.get(workflow.id)
+        mark("approved", True)(workflow, None)
+        mark("core", True)(workflow, None)
+        wf.continue_workflow()
+        assert wf.data["keywords"] == expected_keywords
 
 
 @mock.patch(

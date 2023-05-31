@@ -65,7 +65,7 @@ from inspire_json_merger.config import GrobidOnArxivAuthorsOperations
 from inspire_schemas.builders import LiteratureBuilder
 from inspire_schemas.readers import LiteratureReader
 from inspire_schemas.utils import validate, classify_field
-from inspire_utils.record import get_value, normalize_affiliations
+from inspire_utils.record import get_value
 from inspire_utils.dedupers import dedupe_list
 
 from inspirehep.modules.pidstore.utils import get_pid_type_from_schema
@@ -79,7 +79,7 @@ from inspirehep.modules.workflows.tasks.refextract import (
     extract_references_from_text_data,
 )
 from inspirehep.modules.refextract.matcher import match_references
-from inspirehep.modules.search import InstitutionsSearch, LiteratureSearch
+from inspirehep.modules.search import InstitutionsSearch
 from inspirehep.modules.workflows.utils import _get_headers_for_hep_root_table_request, create_error
 from inspirehep.modules.workflows.errors import BadGatewayError, MissingRecordControlNumber
 from inspirehep.modules.workflows.utils import (
@@ -975,11 +975,23 @@ def _assign_institution_reference_to_affiliations(author_affiliations, already_m
                 already_matched_affiliations_refs[complete_affiliation['value']] = complete_affiliation['record']
 
 
+@backoff.on_exception(backoff.expo, (BadGatewayError, requests.exceptions.ConnectionError), base=4, max_tries=5)
 def normalize_author_affiliations(obj, eng):
-    search = LiteratureSearch()
-    normalized_affiliations, ambiguous_affiliations = normalize_affiliations(
-        obj.data, search, wf_id=obj.id
+    normalized_affiliation_response = requests.get(
+        "{inspirehep_url}/curation/literature/affiliations-normalization".format(
+            inspirehep_url=current_app.config["INSPIREHEP_URL"]
+        ),
+        headers=_get_headers_for_hep_root_table_request(),
+        data=json.dumps({
+            "authors": obj.data.get('authors', []),
+            "workflow_id": obj.id,
+        }),
     )
+    normalized_affiliation_response.raise_for_status()
+    normalized_affiliation_response_json = normalized_affiliation_response.json()
+    normalized_affiliations = normalized_affiliation_response_json['normalized_affiliations']
+    ambiguous_affiliations = normalized_affiliation_response_json['ambiguous_affiliations']
+
     for author, normalized_affiliation in zip(
         obj.data.get("authors", []), normalized_affiliations
     ):

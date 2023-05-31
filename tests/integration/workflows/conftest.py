@@ -29,6 +29,7 @@ import mock
 import os
 
 import pkg_resources
+from inspirehep.modules.workflows.utils import _get_headers_for_hep_root_table_request
 import pytest
 import re
 import requests_mock
@@ -243,6 +244,26 @@ def mocked_external_services(workflow_app):
             "{inspirehep_url}/literature/workflows_record_sources".format(
                 inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
             ),
+            status_code=200,
+        )
+        requests_mocker.register_uri(
+            requests_mock.ANY,
+            "{inspirehep_url}/literature/workflows_record_sources".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            status_code=200,
+        )
+        requests_mocker.register_uri(
+            "GET",
+            "http://web:8000/curation/literature/affiliations-normalization",
+            json={
+                "normalized_affiliations": [
+                    [],
+                    [],
+                ],
+                "ambiguous_affiliations": [],
+            },
+            headers=_get_headers_for_hep_root_table_request(),
             status_code=200,
         )
         if 'INSPIREHEP_URL' in workflow_app.config:
