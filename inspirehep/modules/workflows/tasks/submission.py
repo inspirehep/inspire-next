@@ -77,6 +77,7 @@ def submit_snow_ticket(obj, queue, template, context, caller, recid, ticket_id_k
     functional_category = current_app.config['QUEUE_TO_FUNCTIONAL_CATEGORY_MAPPING'].get(queue)
     if not functional_category:
         LOGGER.info("Skipping creating ticket for wf %s. Queue %s is not mapped to SNOW functional category." % (obj.id, queue))
+        return
     ticket_payload = {
         "template": template,
         "template_context": context,
