@@ -76,6 +76,7 @@ def test_new_ticket_context():
             'qux',
         ],
         'subject': 'Your suggestion to INSPIRE: foo',
+        'obj_url': 'http://localhost:5000/holdingpen/details/1'
     }
     result = new_ticket_context(user, obj)
 
@@ -114,6 +115,7 @@ def test_new_ticket_context_handles_unicode():
             u'simples exceptionnelles pour les systèmes conservatifs à '
             u"intégrale d'énergie: forme explicite de la solution"
         ),
+        'obj_url': 'http://localhost:5000/holdingpen/details/1'
     }
     result = new_ticket_context(user, obj)
 

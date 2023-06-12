@@ -25,13 +25,12 @@ from __future__ import absolute_import, division, print_function
 import copy
 import datetime
 
-from flask import current_app
+from flask import current_app, url_for
 from idutils import is_arxiv_post_2007
 from inspire_schemas.api import LiteratureBuilder
 from inspire_schemas.readers import LiteratureReader
 from inspire_utils.helpers import force_list
 from inspire_utils.record import get_value
-
 from inspirehep.modules.forms.utils import filter_empty_elements
 from inspirehep.modules.workflows.utils import with_debug_logging
 
@@ -219,6 +218,7 @@ def new_ticket_context(user, obj):
         identifier=identifiers or "",
         user_comment=user_comment,
         references=obj.extra_data.get('formdata', {}).get('references'),
+        obj_url=url_for('invenio_workflows_ui.details', objectid=obj.id, _external=True),
         subject=subject
     )
 

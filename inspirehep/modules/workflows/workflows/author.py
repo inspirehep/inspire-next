@@ -60,7 +60,7 @@ SEND_TO_LEGACY = [
 NOTIFY_ACCEPTED = [
     do_not_repeat('reply_ticket_author_submission_accepted')(
         reply_ticket(
-            template="authors/tickets/user_accepted.html",
+            template="authors/tickets/_author.html",
             context_factory=reply_ticket_context)
     ),
     do_not_repeat('close_ticket_author_submission_accepted')(
@@ -73,7 +73,7 @@ CLOSE_TICKET_IF_NEEDED = [
     IF(curation_ticket_needed, [
         do_not_repeat('create_ticket_author_submission_curation_needed')(
             create_ticket(
-                template="authors/tickets/curation_needed.html",
+                template="authors/tickets/curation_needed_author.html",
                 queue="AUTHORS_curation",
                 context_factory=curation_ticket_context,
                 ticket_id_key="curation_ticket_id"
@@ -91,7 +91,7 @@ NOTIFY_NOT_ACCEPTED = [
 SEND_UPDATE_NOTIFICATION = [
     do_not_repeat('create_ticket_author_submission_curator_update')(
         create_ticket(
-            template="authors/tickets/curator_update.html",
+            template="authors/tickets/curator_update_author.html",
             queue="Authors_cor_user",
             context_factory=update_ticket_context,
         )
@@ -102,14 +102,14 @@ SEND_UPDATE_NOTIFICATION = [
 ASK_FOR_REVIEW = [
     do_not_repeat('create_ticket_author_submission_curator_new')(
         create_ticket(
-            template="authors/tickets/curator_new.html",
+            template="authors/tickets/curator_new_author.html",
             queue="Authors_add_user",
             context_factory=new_ticket_context,
         )
     ),
     do_not_repeat('reply_ticket_author_submission_user_new')(
         reply_ticket(
-            template="authors/tickets/user_new.html",
+            template="authors/tickets/user_new_author.html",
             context_factory=reply_ticket_context,
             keep_new=True,
         )

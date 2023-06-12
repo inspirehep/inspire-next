@@ -22,6 +22,7 @@
 
 from __future__ import absolute_import, division, print_function
 
+import pytest
 import json
 
 from invenio_accounts.testutils import login_user_via_session
@@ -66,6 +67,7 @@ def test_new_author_submit_without_authentication_put(api_client):
     assert response.status_code == 401
 
 
+@pytest.mark.xfail(reason="Submission endpoint is no longer in use")
 def test_new_author_submit_with_required_fields(api_client):
     login_user_via_session(api_client, email='johndoe@inspirehep.net')
 
