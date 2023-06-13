@@ -42,11 +42,10 @@ from utils import override_config
 from workflow_utils import build_workflow
 
 from inspirehep.modules.workflows.tasks.actions import (
-    _assign_institution, affiliations_for_hidden_collections,
-    core_selection_wf_already_created, create_core_selection_wf,
-    link_institutions_with_affiliations, load_from_source_data,
-    normalize_author_affiliations, normalize_collaborations,
-    normalize_journal_titles, refextract,
+    affiliations_for_hidden_collections, core_selection_wf_already_created,
+    create_core_selection_wf, link_institutions_with_affiliations,
+    load_from_source_data, normalize_author_affiliations,
+    normalize_collaborations, normalize_journal_titles, refextract,
     remove_inspire_categories_derived_from_core_arxiv_categories,
     replace_collection_to_hidden, update_inspire_categories)
 from inspirehep.modules.workflows.utils import \
@@ -679,13 +678,25 @@ def test_affiliations_for_hidden_collections_works_correctly_with_unicode(
         {
             "value": u"Some longer description grand accélérateur national d'ions lourds. with proper keyword included"
         },
-        {"value": "Another one but this time with wrong keywords Fremilab included"},
+        {"value": u"Another one but this time with wrong keywords Fremilab included"},
     ]
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            "GET",
+            "{inspirehep_url}/curation/literature/assign-institutions".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={
+                "authors": record['authors']
+            },
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
 
-    workflow = build_workflow(record)
+        workflow = build_workflow(record)
 
-    affiliations = affiliations_for_hidden_collections(workflow)
-    assert affiliations == expected_affiliations
+        affiliations = affiliations_for_hidden_collections(workflow)
+        assert affiliations == expected_affiliations
 
 
 def test_replace_collection_to_hidden_sets_proper_hidden_collections_on_metadata(
@@ -812,7 +823,7 @@ def test_normalize_collaborations(workflow_app):
             "http://web:8000/curation/literature/collaborations-normalization",
             json={
                 "normalized_collaborations": expected_collaborations,
-                "accelerator_experiments": expected_accelerator_experiments
+                "accelerator_experiments": expected_accelerator_experiments,
             },
             headers=_get_headers_for_hep_root_table_request(),
             status_code=200,
@@ -824,9 +835,7 @@ def test_normalize_collaborations(workflow_app):
         assert obj.data["accelerator_experiments"] == expected_accelerator_experiments
 
 
-def test_normalize_collaborations_no_collaboration(
-    workflow_app
-):
+def test_normalize_collaborations_no_collaboration(workflow_app):
     record = {
         "_collections": ["Literature"],
         "titles": ["A title"],
@@ -841,12 +850,16 @@ def test_normalize_collaborations_no_collaboration(
     assert obj.data["collaborations"] == expected_collaborations
 
 
-def test_normalize_collaborations_in_workflow_with_already_existing_accelerator_experiments(workflow_app):
+def test_normalize_collaborations_in_workflow_with_already_existing_accelerator_experiments(
+    workflow_app,
+):
     record = {
         "_collections": ["Literature"],
         "titles": ["A title"],
         "document_type": ["report"],
-        "accelerator_experiments": [{"record": {u"$ref": u"https://inspirehep.net/api/experiments/1800050"}}],
+        "accelerator_experiments": [
+            {"record": {"$ref": "https://inspirehep.net/api/experiments/1800050"}}
+        ],
         "collaborations": [
             {
                 "value": "Atlas II",
@@ -870,7 +883,7 @@ def test_normalize_collaborations_in_workflow_with_already_existing_accelerator_
     ]
 
     expected_accelerator_experiments = [
-        {"record": {u"$ref": u"https://inspirehep.net/api/experiments/1800050"}}
+        {"record": {"$ref": "https://inspirehep.net/api/experiments/1800050"}}
     ]
 
     with requests_mock.Mocker() as request_mocker:
@@ -879,7 +892,7 @@ def test_normalize_collaborations_in_workflow_with_already_existing_accelerator_
             "http://web:8000/curation/literature/collaborations-normalization",
             json={
                 "normalized_collaborations": expected_collaborations,
-                "accelerator_experiments": expected_accelerator_experiments
+                "accelerator_experiments": expected_accelerator_experiments,
             },
             headers=_get_headers_for_hep_root_table_request(),
             status_code=200,
@@ -1123,34 +1136,73 @@ def test_normalize_affiliations_handle_not_found_affiliations(
 def test_link_institutions_with_affiliations(
     workflow_app, insert_literature_in_db, insert_institutions_in_db
 ):
-    record = {
-        "_collections": ["Literature"],
-        "titles": ["A title"],
-        "document_type": ["report"],
-        "authors": [
-            {
-                "full_name": "Kowal, Michal",
-                "affiliations": [{"value": "CERN"}, {"value": "Warsaw U."}],
+    with requests_mock.Mocker() as request_mocker:
+        request_mocker.register_uri(
+            "GET",
+            "http://web:8000/curation/literature/assign-institutions",
+            json={
+                "authors": [
+                    {
+                        "full_name": "Kowal, Michal",
+                        "affiliations": [
+                            {
+                                "value": "CERN",
+                                "record": {
+                                    "$ref": "http://localhost:5000//api/institutions/902725"
+                                },
+                            },
+                            {
+                                "value": "Warsaw U.",
+                                "record": {
+                                    "$ref": "https://inspirehep.net/api/institutions/903335"
+                                },
+                            },
+                        ],
+                    },
+                    {
+                        "full_name": "Latacz, Barbara",
+                        "affiliations": [
+                            {
+                                "value": "CERN",
+                                "record": {
+                                    "$ref": "http://localhost:5000//api/institutions/902725"
+                                },
+                            }
+                        ],
+                    },
+                ],
             },
-            {"full_name": "Latacz, Barbara", "affiliations": [{"value": "CERN"}]},
-        ],
-    }
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        record = {
+            "_collections": ["Literature"],
+            "titles": ["A title"],
+            "document_type": ["report"],
+            "authors": [
+                {
+                    "full_name": "Kowal, Michal",
+                    "affiliations": [{"value": "CERN"}, {"value": "Warsaw U."}],
+                },
+                {"full_name": "Latacz, Barbara", "affiliations": [{"value": "CERN"}]},
+            ],
+        }
 
-    obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
-    obj = link_institutions_with_affiliations(obj, None)
+        obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
+        obj = link_institutions_with_affiliations(obj, None)
 
-    expected_affiliation_1 = {
-        "record": {"$ref": "http://localhost:5000//api/institutions/902725"},
-        "value": "CERN",
-    }
-    expected_affiliation_2 = {
-        "record": {"$ref": "https://inspirehep.net/api/institutions/903335"},
-        "value": "Warsaw U.",
-    }
+        expected_affiliation_1 = {
+            "record": {"$ref": "http://localhost:5000//api/institutions/902725"},
+            "value": "CERN",
+        }
+        expected_affiliation_2 = {
+            "record": {"$ref": "https://inspirehep.net/api/institutions/903335"},
+            "value": "Warsaw U.",
+        }
 
-    assert expected_affiliation_1 == obj.data["authors"][0]["affiliations"][0]
-    assert expected_affiliation_2 == obj.data["authors"][0]["affiliations"][1]
-    assert expected_affiliation_1 == obj.data["authors"][1]["affiliations"][0]
+        assert expected_affiliation_1 == obj.data["authors"][0]["affiliations"][0]
+        assert expected_affiliation_2 == obj.data["authors"][0]["affiliations"][1]
+        assert expected_affiliation_1 == obj.data["authors"][1]["affiliations"][0]
 
 
 @mock.patch(
@@ -1177,10 +1229,7 @@ def test_core_selection_wf_already_created_show_created_wf(
         request_mocker.register_uri(
             "GET",
             "http://web:8000/curation/literature/collaborations-normalization",
-            json={
-                "normalized_collaborations": [],
-                "accelerator_experiments": []
-            },
+            json={"normalized_collaborations": [], "accelerator_experiments": []},
             headers=_get_headers_for_hep_root_table_request(),
             status_code=200,
         )
@@ -1292,14 +1341,6 @@ def test_create_core_selection_workflow_task_wont_create_when_record_is_core(
         ).count()
         == 0
     )
-
-
-def test_link_institutions_with_affiliations_assigning_institution_reference_in_correct_type(
-    workflow_app, insert_institutions_in_db
-):
-    matched_affiliation = {"value": "CERN"}
-    matched_complete_affiliation = _assign_institution(matched_affiliation)
-    assert isinstance(matched_complete_affiliation, dict)
 
 
 @mock.patch(

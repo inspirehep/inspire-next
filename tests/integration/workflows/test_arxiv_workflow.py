@@ -43,9 +43,9 @@ from invenio_workflows import (
 from invenio_search import current_search
 from invenio_workflows.errors import WorkflowsError
 from inspire_schemas.utils import validate
-
+from flask import current_app
 from inspirehep.modules.workflows.tasks.actions import load_from_source_data
-from inspirehep.modules.workflows.utils import do_not_repeat
+from inspirehep.modules.workflows.utils import _get_headers_for_hep_root_table_request, do_not_repeat
 
 
 from calls import (
@@ -178,6 +178,7 @@ def test_harvesting_arxiv_workflow_manual_rejected(
     assert obj.extra_data["approved"] is False
 
 
+@mock.patch("inspirehep.modules.workflows.tasks.submission.send_robotupload")
 @mock.patch(
     "inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow",
     side_effect=fake_download_file,
@@ -210,6 +211,7 @@ def test_harvesting_arxiv_workflow_core_record_auto_accepted(
     mocked_is_pdf_link,
     mocked_package_download,
     mocked_arxiv_download,
+    mocked_send_robotupload,
     workflow_app,
     mocked_external_services,
 ):
@@ -493,20 +495,30 @@ def test_update_exact_matched_goes_trough_the_workflow(
     record_from_db,
 ):
     record = record_from_db
-    workflow_id = build_workflow(record).id
-    eng_uuid = start("article", object_id=workflow_id)
-    obj_id = WorkflowEngine.from_uuid(eng_uuid).objects[0].id
-    obj = workflow_object_class.get(obj_id)
+    with requests_mock.Mocker(real_http=True) as requests_mocker:
+        requests_mocker.register_uri(
+            "GET",
+            "{}/curation/literature/assign-institutions".format(current_app.config["INSPIREHEP_URL"]),
+            json={
+                "authors": record['authors']
+            },
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        workflow_id = build_workflow(record).id
+        eng_uuid = start("article", object_id=workflow_id)
+        obj_id = WorkflowEngine.from_uuid(eng_uuid).objects[0].id
+        obj = workflow_object_class.get(obj_id)
 
-    assert obj.extra_data["holdingpen_matches"] == []
-    assert obj.extra_data["previously_rejected"] is False
-    assert not obj.extra_data.get("stopped-matched-holdingpen-wf")
-    assert obj.extra_data["is-update"]
-    assert obj.extra_data["exact-matched"]
-    assert obj.extra_data["matches"]["exact"] == [record.get("control_number")]
-    assert obj.extra_data["matches"]["approved"] == record.get("control_number")
-    assert obj.extra_data["approved"]
-    assert obj.status == ObjectStatus.COMPLETED
+        assert obj.extra_data["holdingpen_matches"] == []
+        assert obj.extra_data["previously_rejected"] is False
+        assert not obj.extra_data.get("stopped-matched-holdingpen-wf")
+        assert obj.extra_data["is-update"]
+        assert obj.extra_data["exact-matched"]
+        assert obj.extra_data["matches"]["exact"] == [record.get("control_number")]
+        assert obj.extra_data["matches"]["approved"] == record.get("control_number")
+        assert obj.extra_data["approved"]
+        assert obj.status == ObjectStatus.COMPLETED
 
 
 @mock.patch(
@@ -569,31 +581,42 @@ def test_fuzzy_matched_goes_trough_the_workflow(
     del record["arxiv_eprints"]
     rec_id = record["control_number"]
 
-    with mock.patch.dict(workflow_app.config["FUZZY_MATCH"], es_query):
-        workflow_id = build_workflow(record).id
-        eng_uuid = start("article", object_id=workflow_id)
+    with requests_mock.Mocker(real_http=True) as requests_mocker:
+        requests_mocker.register_uri(
+            "GET",
+            "{}/curation/literature/assign-institutions".format(current_app.config["INSPIREHEP_URL"]),
+            json={
+                "authors": record['authors']
+            },
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
 
-    obj_id = WorkflowEngine.from_uuid(eng_uuid).objects[0].id
-    obj = workflow_object_class.get(obj_id)
+        with mock.patch.dict(workflow_app.config["FUZZY_MATCH"], es_query):
+            workflow_id = build_workflow(record).id
+            eng_uuid = start("article", object_id=workflow_id)
 
-    assert obj.status == ObjectStatus.HALTED  # for matching approval
-    obj_id = WorkflowEngine.from_uuid(eng_uuid).objects[0].id
-    obj = workflow_object_class.get(obj_id)
+        obj_id = WorkflowEngine.from_uuid(eng_uuid).objects[0].id
+        obj = workflow_object_class.get(obj_id)
 
-    assert obj.extra_data["holdingpen_matches"] == []
-    assert obj.extra_data["matches"]["fuzzy"][0] == expected_brief
+        assert obj.status == ObjectStatus.HALTED  # for matching approval
+        obj_id = WorkflowEngine.from_uuid(eng_uuid).objects[0].id
+        obj = workflow_object_class.get(obj_id)
 
-    WorkflowObject.continue_workflow = continue_wf_patched_context(workflow_app)
-    do_resolve_matching(workflow_app, obj.id, rec_id)
+        assert obj.extra_data["holdingpen_matches"] == []
+        assert obj.extra_data["matches"]["fuzzy"][0] == expected_brief
 
-    obj = workflow_object_class.get(obj_id)
-    assert obj.extra_data["matches"]["approved"] == rec_id
-    assert obj.extra_data["fuzzy-matched"]
-    assert obj.extra_data["is-update"]
-    assert obj.extra_data["approved"]
+        WorkflowObject.continue_workflow = continue_wf_patched_context(workflow_app)
+        do_resolve_matching(workflow_app, obj.id, rec_id)
 
-    obj = workflow_object_class.get(obj_id)
-    assert obj.status == ObjectStatus.COMPLETED
+        obj = workflow_object_class.get(obj_id)
+        assert obj.extra_data["matches"]["approved"] == rec_id
+        assert obj.extra_data["fuzzy-matched"]
+        assert obj.extra_data["is-update"]
+        assert obj.extra_data["approved"]
+
+        obj = workflow_object_class.get(obj_id)
+        assert obj.status == ObjectStatus.COMPLETED
 
 
 @mock.patch(
@@ -1287,6 +1310,15 @@ def test_update_record_goes_through_api_version_of_store_record_without_issue(
                     'id_': expected_head_uuid
                 }
             )
+            requests_mocker.register_uri(
+                "GET",
+                "{}/curation/literature/assign-institutions".format(current_app.config["INSPIREHEP_URL"]),
+                json={
+                    "authors": record['authors']
+                },
+                headers=_get_headers_for_hep_root_table_request(),
+                status_code=200,
+            )
             eng_uuid = start("article", object_id=workflow_id)
             url_paths = [r.path for r in requests_mocker.request_history]
             url_hostnames = [r.hostname for r in requests_mocker.request_history]
@@ -1342,19 +1374,29 @@ def test_update_record_goes_through_api_version_of_store_record_wrong_api_addres
     record_from_db,
 ):
     record = record_from_db
-    workflow_id = build_workflow(record).id
     with mock.patch.dict(
         workflow_app.config, {
             "FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT": True,
             "INSPIREHEP_URL": "http://go_to_wrong_address.bad__:98765"
         }
     ):
-        with pytest.raises(requests.exceptions.ConnectionError):
-            start("article", object_id=workflow_id)
-    obj = workflow_object_class.get(workflow_id)
+        with requests_mock.Mocker(real_http=True) as requests_mocker:
+            requests_mocker.register_uri(
+                "GET",
+                "{}/curation/literature/assign-institutions".format(current_app.config["INSPIREHEP_URL"]),
+                json={
+                    "authors": record['authors']
+                },
+                headers=_get_headers_for_hep_root_table_request(),
+                status_code=200,
+            )
+            workflow_id = build_workflow(record).id
+            with pytest.raises(requests.exceptions.ConnectionError):
+                start("article", object_id=workflow_id)
+        obj = workflow_object_class.get(workflow_id)
 
-    assert obj.status == ObjectStatus.ERROR
-    assert obj.extra_data['_error_msg'].endswith("\nConnectionError\n") is True
+        assert obj.status == ObjectStatus.ERROR
+        assert obj.extra_data['_error_msg'].endswith("\nConnectionError\n") is True
 
 
 def connection_timeout(*args, **kwargs):
@@ -1389,19 +1431,29 @@ def test_update_record_goes_through_api_version_of_store_record_connection_timeo
     record_from_db,
 ):
     record = record_from_db
-    workflow_id = build_workflow(record).id
     with mock.patch.dict(
         workflow_app.config, {
             "FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT": True,
             "INSPIREHEP_URL": "http://go_to_wrong_address.bad__:98765"
         }
     ):
-        with pytest.raises(requests.exceptions.ConnectionError):
-            start("article", object_id=workflow_id)
-    obj = workflow_object_class.get(workflow_id)
+        with requests_mock.Mocker(real_http=True) as requests_mocker:
+            requests_mocker.register_uri(
+                "GET",
+                "{}/curation/literature/assign-institutions".format(current_app.config["INSPIREHEP_URL"]),
+                json={
+                    "authors": record['authors']
+                },
+                headers=_get_headers_for_hep_root_table_request(),
+                status_code=200,
+            )
+            workflow_id = build_workflow(record).id
+            with pytest.raises(requests.exceptions.ConnectionError):
+                start("article", object_id=workflow_id)
+            obj = workflow_object_class.get(workflow_id)
 
-    assert obj.status == ObjectStatus.ERROR
-    assert obj.extra_data['_error_msg'].endswith("\nConnectTimeout\n") is True
+        assert obj.status == ObjectStatus.ERROR
+        assert obj.extra_data['_error_msg'].endswith("\nConnectTimeout\n") is True
 
 
 @mock.patch(
@@ -1443,18 +1495,27 @@ def test_workflow_checks_affiliations_if_record_is_not_important(
     record = generate_record()
     record['authors'].append({u"full_name": u"Third Author"})
     record['authors'][2]['raw_affiliations'] = [{"value": "Fermilab"}, {"value": "IN2P3"}, {"value": "Cern"}]
-    workflow_id = build_workflow(record).id
+    mocked_external_services.register_uri(
+        "GET",
+        "{}/curation/literature/assign-institutions".format(current_app.config["INSPIREHEP_URL"]),
+        json={
+            "authors": record['authors']
+        },
+        headers=_get_headers_for_hep_root_table_request(),
+        status_code=200,
+    )
     with patch.dict(workflow_app.config, {
         'FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT': True,
         'INSPIREHEP_URL': "http://web:8000"
     }):
+        workflow_id = build_workflow(record).id
         start("article", object_id=workflow_id)
 
-    collections_in_record = mocked_external_services.request_history[1].json()['_collections']
-    assert "CDS Hidden" in collections_in_record
-    assert "HAL Hidden" in collections_in_record
-    assert "Fermilab" in collections_in_record
-    assert "Literature" not in collections_in_record
+        collections_in_record = mocked_external_services.request_history[2].json()['_collections']
+        assert "CDS Hidden" in collections_in_record
+        assert "HAL Hidden" in collections_in_record
+        assert "Fermilab" in collections_in_record
+        assert "Literature" not in collections_in_record
 
 
 @mock.patch(
@@ -1489,6 +1550,7 @@ def test_workflow_do_not_changes_to_hidden_if_record_authors_do_not_have_interes
 ):
     """Test a full harvesting workflow."""
     record = generate_record()
+
     workflow_id = build_workflow(record).id
     with patch.dict(workflow_app.config, {
         'FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT': True,
@@ -1500,7 +1562,7 @@ def test_workflow_do_not_changes_to_hidden_if_record_authors_do_not_have_interes
         wf.save()
         wf.continue_workflow(delayed=False)
 
-    collections_in_record = mocked_external_services.request_history[1].json()['_collections']
+    collections_in_record = mocked_external_services.request_history[2].json()['_collections']
     assert "CDS Hidden" not in collections_in_record
     assert "HAL Hidden" not in collections_in_record
     assert "Fermilab" not in collections_in_record
@@ -1546,6 +1608,15 @@ def test_workflow_checks_affiliations_if_record_is_rejected_by_curator(
     record = generate_record()
     record['authors'].append({u"full_name": u"Third Author"})
     record['authors'][2]['raw_affiliations'] = [{"value": "Fermilab?"}, {"value": "IN2P3."}, {"value": "Some words with CErN, inside."}]
+    mocked_external_services.register_uri(
+        "GET",
+        "{}/curation/literature/assign-institutions".format(current_app.config["INSPIREHEP_URL"]),
+        json={
+            "authors": record['authors']
+        },
+        headers=_get_headers_for_hep_root_table_request(),
+        status_code=200,
+    )
     workflow_id = build_workflow(record).id
     with patch.dict(workflow_app.config, {
         'FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT': True,
@@ -1557,7 +1628,7 @@ def test_workflow_checks_affiliations_if_record_is_rejected_by_curator(
         wf.save()
         wf.continue_workflow(delayed=False)
 
-    collections_in_record = mocked_external_services.request_history[1].json()['_collections']
+    collections_in_record = mocked_external_services.request_history[2].json()['_collections']
     assert "CDS Hidden" in collections_in_record
     assert "HAL Hidden" in collections_in_record
     assert "Fermilab" in collections_in_record

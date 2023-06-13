@@ -266,6 +266,17 @@ def mocked_external_services(workflow_app):
             headers=_get_headers_for_hep_root_table_request(),
             status_code=200,
         )
+        requests_mocker.register_uri(
+            "GET",
+            "{inspirehep_url}/curation/literature/assign-institutions".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={
+                "authors": [{'full_name': 'test author'}]
+            },
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
         if 'INSPIREHEP_URL' in workflow_app.config:
             # HEP record upload
             requests_mocker.register_uri(

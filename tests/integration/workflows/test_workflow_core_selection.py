@@ -113,6 +113,31 @@ def test_core_selection_wf_starts_after_article_wf_when_no_core(
                 headers=_get_headers_for_hep_root_table_request(),
                 status_code=200,
             )
+            mock.register_uri(
+                "GET",
+                "http://web:8000/curation/literature/assign-institutions",
+                json={
+                    "authors": [
+                        {
+                            "ids": [{"value": "A.Simon.7", "schema": "INSPIRE BAI"}],
+                            "uuid": "d121b8aa-34aa-45fa-a288-ff0140123b34",
+                            "full_name": "Simon, A.",
+                            "signature_block": "SANANa",
+                        },
+                        {
+                            "ids": [{"value": "G.Wolschin.1", "schema": "INSPIRE BAI"}],
+                            "uuid": "08cf89f3-4f28-482e-8ad4-52f2555154a2",
+                            "record": {
+                                "$ref": "https://inspirehep.net/api/authors/1019439"
+                            },
+                            "full_name": "Wolschin, G.",
+                            "signature_block": "WALSANg",
+                        },
+                    ]
+                },
+                headers=_get_headers_for_hep_root_table_request(),
+                status_code=200,
+            )
 
             start("article", object_id=workflow_object.id)
 
@@ -147,9 +172,9 @@ def test_core_selection_wf_starts_after_article_wf_when_no_core(
     expected_record_data = load_json_record("hep_record_no_core.json")["metadata"]
     expected_record_data["core"] = True
 
-    assert len(mock.request_history) == 4
+    assert len(mock.request_history) == 5
     # Check is record sent to HEP is correct (only core has changed)
-    assert mock.request_history[3].json() == expected_record_data
+    assert mock.request_history[4].json() == expected_record_data
 
 
 @mock.patch("inspirehep.modules.workflows.tasks.submission.send_robotupload")
@@ -330,6 +355,31 @@ def test_core_selection_wf_works_when_there_is_record_redirection_on_hep(
                 headers=_get_headers_for_hep_root_table_request(),
                 status_code=200,
             )
+            mock.register_uri(
+                "GET",
+                "http://web:8000/curation/literature/assign-institutions",
+                json={
+                    "authors": [
+                        {
+                            "ids": [{"value": "A.Simon.7", "schema": "INSPIRE BAI"}],
+                            "uuid": "d121b8aa-34aa-45fa-a288-ff0140123b34",
+                            "full_name": "Simon, A.",
+                            "signature_block": "SANANa",
+                        },
+                        {
+                            "ids": [{"value": "G.Wolschin.1", "schema": "INSPIRE BAI"}],
+                            "uuid": "08cf89f3-4f28-482e-8ad4-52f2555154a2",
+                            "record": {
+                                "$ref": "https://inspirehep.net/api/authors/1019439"
+                            },
+                            "full_name": "Wolschin, G.",
+                            "signature_block": "WALSANg",
+                        },
+                    ]
+                },
+                headers=_get_headers_for_hep_root_table_request(),
+                status_code=200,
+            )
 
             start("article", object_id=workflow_object.id)
 
@@ -361,9 +411,9 @@ def test_core_selection_wf_works_when_there_is_record_redirection_on_hep(
     expected_record_data = load_json_record("hep_record_no_core.json")["metadata"]
     expected_record_data["core"] = True
 
-    assert len(mock.request_history) == 4
+    assert len(mock.request_history) == 5
     # Check is record sent to HEP is correct (only core has changed)
-    assert mock.request_history[3].json() == expected_record_data
+    assert mock.request_history[4].json() == expected_record_data
 
 
 @mock.patch("inspirehep.modules.workflows.tasks.submission.send_robotupload")

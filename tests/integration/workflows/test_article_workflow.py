@@ -250,12 +250,25 @@ def test_set_fermilab_collection_even_when_record_is_hidden_and_affiliations_are
         ],
     }
     expected_collections = ["CDS Hidden", "Fermilab"]
-    workflow = build_workflow(record)
-    start("article", object_id=workflow.id)
-    wf = workflow_object_class.get(workflow.id)
-    mark("approved", False)(workflow, None)
-    wf.continue_workflow()
-    assert workflow.data["_collections"] == expected_collections
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            "GET",
+            "{inspirehep_url}/curation/literature/assign-institutions".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={
+                "authors": record['authors']
+            },
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+
+        workflow = build_workflow(record)
+        start("article", object_id=workflow.id)
+        wf = workflow_object_class.get(workflow.id)
+        mark("approved", False)(workflow, None)
+        wf.continue_workflow()
+        assert workflow.data["_collections"] == expected_collections
 
 
 @mock.patch(
@@ -321,6 +334,15 @@ def test_keywords_are_stored_in_record_when_record_is_core(
                     [],
                 ],
                 "ambiguous_affiliations": [],
+            },
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        mock.register_uri(
+            "GET",
+            "http://web:8000/curation/literature/assign-institutions",
+            json={
+                "authors": [{'full_name': 'test author'}]
             },
             headers=_get_headers_for_hep_root_table_request(),
             status_code=200,
