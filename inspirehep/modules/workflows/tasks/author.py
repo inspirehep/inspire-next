@@ -21,7 +21,7 @@
 # or submit itself to any jurisdiction.
 
 from __future__ import absolute_import, division, print_function
-from flask import current_app
+from flask import current_app, url_for
 from inspirehep.modules.literaturesuggest.tasks import get_user_name
 
 from inspirehep.modules.workflows.utils import with_debug_logging
@@ -43,6 +43,7 @@ def new_ticket_context(user, obj):
         email=user.email,
         subject=subject,
         user_comment=obj.extra_data.get('formdata', {}).get('extra_comments', ''),
+        obj_url=url_for('invenio_workflows_ui.details', objectid=obj.id, _external=True)
     )
 
 
