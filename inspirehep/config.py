@@ -35,8 +35,6 @@ from invenio_oauthclient.contrib import orcid
 from invenio_records_rest.facets import range_filter, terms_filter
 from invenio_records_rest.utils import allow_all
 
-from inspire_matcher.config import MATCHER_DEFAULT_CONFIGURATION as exact_match
-
 from .modules.records.facets import range_author_count_filter, must_match_all_filter
 from .modules.search.facets import hep_author_publications
 
@@ -1652,46 +1650,6 @@ INSPIRE_REF_UPDATER_WHITELISTS = {
     ],
 }
 """Controls which fields are updated when the referred record is updated."""
-
-# Configuration for the matcher
-# =============================
-EXACT_MATCH = exact_match
-
-FUZZY_MATCH = {
-    'algorithm': [
-        {
-            'queries': [
-                {
-                    'clauses': [
-                        {
-                            'boost': 20,
-                            'path': 'abstracts',
-                        },
-                        {
-                            'boost': 10,
-                            'path': 'authors[:3]',
-                        },
-                        {
-                            'boost': 20,
-                            'path': 'titles',
-                        },
-                        {
-                            'boost': 10,
-                            'path': 'report_numbers',
-                        },
-                    ],
-                    'type': 'fuzzy',
-                }
-            ],
-            'validator': ['inspire_matcher.validators:authors_titles_validator', 'inspire_matcher.validators:arxiv_eprints_validator']
-        }
-    ],
-    'index': 'records-hep',
-    'source': ['control_number', 'titles', 'abstracts', 'authors',
-               'arxiv_eprints', 'public_notes', 'number_of_pages',
-               'publication_info', 'earliest_date']
-}
-
 
 # App metrics
 # ===========

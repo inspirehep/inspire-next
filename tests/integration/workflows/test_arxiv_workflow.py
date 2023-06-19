@@ -25,46 +25,32 @@
 from __future__ import absolute_import, division, print_function
 
 import json
+
 import mock
 import pkg_resources
 import pytest
 import requests
 import requests_mock
-
-from jsonschema import ValidationError
-from invenio_db import db
-from invenio_workflows import (
-    ObjectStatus,
-    WorkflowEngine,
-    WorkflowObject,
-    start,
-    workflow_object_class,
-)
-from invenio_search import current_search
-from invenio_workflows.errors import WorkflowsError
-from inspire_schemas.utils import validate
-from flask import current_app
-from inspirehep.modules.workflows.tasks.actions import load_from_source_data
-from inspirehep.modules.workflows.utils import _get_headers_for_hep_root_table_request, do_not_repeat
-
-
-from calls import (
-    core_record,
-    do_accept_core,
-    do_resolve_matching,
-    do_robotupload_callback,
-    do_validation_callback,
-    generate_record,
-)
-from mocks import (
-    fake_classifier_api_request,
-    fake_download_file,
-    fake_magpie_api_request,
-)
+from calls import (core_record, do_accept_core, do_resolve_matching,
+                   do_robotupload_callback, do_validation_callback,
+                   generate_record)
 from factories.db.invenio_records import TestRecordMetadata
-from inspirehep.modules.workflows.tasks.matching import _get_hep_record_brief
-from workflow_utils import build_workflow
+from flask import current_app
+from inspire_schemas.utils import validate
+from invenio_db import db
+from invenio_search import current_search
+from invenio_workflows import (ObjectStatus, WorkflowEngine, WorkflowObject,
+                               start, workflow_object_class)
+from invenio_workflows.errors import WorkflowsError
+from jsonschema import ValidationError
 from mock import patch
+from mocks import (fake_classifier_api_request, fake_download_file,
+                   fake_magpie_api_request)
+from workflow_utils import build_workflow
+
+from inspirehep.modules.workflows.tasks.actions import load_from_source_data
+from inspirehep.modules.workflows.utils import (
+    _get_headers_for_hep_root_table_request, do_not_repeat)
 
 
 @mock.patch("inspirehep.modules.workflows.tasks.arxiv.is_pdf_link")
@@ -98,8 +84,8 @@ def get_halted_workflow(mocked_is_pdf_link, app, record, extra_config=None):
     # A prediction should have been made
     prediction = obj.extra_data.get("relevance_prediction")
     assert prediction
-    assert prediction['decision'] == 'Non-CORE'
-    assert prediction['scores']['Non-CORE'] == 0.6497962474822998
+    assert prediction["decision"] == "Non-CORE"
+    assert prediction["scores"]["Non-CORE"] == 0.6497962474822998
 
     expected_experiment_prediction = {
         "experiments": [{"label": "CMS", "score": 0.75495152473449707}]
@@ -131,7 +117,7 @@ def get_halted_workflow(mocked_is_pdf_link, app, record, extra_config=None):
     side_effect=fake_download_file,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
     side_effect=fake_classifier_api_request,
 )
 @mock.patch(
@@ -188,12 +174,9 @@ def test_harvesting_arxiv_workflow_manual_rejected(
     side_effect=fake_download_file,
 )
 @mock.patch("inspirehep.modules.workflows.tasks.arxiv.is_pdf_link", return_value=True)
+@mock.patch("inspirehep.modules.workflows.tasks.arxiv.is_pdf_link", return_value=True)
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
-    return_value=True
-)
-@mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
     side_effect=fake_classifier_api_request,
 )
 @mock.patch(
@@ -249,7 +232,7 @@ def test_harvesting_arxiv_workflow_core_record_auto_accepted(
     side_effect=fake_download_file,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
     side_effect=fake_classifier_api_request,
 )
 @mock.patch(
@@ -310,7 +293,7 @@ def test_harvesting_arxiv_workflow_manual_accepted(
     side_effect=fake_download_file,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
     side_effect=fake_classifier_api_request,
 )
 @mock.patch(
@@ -351,16 +334,16 @@ def test_match_in_holdingpen_stops_pending_wf(
     assert update_wf.status == ObjectStatus.HALTED
     #  As workflow stops (in error) before setting this
     assert update_wf.extra_data["previously_rejected"] is False
-    assert update_wf.extra_data['already-in-holding-pen'] is True
+    assert update_wf.extra_data["already-in-holding-pen"] is True
     assert update_wf.extra_data["stopped-matched-holdingpen-wf"] is True
     assert update_wf.extra_data["is-update"] is False
 
     old_wf = workflow_object_class.get(obj_id)
-    assert old_wf.extra_data['already-in-holding-pen'] is False
-    assert old_wf.extra_data['previously_rejected'] is False
-    assert old_wf.extra_data['stopped-by-wf'] == update_wf.id
-    assert old_wf.extra_data.get('approved') is None
-    assert old_wf.extra_data['is-update'] is False
+    assert old_wf.extra_data["already-in-holding-pen"] is False
+    assert old_wf.extra_data["previously_rejected"] is False
+    assert old_wf.extra_data["stopped-by-wf"] == update_wf.id
+    assert old_wf.extra_data.get("approved") is None
+    assert old_wf.extra_data["is-update"] is False
     assert old_wf.status == ObjectStatus.COMPLETED
 
 
@@ -374,7 +357,7 @@ def test_match_in_holdingpen_stops_pending_wf(
     side_effect=fake_download_file,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
     side_effect=fake_classifier_api_request,
 )
 @mock.patch(
@@ -416,9 +399,9 @@ def test_match_in_holdingpen_previously_rejected_wf_stop(
     eng = WorkflowEngine.from_uuid(eng_uuid)
     obj2 = eng.objects[0]
 
-    assert obj2.extra_data['already-in-holding-pen'] is False
-    assert obj2.extra_data['previously_rejected'] is True
-    assert obj2.extra_data['previously_rejected_matches'] == [obj_id]
+    assert obj2.extra_data["already-in-holding-pen"] is False
+    assert obj2.extra_data["previously_rejected"] is True
+    assert obj2.extra_data["previously_rejected_matches"] == [obj_id]
 
 
 def test_article_workflow_stops_when_record_is_not_valid(workflow_app):
@@ -444,32 +427,49 @@ def test_article_workflow_stops_when_record_is_not_valid(workflow_app):
 
 
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+    "inspirehep.modules.workflows.tasks.magpie.json_api_request",
     side_effect=fake_magpie_api_request,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
     side_effect=fake_classifier_api_request,
 )
 def test_article_workflow_continues_when_record_is_valid(
-    mocked_api_request_magpie,
-    mocked_api_request_classifier,
-    workflow_app
+    mocked_api_request_magpie, mocked_api_request_classifier, workflow_app
 ):
     valid_record = {
         "_collections": ["Literature"],
         "document_type": ["article"],
         "titles": [{"title": "A title"}],
     }
+    with requests_mock.Mocker(real_http=True) as requests_mocker:
+        requests_mocker.register_uri(
+            "GET",
+            "{inspirehep_url}/matcher/exact-match".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={"matched_ids": []},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        requests_mocker.register_uri(
+            "GET",
+            "{inspirehep_url}/matcher/fuzzy-match".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={"matched_data": {}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
 
-    workflow_id = build_workflow(valid_record).id
-    eng_uuid = start("article", object_id=workflow_id)
+        workflow_id = build_workflow(valid_record).id
+        eng_uuid = start("article", object_id=workflow_id)
 
-    eng = WorkflowEngine.from_uuid(eng_uuid)
-    obj = eng.objects[0]
+        eng = WorkflowEngine.from_uuid(eng_uuid)
+        obj = eng.objects[0]
 
-    assert obj.status != ObjectStatus.ERROR
-    assert "_error_msg" not in obj.extra_data
+        assert obj.status != ObjectStatus.ERROR
+        assert "_error_msg" not in obj.extra_data
 
 
 @mock.patch(
@@ -477,7 +477,7 @@ def test_article_workflow_continues_when_record_is_valid(
     side_effect=fake_magpie_api_request,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
     side_effect=fake_classifier_api_request,
 )
 @mock.patch(
@@ -498,10 +498,28 @@ def test_update_exact_matched_goes_trough_the_workflow(
     with requests_mock.Mocker(real_http=True) as requests_mocker:
         requests_mocker.register_uri(
             "GET",
-            "{}/curation/literature/assign-institutions".format(current_app.config["INSPIREHEP_URL"]),
-            json={
-                "authors": record['authors']
-            },
+            "{}/curation/literature/assign-institutions".format(
+                current_app.config["INSPIREHEP_URL"]
+            ),
+            json={"authors": record["authors"]},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        requests_mocker.register_uri(
+            "GET",
+            "{inspirehep_url}/matcher/exact-match".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={"matched_ids": [record["control_number"]]},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        requests_mocker.register_uri(
+            "GET",
+            "{inspirehep_url}/matcher/fuzzy-match".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={"matched_data": {}},
             headers=_get_headers_for_hep_root_table_request(),
             status_code=200,
         )
@@ -526,7 +544,7 @@ def test_update_exact_matched_goes_trough_the_workflow(
     side_effect=fake_magpie_api_request,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
     side_effect=fake_classifier_api_request,
 )
 @mock.patch(
@@ -541,7 +559,7 @@ def test_fuzzy_matched_goes_trough_the_workflow(
     mocked_api_request_magpie,
     workflow_app,
     mocked_external_services,
-    record_from_db
+    record_from_db,
 ):
     """Test update article fuzzy matched.
 
@@ -561,40 +579,41 @@ def test_fuzzy_matched_goes_trough_the_workflow(
 
         return custom_continue_workflow
 
-    es_query = {
-        "algorithm": [
-            {
-                "queries": [
-                    {
-                        "path": "report_numbers.value",
-                        "search_path": "report_numbers.value.raw",
-                        "type": "exact",
-                    }
-                ]
-            }
-        ],
-        "index": "records-hep",
-    }
-
     record = record_from_db
-    expected_brief = _get_hep_record_brief(record)
     del record["arxiv_eprints"]
     rec_id = record["control_number"]
 
     with requests_mock.Mocker(real_http=True) as requests_mocker:
         requests_mocker.register_uri(
             "GET",
-            "{}/curation/literature/assign-institutions".format(current_app.config["INSPIREHEP_URL"]),
-            json={
-                "authors": record['authors']
-            },
+            "{}/curation/literature/assign-institutions".format(
+                current_app.config["INSPIREHEP_URL"]
+            ),
+            json={"authors": record["authors"]},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        requests_mocker.register_uri(
+            "GET",
+            "{inspirehep_url}/matcher/exact-match".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={"matched_ids": []},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        requests_mocker.register_uri(
+            "GET",
+            "{inspirehep_url}/matcher/fuzzy-match".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={"matched_data": {"control_number": record["control_number"]}},
             headers=_get_headers_for_hep_root_table_request(),
             status_code=200,
         )
 
-        with mock.patch.dict(workflow_app.config["FUZZY_MATCH"], es_query):
-            workflow_id = build_workflow(record).id
-            eng_uuid = start("article", object_id=workflow_id)
+        workflow_id = build_workflow(record).id
+        eng_uuid = start("article", object_id=workflow_id)
 
         obj_id = WorkflowEngine.from_uuid(eng_uuid).objects[0].id
         obj = workflow_object_class.get(obj_id)
@@ -604,7 +623,6 @@ def test_fuzzy_matched_goes_trough_the_workflow(
         obj = workflow_object_class.get(obj_id)
 
         assert obj.extra_data["holdingpen_matches"] == []
-        assert obj.extra_data["matches"]["fuzzy"][0] == expected_brief
 
         WorkflowObject.continue_workflow = continue_wf_patched_context(workflow_app)
         do_resolve_matching(workflow_app, obj.id, rec_id)
@@ -620,53 +638,70 @@ def test_fuzzy_matched_goes_trough_the_workflow(
 
 
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+    "inspirehep.modules.workflows.tasks.magpie.json_api_request",
     side_effect=fake_magpie_api_request,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
     side_effect=fake_classifier_api_request,
 )
 def test_validation_error_callback_with_a_valid(
-    mocked_api_request_magpie,
-    mocked_api_request_classifier,
-    workflow_app
+    mocked_api_request_magpie, mocked_api_request_classifier, workflow_app
 ):
     valid_record = {
         "_collections": ["Literature"],
         "document_type": ["article"],
         "titles": [{"title": "A title"}],
     }
+    with requests_mock.Mocker(real_http=True) as requests_mocker:
+        requests_mocker.register_uri(
+            "GET",
+            "{inspirehep_url}/matcher/exact-match".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={"matched_ids": []},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        requests_mocker.register_uri(
+            "GET",
+            "{inspirehep_url}/matcher/fuzzy-match".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={"matched_data": {}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
 
-    workflow_id = build_workflow(valid_record).id
-    eng_uuid = start("article", object_id=workflow_id)
+        workflow_id = build_workflow(valid_record).id
+        eng_uuid = start("article", object_id=workflow_id)
 
-    eng = WorkflowEngine.from_uuid(eng_uuid)
-    obj = eng.objects[0]
+        eng = WorkflowEngine.from_uuid(eng_uuid)
+        obj = eng.objects[0]
 
-    assert obj.status != ObjectStatus.ERROR
+        assert obj.status != ObjectStatus.ERROR
 
-    response = do_validation_callback(workflow_app, obj.id, obj.data, obj.extra_data)
+        response = do_validation_callback(
+            workflow_app, obj.id, obj.data, obj.extra_data
+        )
 
-    expected_error_code = "WORKFLOW_NOT_IN_ERROR_STATE"
-    data = json.loads(response.get_data())
+        expected_error_code = "WORKFLOW_NOT_IN_ERROR_STATE"
+        data = json.loads(response.get_data())
 
-    assert response.status_code == 400
-    assert expected_error_code == data["error_code"]
+        assert response.status_code == 400
+        assert expected_error_code == data["error_code"]
 
 
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+    "inspirehep.modules.workflows.tasks.magpie.json_api_request",
     side_effect=fake_magpie_api_request,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
     side_effect=fake_classifier_api_request,
 )
 def test_validation_error_callback_with_validation_error(
-    mocked_api_request_magpie,
-    mocked_api_request_classifier,
-    workflow_app
+    mocked_api_request_magpie, mocked_api_request_classifier, workflow_app
 ):
     invalid_record = {
         "_collections": ["Literature"],
@@ -674,107 +709,162 @@ def test_validation_error_callback_with_validation_error(
         "titles": [{"title": "A title"}],
         "preprint_date": "Jessica Jones",
     }
+    with requests_mock.Mocker(real_http=True) as requests_mocker:
+        requests_mocker.register_uri(
+            "GET",
+            "{inspirehep_url}/matcher/exact-match".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={"matched_ids": []},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        requests_mocker.register_uri(
+            "GET",
+            "{inspirehep_url}/matcher/fuzzy-match".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={"matched_data": {}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
 
-    workflow_id = build_workflow(invalid_record).id
+        workflow_id = build_workflow(invalid_record).id
 
-    with pytest.raises(ValidationError):
-        start("article", object_id=workflow_id)
+        with pytest.raises(ValidationError):
+            start("article", object_id=workflow_id)
 
-    obj = workflow_object_class.get(workflow_id)
+        obj = workflow_object_class.get(workflow_id)
 
-    assert obj.status == ObjectStatus.ERROR
+        assert obj.status == ObjectStatus.ERROR
 
-    response = do_validation_callback(workflow_app, obj.id, obj.data, obj.extra_data)
+        response = do_validation_callback(
+            workflow_app, obj.id, obj.data, obj.extra_data
+        )
 
-    expected_message = "Validation error."
-    expected_error_code = "VALIDATION_ERROR"
-    data = json.loads(response.get_data())
+        expected_message = "Validation error."
+        expected_error_code = "VALIDATION_ERROR"
+        data = json.loads(response.get_data())
 
-    assert response.status_code == 400
-    assert expected_error_code == data["error_code"]
-    assert expected_message == data["message"]
+        assert response.status_code == 400
+        assert expected_error_code == data["error_code"]
+        assert expected_message == data["message"]
 
-    assert data["workflow"]["_extra_data"]["callback_url"]
-    assert len(data["workflow"]["_extra_data"]["validation_errors"]) == 1
+        assert data["workflow"]["_extra_data"]["callback_url"]
+        assert len(data["workflow"]["_extra_data"]["validation_errors"]) == 1
 
 
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+    "inspirehep.modules.workflows.tasks.magpie.json_api_request",
     side_effect=fake_magpie_api_request,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
     side_effect=fake_classifier_api_request,
 )
 def test_validation_error_callback_with_missing_worfklow(
-    mocked_api_request_magpie,
-    mocked_api_request_classifier,
-    workflow_app
+    mocked_api_request_magpie, mocked_api_request_classifier, workflow_app
 ):
     invalid_record = {
         "_collections": ["Literature"],
         "document_type": ["article"],
         "titles": [{"title": "A title"}],
     }
+    with requests_mock.Mocker(real_http=True) as requests_mocker:
+        requests_mocker.register_uri(
+            "GET",
+            "{inspirehep_url}/matcher/exact-match".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={"matched_ids": []},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        requests_mocker.register_uri(
+            "GET",
+            "{inspirehep_url}/matcher/fuzzy-match".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={"matched_data": {}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
 
-    workflow_id = build_workflow(invalid_record).id
-    eng_uuid = start("article", object_id=workflow_id)
+        workflow_id = build_workflow(invalid_record).id
+        eng_uuid = start("article", object_id=workflow_id)
 
-    eng = WorkflowEngine.from_uuid(eng_uuid)
-    obj = eng.objects[0]
+        eng = WorkflowEngine.from_uuid(eng_uuid)
+        obj = eng.objects[0]
 
-    response = do_validation_callback(workflow_app, 1111, obj.data, obj.extra_data)
+        response = do_validation_callback(workflow_app, 1111, obj.data, obj.extra_data)
 
-    data = json.loads(response.get_data())
-    expected_message = 'The workflow with id "1111" was not found.'
-    expected_error_code = "WORKFLOW_NOT_FOUND"
+        data = json.loads(response.get_data())
+        expected_message = 'The workflow with id "1111" was not found.'
+        expected_error_code = "WORKFLOW_NOT_FOUND"
 
-    assert response.status_code == 404
-    assert expected_error_code == data["error_code"]
-    assert expected_message == data["message"]
+        assert response.status_code == 404
+        assert expected_error_code == data["error_code"]
+        assert expected_message == data["message"]
 
 
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+    "inspirehep.modules.workflows.tasks.magpie.json_api_request",
     side_effect=fake_magpie_api_request,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
     side_effect=fake_classifier_api_request,
 )
 def test_validation_error_callback_with_malformed_with_invalid_types(
-    mocked_api_request_magpie,
-    mocked_api_request_classifier,
-    workflow_app
+    mocked_api_request_magpie, mocked_api_request_classifier, workflow_app
 ):
     invalid_record = {
         "_collections": ["Literature"],
         "document_type": ["article"],
         "titles": [{"title": "A title"}],
     }
+    with requests_mock.Mocker(real_http=True) as requests_mocker:
+        requests_mocker.register_uri(
+            "GET",
+            "{inspirehep_url}/matcher/exact-match".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={"matched_ids": []},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        requests_mocker.register_uri(
+            "GET",
+            "{inspirehep_url}/matcher/fuzzy-match".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={"matched_data": {}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
 
-    workflow_id = build_workflow(invalid_record).id
-    eng_uuid = start("article", object_id=workflow_id)
+        workflow_id = build_workflow(invalid_record).id
+        eng_uuid = start("article", object_id=workflow_id)
 
-    eng = WorkflowEngine.from_uuid(eng_uuid)
-    obj = eng.objects[0]
+        eng = WorkflowEngine.from_uuid(eng_uuid)
+        obj = eng.objects[0]
 
-    response = do_validation_callback(
-        workflow_app,
-        # id
-        "Alias Investigations",
-        obj.data,
-        # extra_data
-        "Jessica Jones",
-    )
-    data = json.loads(response.get_data())
-    expected_message = "The workflow request is malformed."
-    expected_error_code = "MALFORMED"
+        response = do_validation_callback(
+            workflow_app,
+            # id
+            "Alias Investigations",
+            obj.data,
+            # extra_data
+            "Jessica Jones",
+        )
+        data = json.loads(response.get_data())
+        expected_message = "The workflow request is malformed."
+        expected_error_code = "MALFORMED"
 
-    assert response.status_code == 400
-    assert expected_error_code == data["error_code"]
-    assert expected_message == data["message"]
-    assert "errors" in data
+        assert response.status_code == 400
+        assert expected_error_code == data["error_code"]
+        assert expected_message == data["message"]
+        assert "errors" in data
 
 
 @mock.patch(
@@ -786,12 +876,9 @@ def test_validation_error_callback_with_malformed_with_invalid_types(
     side_effect=fake_download_file,
 )
 @mock.patch("inspirehep.modules.workflows.tasks.arxiv.is_pdf_link", return_value=True)
+@mock.patch("inspirehep.modules.workflows.tasks.arxiv.is_pdf_link", return_value=True)
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
-    return_value=True
-)
-@mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
     side_effect=fake_classifier_api_request,
 )
 @mock.patch(
@@ -803,14 +890,14 @@ def test_validation_error_callback_with_malformed_with_invalid_types(
     return_value=[],
 )
 def test_keep_previously_rejected_from_fully_harvested_category_is_auto_approved(
-        mocked_refextract_extract_refs,
-        mocked_api_request_magpie,
-        mocked_api_request_classifier,
-        mocked_is_pdf_link,
-        mocked_package_download,
-        mocked_arxiv_download,
-        workflow_app,
-        mocked_external_services,
+    mocked_refextract_extract_refs,
+    mocked_api_request_magpie,
+    mocked_api_request_classifier,
+    mocked_is_pdf_link,
+    mocked_package_download,
+    mocked_arxiv_download,
+    workflow_app,
+    mocked_external_services,
 ):
     record, categories = core_record()
     obj = workflow_object_class.create(
@@ -845,12 +932,9 @@ def test_keep_previously_rejected_from_fully_harvested_category_is_auto_approved
     side_effect=fake_download_file,
 )
 @mock.patch("inspirehep.modules.workflows.tasks.arxiv.is_pdf_link", return_value=True)
+@mock.patch("inspirehep.modules.workflows.tasks.arxiv.is_pdf_link", return_value=True)
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
-    return_value=True
-)
-@mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
     side_effect=fake_classifier_api_request,
 )
 @mock.patch(
@@ -862,14 +946,14 @@ def test_keep_previously_rejected_from_fully_harvested_category_is_auto_approved
     return_value=[],
 )
 def test_previously_rejected_from_not_fully_harvested_category_is_not_auto_approved(
-        mocked_refextract_extract_refs,
-        mocked_api_request_magpie,
-        mocked_api_request_classifier,
-        mocked_is_pdf_link,
-        mocked_package_download,
-        mocked_arxiv_download,
-        workflow_app,
-        mocked_external_services,
+    mocked_refextract_extract_refs,
+    mocked_api_request_magpie,
+    mocked_api_request_classifier,
+    mocked_is_pdf_link,
+    mocked_package_download,
+    mocked_arxiv_download,
+    workflow_app,
+    mocked_external_services,
 ):
     record, categories = core_record()
     record["arxiv_eprints"][0]["categories"] = ["q-bio.GN"]
@@ -950,12 +1034,9 @@ def test_start_wf_with_no_source_data_fails(workflow_app):
     side_effect=fake_download_file,
 )
 @mock.patch("inspirehep.modules.workflows.tasks.arxiv.is_pdf_link", return_value=True)
+@mock.patch("inspirehep.modules.workflows.tasks.arxiv.is_pdf_link", return_value=True)
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
-    return_value=True
-)
-@mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
     side_effect=fake_classifier_api_request,
 )
 @mock.patch(
@@ -998,14 +1079,14 @@ def test_do_not_repeat(
     ]
 
     expected_persistent_data_first_run = {
-        'one': {'id': 1},
-        'two': {'id': 2}
+        "one": {"id": 1},
+        "two": {"id": 2},
     }.viewitems()
 
     expected_persistent_data_second_run = {
-        'one': {'id': 1},
-        'two': {'id': 2},
-        'three': {'id': 43},
+        "one": {"id": 1},
+        "two": {"id": 2},
+        "three": {"id": 43},
     }.viewitems()
 
     record = generate_record()
@@ -1024,9 +1105,9 @@ def test_do_not_repeat(
         eng = WorkflowEngine.from_uuid(workflow_uuid)
         obj = eng.processed_objects[0]
 
-        persistent_data = obj.extra_data['source_data']['persistent_data'].viewitems()
+        persistent_data = obj.extra_data["source_data"]["persistent_data"].viewitems()
         assert expected_persistent_data_first_run <= persistent_data
-        assert obj.extra_data['id'] == 2
+        assert obj.extra_data["id"] == 2
         assert obj.status == ObjectStatus.COMPLETED
 
         eng = WorkflowEngine.from_uuid(obj.id_workflow)
@@ -1039,19 +1120,19 @@ def test_do_not_repeat(
         eng = WorkflowEngine.from_uuid(workflow_uuid)
         obj = eng.processed_objects[0]
 
-        persistent_data = obj.extra_data['source_data']['persistent_data'].viewitems()
+        persistent_data = obj.extra_data["source_data"]["persistent_data"].viewitems()
         assert expected_persistent_data_second_run <= persistent_data
-        assert obj.extra_data['id'] == 43
+        assert obj.extra_data["id"] == 43
 
 
 def test_workflows_halts_on_multiple_exact_matches(workflow_app):
     # Record from arxiv with just arxiv ID in DB
-    TestRecordMetadata.create_from_file(
+    record_1 = TestRecordMetadata.create_from_file(
         __name__, "multiple_matches_arxiv.json", index_name="records-hep"
     )
 
     # Record from publisher with just DOI in DB
-    TestRecordMetadata.create_from_file(
+    record_2 = TestRecordMetadata.create_from_file(
         __name__, "multiple_matches_publisher.json", index_name="records-hep"
     )
 
@@ -1059,17 +1140,40 @@ def test_workflows_halts_on_multiple_exact_matches(workflow_app):
         __name__, "fixtures/multiple_matches_arxiv_update.json"
     )
     update_from_arxiv = json.load(open(path))
+    with requests_mock.Mocker(real_http=True) as requests_mocker:
+        requests_mocker.register_uri(
+            "GET",
+            "{inspirehep_url}/matcher/exact-match".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={
+                "matched_ids": [
+                    record_1.inspire_record["control_number"],
+                    record_2.inspire_record["control_number"],
+                ]
+            },
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        requests_mocker.register_uri(
+            "GET",
+            "{inspirehep_url}/matcher/fuzzy-match".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={"matched_data": {}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        # An update from arxiv with the same arxiv and DOI as above records
+        workflow_id = build_workflow(update_from_arxiv).id
+        start("article", object_id=workflow_id)
 
-    # An update from arxiv with the same arxiv and DOI as above records
-    workflow_id = build_workflow(update_from_arxiv).id
-    start("article", object_id=workflow_id)
+        obj = workflow_object_class.get(workflow_id)
 
-    obj = workflow_object_class.get(workflow_id)
+        assert len(set(obj.extra_data["matches"]["exact"])) == 2
 
-    assert len(set(obj.extra_data["matches"]["exact"])) == 2
-
-    assert obj.status == ObjectStatus.HALTED
-    assert obj.extra_data["_action"] == "resolve_multiple_exact_matches"
+        assert obj.status == ObjectStatus.HALTED
+        assert obj.extra_data["_action"] == "resolve_multiple_exact_matches"
 
 
 def fake_validation(data, schema=None):
@@ -1077,7 +1181,7 @@ def fake_validation(data, schema=None):
 
 
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
     side_effect=fake_classifier_api_request,
 )
 @mock.patch(
@@ -1115,7 +1219,7 @@ def test_workflow_with_validation_error(
 
 
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
     side_effect=fake_classifier_api_request,
 )
 @mock.patch(
@@ -1151,23 +1255,20 @@ def test_workflow_without_validation_error(
 
 
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
+    "inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow",
     side_effect=fake_download_file,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.actions.download_file_to_workflow',
+    "inspirehep.modules.workflows.tasks.actions.download_file_to_workflow",
     side_effect=fake_download_file,
 )
+@mock.patch("inspirehep.modules.workflows.tasks.arxiv.is_pdf_link", return_value=True)
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
-    return_value=True
-)
-@mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
     side_effect=fake_classifier_api_request,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+    "inspirehep.modules.workflows.tasks.magpie.json_api_request",
     side_effect=fake_magpie_api_request,
 )
 def test_workflow_restart_count_initialized_properly(
@@ -1184,45 +1285,48 @@ def test_workflow_restart_count_initialized_properly(
 
     with workflow_app.app_context():
         obj_id = build_workflow(record).id
-        start('article', object_id=obj_id)
+        start("article", object_id=obj_id)
 
         obj = workflow_object_class.get(obj_id)
 
-        assert obj.extra_data['source_data']['persistent_data']['marks']['restart-count'] == 0
-        assert obj.extra_data['restart-count'] == 0
+        assert (
+            obj.extra_data["source_data"]["persistent_data"]["marks"]["restart-count"]
+            == 0
+        )
+        assert obj.extra_data["restart-count"] == 0
 
         obj.callback_pos = [0]
         obj.save()
         db.session.commit()
 
-        start('article', object_id=obj_id)
+        start("article", object_id=obj_id)
 
-        assert obj.extra_data['source_data']['persistent_data']['marks']['restart-count'] == 1
-        assert obj.extra_data['restart-count'] == 1
+        assert (
+            obj.extra_data["source_data"]["persistent_data"]["marks"]["restart-count"]
+            == 1
+        )
+        assert obj.extra_data["restart-count"] == 1
 
 
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow',
+    "inspirehep.modules.workflows.tasks.arxiv.download_file_to_workflow",
+    side_effect=fake_download_file,
+)
+@mock.patch("inspirehep.modules.workflows.tasks.arxiv.is_pdf_link", return_value=True)
+@mock.patch(
+    "inspirehep.modules.workflows.tasks.actions.download_file_to_workflow",
     side_effect=fake_download_file,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.arxiv.is_pdf_link',
-    return_value=True
-)
-@mock.patch(
-    'inspirehep.modules.workflows.tasks.actions.download_file_to_workflow',
-    side_effect=fake_download_file,
-)
-@mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
     side_effect=fake_classifier_api_request,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+    "inspirehep.modules.workflows.tasks.magpie.json_api_request",
     side_effect=fake_magpie_api_request,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.magpie.json_api_request',
+    "inspirehep.modules.workflows.tasks.magpie.json_api_request",
     side_effect=fake_magpie_api_request,
 )
 def test_match_in_holdingpen_different_sources_continues(
@@ -1237,30 +1341,32 @@ def test_match_in_holdingpen_different_sources_continues(
     record = generate_record()
 
     workflow_id = build_workflow(record).id
-    eng_uuid = start('article', object_id=workflow_id)
-    current_search.flush_and_refresh('holdingpen-hep')
+    eng_uuid = start("article", object_id=workflow_id)
+    current_search.flush_and_refresh("holdingpen-hep")
     eng = WorkflowEngine.from_uuid(eng_uuid)
     wf_to_match = eng.objects[0].id
     obj = workflow_object_class.get(wf_to_match)
     assert obj.status == ObjectStatus.HALTED
     # generated wf pending in holdingpen
 
-    record['titles'][0]['title'] = 'This is an update that will match the wf in the holdingpen'
-    record['acquisition_source']['source'] = 'but not the source'
+    record["titles"][0][
+        "title"
+    ] = "This is an update that will match the wf in the holdingpen"
+    record["acquisition_source"]["source"] = "but not the source"
     # this workflow matches in the holdingpen and stops
     # because match for the workflow was found
     workflow_2_id = build_workflow(record).id
-    eng_2_uuid = start('article', object_id=workflow_2_id)
+    eng_2_uuid = start("article", object_id=workflow_2_id)
     eng_2 = WorkflowEngine.from_uuid(eng_2_uuid)
     obj_2 = eng_2.objects[0]
 
     # the first wf from another source is still halted in HP
     assert obj.status == ObjectStatus.HALTED
     assert obj_2.status == ObjectStatus.HALTED
-    assert eng.status.name == 'HALTED'
-    assert obj_2.extra_data['already-in-holding-pen'] is True
-    assert obj_2.extra_data['holdingpen_matches'] == [wf_to_match]
-    assert obj_2.extra_data['previously_rejected'] is False
+    assert eng.status.name == "HALTED"
+    assert obj_2.extra_data["already-in-holding-pen"] is True
+    assert obj_2.extra_data["holdingpen_matches"] == [wf_to_match]
+    assert obj_2.extra_data["previously_rejected"] is False
 
 
 @mock.patch(
@@ -1268,7 +1374,7 @@ def test_match_in_holdingpen_different_sources_continues(
     side_effect=fake_magpie_api_request,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
     side_effect=fake_classifier_api_request,
 )
 @mock.patch(
@@ -1287,59 +1393,92 @@ def test_update_record_goes_through_api_version_of_store_record_without_issue(
 ):
     record = record_from_db
     workflow_id = build_workflow(record).id
-    expected_control_number = record['control_number']
+    expected_control_number = record["control_number"]
     expected_head_uuid = str(record.id)
     with mock.patch.dict(
-        workflow_app.config, {
+        workflow_app.config,
+        {
             "FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT": True,
-            "INSPIREHEP_URL": "http://web:8000"
-        }
+            "INSPIREHEP_URL": "http://web:8000",
+        },
     ):
-        with requests_mock.Mocker(real_http=True) as requests_mocker:
-            requests_mocker.register_uri(
-                'PUT', '{url}/literature/{cn}'.format(
-                    url=workflow_app.config.get("INSPIREHEP_URL"),
-                    cn=expected_control_number,
-                ),
-                headers={'content-type': 'application/json'},
-                status_code=200,
-                json={
-                    'metadata': {
-                        'control_number': expected_control_number,
-                    },
-                    'id_': expected_head_uuid
-                }
-            )
-            requests_mocker.register_uri(
-                "GET",
-                "{}/curation/literature/assign-institutions".format(current_app.config["INSPIREHEP_URL"]),
-                json={
-                    "authors": record['authors']
+        mocked_external_services.register_uri(
+            "PUT",
+            "{url}/literature/{cn}".format(
+                url=workflow_app.config.get("INSPIREHEP_URL"),
+                cn=expected_control_number,
+            ),
+            headers={"content-type": "application/json"},
+            status_code=200,
+            json={
+                "metadata": {
+                    "control_number": expected_control_number,
                 },
-                headers=_get_headers_for_hep_root_table_request(),
-                status_code=200,
-            )
-            eng_uuid = start("article", object_id=workflow_id)
-            url_paths = [r.path for r in requests_mocker.request_history]
-            url_hostnames = [r.hostname for r in requests_mocker.request_history]
+                "id_": expected_head_uuid,
+            },
+        )
+        mocked_external_services.register_uri(
+            "GET",
+            "{}/curation/literature/assign-institutions".format(
+                current_app.config["INSPIREHEP_URL"]
+            ),
+            json={"authors": record["authors"]},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        mocked_external_services.register_uri(
+            "GET",
+            "{inspirehep_url}/matcher/exact-match".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={"matched_ids": [record["control_number"]]},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        mocked_external_services.register_uri(
+            "GET",
+            "{inspirehep_url}/matcher/fuzzy-match".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={"matched_data": {}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        mocked_external_services.register_uri(
+            "GET",
+            "http://web:8000/curation/literature/affiliations-normalization",
+            json={
+                "normalized_affiliations": [
+                    [],
+                    [],
+                ],
+                "ambiguous_affiliations": [],
+            },
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
 
-            assert 'web' in url_hostnames
-            assert "/literature/{cn}".format(cn=expected_control_number) in url_paths
+        eng_uuid = start("article", object_id=workflow_id)
+        url_paths = [r.path for r in mocked_external_services.request_history]
+        url_hostnames = [r.hostname for r in mocked_external_services.request_history]
 
-    obj_id = WorkflowEngine.from_uuid(eng_uuid).objects[0].id
-    obj = workflow_object_class.get(obj_id)
+        assert "web" in url_hostnames
+        assert "/literature/{cn}".format(cn=expected_control_number) in url_paths
 
-    assert obj.data['control_number'] == expected_control_number
+        obj_id = WorkflowEngine.from_uuid(eng_uuid).objects[0].id
+        obj = workflow_object_class.get(obj_id)
 
-    assert obj.extra_data["holdingpen_matches"] == []
-    assert obj.extra_data["previously_rejected"] is False
-    assert not obj.extra_data.get("stopped-matched-holdingpen-wf")
-    assert obj.extra_data["is-update"]
-    assert obj.extra_data["exact-matched"]
-    assert obj.extra_data["matches"]["exact"] == [record.get("control_number")]
-    assert obj.extra_data["matches"]["approved"] == record.get("control_number")
-    assert obj.extra_data["approved"]
-    assert obj.status == ObjectStatus.COMPLETED
+        assert obj.data["control_number"] == expected_control_number
+
+        assert obj.extra_data["holdingpen_matches"] == []
+        assert obj.extra_data["previously_rejected"] is False
+        assert not obj.extra_data.get("stopped-matched-holdingpen-wf")
+        assert obj.extra_data["is-update"]
+        assert obj.extra_data["exact-matched"]
+        assert obj.extra_data["matches"]["exact"] == [record.get("control_number")]
+        assert obj.extra_data["matches"]["approved"] == record.get("control_number")
+        assert obj.extra_data["approved"]
+        assert obj.status == ObjectStatus.COMPLETED
 
 
 def connection_error(*args, **kwargs):
@@ -1351,7 +1490,7 @@ def connection_error(*args, **kwargs):
     side_effect=fake_magpie_api_request,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
     side_effect=fake_classifier_api_request,
 )
 @mock.patch(
@@ -1361,7 +1500,7 @@ def connection_error(*args, **kwargs):
 @mock.patch("inspirehep.modules.workflows.tasks.arxiv.is_pdf_link", return_value=True)
 @mock.patch(
     "inspirehep.modules.workflows.tasks.upload.requests.put",
-    side_effect=connection_error
+    side_effect=connection_error,
 )
 def test_update_record_goes_through_api_version_of_store_record_wrong_api_address(
     mocked_request_in_upload,
@@ -1375,28 +1514,60 @@ def test_update_record_goes_through_api_version_of_store_record_wrong_api_addres
 ):
     record = record_from_db
     with mock.patch.dict(
-        workflow_app.config, {
+        workflow_app.config,
+        {
             "FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT": True,
-            "INSPIREHEP_URL": "http://go_to_wrong_address.bad__:98765"
-        }
+            "INSPIREHEP_URL": "http://go_to_wrong_address.bad__:98765",
+        },
     ):
-        with requests_mock.Mocker(real_http=True) as requests_mocker:
-            requests_mocker.register_uri(
-                "GET",
-                "{}/curation/literature/assign-institutions".format(current_app.config["INSPIREHEP_URL"]),
-                json={
-                    "authors": record['authors']
-                },
-                headers=_get_headers_for_hep_root_table_request(),
-                status_code=200,
-            )
-            workflow_id = build_workflow(record).id
-            with pytest.raises(requests.exceptions.ConnectionError):
-                start("article", object_id=workflow_id)
+        mocked_external_services.register_uri(
+            "GET",
+            "{}/curation/literature/assign-institutions".format(
+                current_app.config["INSPIREHEP_URL"]
+            ),
+            json={"authors": record["authors"]},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        mocked_external_services.register_uri(
+            "GET",
+            "{inspirehep_url}/matcher/exact-match".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={"matched_ids": [record["control_number"]]},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        mocked_external_services.register_uri(
+            "GET",
+            "http://web:8000/curation/literature/affiliations-normalization",
+            json={
+                "normalized_affiliations": [
+                    [],
+                    [],
+                ],
+                "ambiguous_affiliations": [],
+            },
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        mocked_external_services.register_uri(
+            "GET",
+            "{inspirehep_url}/matcher/fuzzy-match".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={"matched_data": {}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+
+        workflow_id = build_workflow(record).id
+        with pytest.raises(requests.exceptions.ConnectionError):
+            start("article", object_id=workflow_id)
         obj = workflow_object_class.get(workflow_id)
 
         assert obj.status == ObjectStatus.ERROR
-        assert obj.extra_data['_error_msg'].endswith("\nConnectionError\n") is True
+        assert obj.extra_data["_error_msg"].endswith("\nConnectionError\n") is True
 
 
 def connection_timeout(*args, **kwargs):
@@ -1408,7 +1579,7 @@ def connection_timeout(*args, **kwargs):
     side_effect=fake_magpie_api_request,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
     side_effect=fake_classifier_api_request,
 )
 @mock.patch(
@@ -1418,7 +1589,7 @@ def connection_timeout(*args, **kwargs):
 @mock.patch("inspirehep.modules.workflows.tasks.arxiv.is_pdf_link", return_value=True)
 @mock.patch(
     "inspirehep.modules.workflows.tasks.upload.requests.put",
-    side_effect=connection_timeout
+    side_effect=connection_timeout,
 )
 def test_update_record_goes_through_api_version_of_store_record_connection_timeout(
     mocked_request_in_upload,
@@ -1432,28 +1603,62 @@ def test_update_record_goes_through_api_version_of_store_record_connection_timeo
 ):
     record = record_from_db
     with mock.patch.dict(
-        workflow_app.config, {
+        workflow_app.config,
+        {
             "FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT": True,
-            "INSPIREHEP_URL": "http://go_to_wrong_address.bad__:98765"
-        }
+            "INSPIREHEP_URL": "http://go_to_wrong_address.bad__:98765",
+        },
     ):
-        with requests_mock.Mocker(real_http=True) as requests_mocker:
-            requests_mocker.register_uri(
-                "GET",
-                "{}/curation/literature/assign-institutions".format(current_app.config["INSPIREHEP_URL"]),
-                json={
-                    "authors": record['authors']
-                },
-                headers=_get_headers_for_hep_root_table_request(),
-                status_code=200,
-            )
-            workflow_id = build_workflow(record).id
-            with pytest.raises(requests.exceptions.ConnectionError):
-                start("article", object_id=workflow_id)
-            obj = workflow_object_class.get(workflow_id)
+        mocked_external_services.register_uri(
+            "GET",
+            "{}/curation/literature/assign-institutions".format(
+                current_app.config["INSPIREHEP_URL"]
+            ),
+            json={"authors": record["authors"]},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        mocked_external_services.register_uri(
+            "GET",
+            "{inspirehep_url}/matcher/exact-match".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={"matched_ids": [record["control_number"]]},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        mocked_external_services.register_uri(
+            "GET",
+            "{inspirehep_url}/matcher/fuzzy-match".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={"matched_data": {}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        mocked_external_services.register_uri(
+            "GET",
+            "{inspirehep_url}/curation/literature/affiliations-normalization".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={
+                "normalized_affiliations": [
+                    [],
+                    [],
+                ],
+                "ambiguous_affiliations": [],
+            },
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+
+        workflow_id = build_workflow(record).id
+        with pytest.raises(requests.exceptions.ConnectionError):
+            start("article", object_id=workflow_id)
+        obj = workflow_object_class.get(workflow_id)
 
         assert obj.status == ObjectStatus.ERROR
-        assert obj.extra_data['_error_msg'].endswith("\nConnectTimeout\n") is True
+        assert obj.extra_data["_error_msg"].endswith("\nConnectTimeout\n") is True
 
 
 @mock.patch(
@@ -1466,7 +1671,7 @@ def test_update_record_goes_through_api_version_of_store_record_connection_timeo
     side_effect=fake_download_file,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
     side_effect=fake_classifier_api_request,
 )
 @mock.patch(
@@ -1478,7 +1683,8 @@ def test_update_record_goes_through_api_version_of_store_record_connection_timeo
     return_value=[],
 )
 @mock.patch(
-    "inspirehep.modules.workflows.tasks.actions._is_auto_rejected", return_value=True,
+    "inspirehep.modules.workflows.tasks.actions._is_auto_rejected",
+    return_value=True,
 )
 def test_workflow_checks_affiliations_if_record_is_not_important(
     mocked_is_auto_rejected,
@@ -1493,25 +1699,34 @@ def test_workflow_checks_affiliations_if_record_is_not_important(
 ):
     """Test a full harvesting workflow."""
     record = generate_record()
-    record['authors'].append({u"full_name": u"Third Author"})
-    record['authors'][2]['raw_affiliations'] = [{"value": "Fermilab"}, {"value": "IN2P3"}, {"value": "Cern"}]
+    record["authors"].append({"full_name": "Third Author"})
+    record["authors"][2]["raw_affiliations"] = [
+        {"value": "Fermilab"},
+        {"value": "IN2P3"},
+        {"value": "Cern"},
+    ]
     mocked_external_services.register_uri(
         "GET",
-        "{}/curation/literature/assign-institutions".format(current_app.config["INSPIREHEP_URL"]),
-        json={
-            "authors": record['authors']
-        },
+        "{}/curation/literature/assign-institutions".format(
+            current_app.config["INSPIREHEP_URL"]
+        ),
+        json={"authors": record["authors"]},
         headers=_get_headers_for_hep_root_table_request(),
         status_code=200,
     )
-    with patch.dict(workflow_app.config, {
-        'FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT': True,
-        'INSPIREHEP_URL': "http://web:8000"
-    }):
+    with patch.dict(
+        workflow_app.config,
+        {
+            "FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT": True,
+            "INSPIREHEP_URL": "http://web:8000",
+        },
+    ):
         workflow_id = build_workflow(record).id
         start("article", object_id=workflow_id)
 
-        collections_in_record = mocked_external_services.request_history[2].json()['_collections']
+        collections_in_record = mocked_external_services.request_history[4].json()[
+            "_collections"
+        ]
         assert "CDS Hidden" in collections_in_record
         assert "HAL Hidden" in collections_in_record
         assert "Fermilab" in collections_in_record
@@ -1528,8 +1743,9 @@ def test_workflow_checks_affiliations_if_record_is_not_important(
     side_effect=fake_download_file,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
-    side_effect=fake_classifier_api_request)
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
+    side_effect=fake_classifier_api_request,
+)
 @mock.patch(
     "inspirehep.modules.workflows.tasks.magpie.json_api_request",
     side_effect=fake_magpie_api_request,
@@ -1552,17 +1768,22 @@ def test_workflow_do_not_changes_to_hidden_if_record_authors_do_not_have_interes
     record = generate_record()
 
     workflow_id = build_workflow(record).id
-    with patch.dict(workflow_app.config, {
-        'FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT': True,
-        'INSPIREHEP_URL': "http://web:8000"
-    }):
+    with patch.dict(
+        workflow_app.config,
+        {
+            "FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT": True,
+            "INSPIREHEP_URL": "http://web:8000",
+        },
+    ):
         start("article", object_id=workflow_id)
         wf = workflow_object_class.get(workflow_id)
-        wf.extra_data['approved'] = True
+        wf.extra_data["approved"] = True
         wf.save()
         wf.continue_workflow(delayed=False)
 
-    collections_in_record = mocked_external_services.request_history[2].json()['_collections']
+    collections_in_record = mocked_external_services.request_history[4].json()[
+        "_collections"
+    ]
     assert "CDS Hidden" not in collections_in_record
     assert "HAL Hidden" not in collections_in_record
     assert "Fermilab" not in collections_in_record
@@ -1579,7 +1800,7 @@ def test_workflow_do_not_changes_to_hidden_if_record_authors_do_not_have_interes
     side_effect=fake_download_file,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
     side_effect=fake_classifier_api_request,
 )
 @mock.patch(
@@ -1591,7 +1812,8 @@ def test_workflow_do_not_changes_to_hidden_if_record_authors_do_not_have_interes
     return_value=[],
 )
 @mock.patch(
-    "inspirehep.modules.workflows.tasks.actions._is_auto_rejected", return_value=False,
+    "inspirehep.modules.workflows.tasks.actions._is_auto_rejected",
+    return_value=False,
 )
 def test_workflow_checks_affiliations_if_record_is_rejected_by_curator(
     mocked_is_auto_rejected,
@@ -1606,29 +1828,57 @@ def test_workflow_checks_affiliations_if_record_is_rejected_by_curator(
 ):
     """Test a full harvesting workflow."""
     record = generate_record()
-    record['authors'].append({u"full_name": u"Third Author"})
-    record['authors'][2]['raw_affiliations'] = [{"value": "Fermilab?"}, {"value": "IN2P3."}, {"value": "Some words with CErN, inside."}]
+    record["authors"].append({"full_name": "Third Author"})
+    record["authors"][2]["raw_affiliations"] = [
+        {"value": "Fermilab?"},
+        {"value": "IN2P3."},
+        {"value": "Some words with CErN, inside."},
+    ]
     mocked_external_services.register_uri(
         "GET",
-        "{}/curation/literature/assign-institutions".format(current_app.config["INSPIREHEP_URL"]),
-        json={
-            "authors": record['authors']
-        },
+        "{}/curation/literature/assign-institutions".format(
+            current_app.config["INSPIREHEP_URL"]
+        ),
+        json={"authors": record["authors"]},
         headers=_get_headers_for_hep_root_table_request(),
         status_code=200,
     )
+    mocked_external_services.register_uri(
+        "GET",
+        "{inspirehep_url}/matcher/exact-match".format(
+            inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+        ),
+        json={"matched_ids": []},
+        headers=_get_headers_for_hep_root_table_request(),
+        status_code=200,
+    )
+    mocked_external_services.register_uri(
+        "GET",
+        "{inspirehep_url}/matcher/fuzzy-match".format(
+            inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+        ),
+        json={"matched_data": {}},
+        headers=_get_headers_for_hep_root_table_request(),
+        status_code=200,
+    )
+
     workflow_id = build_workflow(record).id
-    with patch.dict(workflow_app.config, {
-        'FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT': True,
-        'INSPIREHEP_URL': "http://web:8000"
-    }):
+    with patch.dict(
+        workflow_app.config,
+        {
+            "FEATURE_FLAG_ENABLE_REST_RECORD_MANAGEMENT": True,
+            "INSPIREHEP_URL": "http://web:8000",
+        },
+    ):
         start("article", object_id=workflow_id)
         wf = workflow_object_class.get(workflow_id)
-        wf.extra_data['approved'] = False
+        wf.extra_data["approved"] = False
         wf.save()
         wf.continue_workflow(delayed=False)
 
-    collections_in_record = mocked_external_services.request_history[2].json()['_collections']
+    collections_in_record = mocked_external_services.request_history[4].json()[
+        "_collections"
+    ]
     assert "CDS Hidden" in collections_in_record
     assert "HAL Hidden" in collections_in_record
     assert "Fermilab" in collections_in_record
@@ -1645,7 +1895,7 @@ def test_workflow_checks_affiliations_if_record_is_rejected_by_curator(
     side_effect=fake_download_file,
 )
 @mock.patch(
-    'inspirehep.modules.workflows.tasks.classifier.json_api_request',
+    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
     side_effect=fake_classifier_api_request,
 )
 @mock.patch(
@@ -1668,8 +1918,10 @@ def test_grobid_extracts_authors_correctly(
 ):
     """Test a full harvesting workflow."""
     record = generate_record()
-    record['authors'][0]['raw_affiliations'] = [{"value": "Concordia University, Montréal, Québec, Canada"}]
-    record['authors'][0]['full_name'] = "Hall, Richard Leon"
+    record["authors"][0]["raw_affiliations"] = [
+        {"value": "Concordia University, Montréal, Québec, Canada"}
+    ]
+    record["authors"][0]["full_name"] = "Hall, Richard Leon"
 
     extra_config = {
         "CLASSIFIER_API_URL": "http://example.com/classifier",
@@ -1689,7 +1941,7 @@ def test_grobid_extracts_authors_correctly(
         {
             u"raw_affiliations": [
                 {
-                    u"value": u"Department of Mathematics and Statistics, University of Prince Edward Island, 550 University Avenue, Charlottetown, PEI, Canada C1A 4P3."
+                    "value": u"Department of Mathematics and Statistics, University of Prince Edward Island, 550 University Avenue, Charlottetown, PEI, Canada C1A 4P3."
                 }
             ],
             u"emails": [u"nsaad@upei.ca"],
@@ -1703,5 +1955,5 @@ def test_grobid_extracts_authors_correctly(
 
     obj = workflow_object_class.get(obj.id)
 
-    assert obj.extra_data['authors_with_affiliations']
-    assert obj.data['authors'] == expected_authors_after_extraction
+    assert obj.extra_data["authors_with_affiliations"]
+    assert obj.data["authors"] == expected_authors_after_extraction

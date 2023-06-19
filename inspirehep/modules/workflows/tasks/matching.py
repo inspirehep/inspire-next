@@ -24,27 +24,35 @@
 
 from __future__ import absolute_import, division, print_function
 
-from flask import current_app
+import json
 
+import backoff
+import requests
+from flask import current_app
+from inspire_matcher.api import match
 from inspire_schemas.readers import LiteratureReader
+from inspire_utils.dedupers import dedupe_list
 from inspire_utils.record import get_value
 from invenio_db import db
-from invenio_workflows import workflow_object_class, WorkflowEngine, \
-    ObjectStatus
-from invenio_workflows.errors import WorkflowsError, HaltProcessing
-import re
+from invenio_workflows import (ObjectStatus, WorkflowEngine,
+                               workflow_object_class)
+from invenio_workflows.errors import HaltProcessing, WorkflowsError
 
-from inspire_matcher.api import match
-from inspire_utils.dedupers import dedupe_list
-from inspirehep.utils.url import get_hep_url_for_recid
+from inspirehep.modules.workflows.errors import BadGatewayError
 from inspirehep.modules.workflows.tasks.actions import mark, save_workflow
 from inspirehep.modules.workflows.utils import restart_workflow
-from copy import deepcopy, copy
+from inspirehep.utils.url import get_hep_url_for_recid
 
-from ..utils import with_debug_logging
+from ..utils import _get_headers_for_hep_root_table_request, with_debug_logging
 
 
 @with_debug_logging
+@backoff.on_exception(
+    backoff.expo,
+    (BadGatewayError, requests.exceptions.ConnectionError),
+    base=4,
+    max_tries=5,
+)
 def exact_match(obj, eng):
     """Return ``True`` if the record is already present in the system.
 
@@ -63,14 +71,30 @@ def exact_match(obj, eng):
         ``False`` otherwise.
 
     """
-    exact_match_config = current_app.config['EXACT_MATCH']
-    matches = dedupe_list(match(obj.data, exact_match_config))
-    record_ids = [el['_source']['control_number'] for el in matches]
-    obj.extra_data.setdefault('matches', {})['exact'] = record_ids
-    return bool(record_ids)
+    matching_response = requests.get(
+        "{inspirehep_url}/matcher/exact-match".format(
+            inspirehep_url=current_app.config["INSPIREHEP_URL"]
+        ),
+        headers=_get_headers_for_hep_root_table_request(),
+        data=json.dumps(
+            {
+                "data": obj.data,
+            }
+        ),
+    )
+    matching_response.raise_for_status()
+    matches = matching_response.json()["matched_ids"]
+    obj.extra_data.setdefault("matches", {})["exact"] = matches
+    return bool(matches)
 
 
 @with_debug_logging
+@backoff.on_exception(
+    backoff.expo,
+    (BadGatewayError, requests.exceptions.ConnectionError),
+    base=4,
+    max_tries=5,
+)
 def fuzzy_match(obj, eng):
     """Return ``True`` if a similar record is found in the system.
 
@@ -89,82 +113,41 @@ def fuzzy_match(obj, eng):
         ``False`` otherwise.
 
     """
-    math_ml_latex_regex = r"(<math(.*?)<\/math>|(?<!\\)\$.*?(?<!\\)\$|(?<!\\)\\(.*?(?<!\\)\\)|(?<!\\)\\[.*?(?<!\\)\\])"
-    fuzzy_match_config = current_app.config['FUZZY_MATCH']
-    obj_data_without_math_ml_latex = copy(obj.data)
-    if "abstracts" in obj.data:
-        abstract_dup = deepcopy(obj.data["abstracts"])
-        for abstract in abstract_dup:
-            abstract['value'] = re.sub(math_ml_latex_regex, '', abstract['value'])
-        obj_data_without_math_ml_latex["abstracts"] = abstract_dup
-    matches = dedupe_list(match(obj_data_without_math_ml_latex, fuzzy_match_config))
-    record_ids = [_get_hep_record_brief(el['_source']) for el in matches]
-    obj.extra_data.setdefault('matches', {})['fuzzy'] = record_ids[0:5]
-    return bool(record_ids)
-
-
-def _get_hep_record_brief(hep_record):
-    brief = {
-        'control_number': hep_record['control_number'],
-        'title': get_value(hep_record, 'titles[0].title'),
-    }
-
-    abstract = get_value(hep_record, 'abstracts[0].value')
-    if abstract is not None:
-        brief['abstract'] = abstract
-
-    arxiv_eprint = get_value(hep_record, 'arxiv_eprints[0].value')
-    if arxiv_eprint is not None:
-        brief['arxiv_eprint'] = arxiv_eprint
-
-    number_of_pages = get_value(hep_record, 'number_of_pages')
-    if number_of_pages is not None:
-        brief['number_of_pages'] = number_of_pages
-
-    earliest_date = get_value(hep_record, 'earliest_date')
-    if earliest_date is not None:
-        brief['earliest_date'] = earliest_date
-
-    authors = hep_record.get('authors')
-    if authors is not None:
-        brief['authors_count'] = len(authors)
-        author_briefs = []
-        for author in authors[:3]:
-            author_briefs.append({'full_name': author['full_name']})
-        brief['authors'] = author_briefs
-
-    public_notes = hep_record.get('public_notes')
-    if public_notes is not None:
-        public_notes_value = []
-        for public_note in public_notes:
-            public_notes_value.append({'value': public_note['value']})
-        brief['public_notes'] = public_notes_value
-
-    publication_info = hep_record.get('publication_info')
-    if publication_info is not None:
-        brief['publication_info'] = publication_info
-
-    return brief
+    matching_response = requests.get(
+        "{inspirehep_url}/matcher/fuzzy-match".format(
+            inspirehep_url=current_app.config["INSPIREHEP_URL"]
+        ),
+        headers=_get_headers_for_hep_root_table_request(),
+        data=json.dumps(
+            {
+                "data": obj.data,
+            }
+        ),
+    )
+    matching_response.raise_for_status()
+    matches = matching_response.json()["matched_data"]
+    obj.extra_data.setdefault("matches", {})["fuzzy"] = matches
+    return bool(matches)
 
 
 @with_debug_logging
 def is_fuzzy_match_approved(obj, eng):
     """Check if a fuzzy match has been approved by a human."""
-    return obj.extra_data.get('fuzzy_match_approved_id')
+    return obj.extra_data.get("fuzzy_match_approved_id")
 
 
 @with_debug_logging
 def set_fuzzy_match_approved_in_extradata(obj, eng):
     """Set the human approved match in `matches.approved` in extra_data."""
-    approved_match = obj.extra_data.get('fuzzy_match_approved_id')
-    obj.extra_data.setdefault('matches', {})['approved'] = approved_match
+    approved_match = obj.extra_data.get("fuzzy_match_approved_id")
+    obj.extra_data.setdefault("matches", {})["approved"] = approved_match
 
 
 @with_debug_logging
 def set_exact_match_as_approved_in_extradata(obj, eng):
     """Set the best match in `matches.approved` in extra_data."""
-    best_match = obj.extra_data['matches']['exact'][0]
-    obj.extra_data.setdefault('matches', {})['approved'] = best_match
+    best_match = obj.extra_data["matches"]["exact"][0]
+    obj.extra_data.setdefault("matches", {})["approved"] = best_match
 
 
 def auto_approve(obj, eng):
@@ -179,8 +162,9 @@ def auto_approve(obj, eng):
         harvested or if the primary category is `physics.data-an`, otherwise
         False.
     """
-    return has_fully_harvested_category(obj.data) or \
-        physics_data_an_is_primary_category(obj.data)
+    return has_fully_harvested_category(
+        obj.data
+    ) or physics_data_an_is_primary_category(obj.data)
 
 
 def has_fully_harvested_category(record):
@@ -194,40 +178,45 @@ def has_fully_harvested_category(record):
         harvested, otherwise False.
     """
     record_categories = set(LiteratureReader(record).arxiv_categories)
-    harvested_categories = current_app.config.get('ARXIV_CATEGORIES', {})
-    return len(
-        record_categories &
-        set(
-            harvested_categories.get('core') +
-            harvested_categories.get('non-core')
+    harvested_categories = current_app.config.get("ARXIV_CATEGORIES", {})
+    return (
+        len(
+            record_categories
+            & set(
+                harvested_categories.get("core") + harvested_categories.get("non-core")
+            )
         )
-    ) > 0
+        > 0
+    )
 
 
 def physics_data_an_is_primary_category(record):
     record_categories = LiteratureReader(record).arxiv_categories
     if record_categories:
-        return record_categories[0] == 'physics.data-an'
+        return record_categories[0] == "physics.data-an"
     return False
 
 
 def _is_first_category_core(record):
     record_core_category = LiteratureReader(record).arxiv_categories[0]
-    arxiv_core_categories = set(current_app.config.get('ARXIV_CATEGORIES', {}).get('core', []))
+    arxiv_core_categories = set(
+        current_app.config.get("ARXIV_CATEGORIES", {}).get("core", [])
+    )
     return record_core_category in arxiv_core_categories
 
 
 def is_second_category_core(record):
     record_core_categories = LiteratureReader(record).arxiv_categories[1:]
-    return set(record_core_categories) & \
-        set(current_app.config.get('ARXIV_CATEGORIES', {}).get('core'))
+    return set(record_core_categories) & set(
+        current_app.config.get("ARXIV_CATEGORIES", {}).get("core")
+    )
 
 
 @with_debug_logging
 def set_core_in_extra_data(obj, eng):
     """Set `core=True` in `obj.extra_data` if the record belongs to a core arXiv category"""
     if _is_first_category_core(obj.data):
-        obj.extra_data['core'] = True
+        obj.extra_data["core"] = True
 
 
 def check_if_secondary_categories_are_core(obj, eng):
@@ -246,20 +235,24 @@ def set_wf_not_completed_ids_to_wf(obj, skip_blocked=True, skip_halted=False):
         skip_halted: boolean, if True, then it skips HALTED workflows when
             looking for matched workflows
     """
+
     def _accept_only_article_wf(base_record, match_result):
-        return get_value(match_result, '_source._workflow.workflow_class') == "article"
+        return get_value(match_result, "_source._workflow.workflow_class") == "article"
 
     def _non_completed(base_record, match_result):
-        return get_value(match_result, '_source._workflow.status') != 'COMPLETED' \
-            and _accept_only_article_wf(base_record, match_result)
+        return get_value(
+            match_result, "_source._workflow.status"
+        ) != "COMPLETED" and _accept_only_article_wf(base_record, match_result)
 
     def _not_completed_or_halted(base_record, match_result):
-        return get_value(match_result, '_source._workflow.status') not in [
-            'COMPLETED', 'HALTED'] and _accept_only_article_wf(base_record, match_result)
+        return get_value(match_result, "_source._workflow.status") not in [
+            "COMPLETED",
+            "HALTED",
+        ] and _accept_only_article_wf(base_record, match_result)
 
     def is_workflow_blocked_by_another_workflow(workflow_id):
         workflow = workflow_object_class.get(workflow_id)
-        return obj.id in workflow.extra_data.get('holdingpen_matches', [])
+        return obj.id in workflow.extra_data.get("holdingpen_matches", [])
 
     if skip_halted:
         matched_ids = pending_in_holding_pen(obj, _not_completed_or_halted)
@@ -267,9 +260,12 @@ def set_wf_not_completed_ids_to_wf(obj, skip_blocked=True, skip_halted=False):
         matched_ids = pending_in_holding_pen(obj, _non_completed)
 
     if skip_blocked:
-        matched_ids = [_id for _id in matched_ids if
-                       not is_workflow_blocked_by_another_workflow(_id)]
-    obj.extra_data['holdingpen_matches'] = matched_ids
+        matched_ids = [
+            _id
+            for _id in matched_ids
+            if not is_workflow_blocked_by_another_workflow(_id)
+        ]
+    obj.extra_data["holdingpen_matches"] = matched_ids
     save_workflow(obj, None)
     return matched_ids
 
@@ -309,19 +305,20 @@ def raise_if_match_workflow(obj, eng):
 
     """
     matched_ids = set_wf_not_completed_ids_to_wf(
-        obj,
-        skip_blocked=True,
-        skip_halted=True
+        obj, skip_blocked=True, skip_halted=True
     )
     if bool(matched_ids):
-        urls = ["<a href='{0}' target='_blank'>{1}</a>".format(get_hep_url_for_recid(id, 'holdingpen'), id) for id in matched_ids]
+        urls = [
+            "<a href='{0}' target='_blank'>{1}</a>".format(
+                get_hep_url_for_recid(id, "holdingpen"), id
+            )
+            for id in matched_ids
+        ]
 
         raise WorkflowsError(
-            'Cannot continue processing workflow {wf_id}. '
-            'Found not-completed workflows in holdingpen'
-            ': {blocking_ids}'.format(
-                wf_id=obj.id,
-                blocking_ids=urls)
+            "Cannot continue processing workflow {wf_id}. "
+            "Found not-completed workflows in holdingpen"
+            ": {blocking_ids}".format(wf_id=obj.id, blocking_ids=urls)
         )
 
 
@@ -346,11 +343,13 @@ def match_previously_rejected_wf_in_holdingpen(obj, eng):
     """
 
     def _rejected_and_completed(base_record, match_result):
-        return get_value(match_result, '_source._workflow.status') == 'COMPLETED' and \
-            get_value(match_result, '_source._extra_data.approved') is False
+        return (
+            get_value(match_result, "_source._workflow.status") == "COMPLETED"
+            and get_value(match_result, "_source._extra_data.approved") is False
+        )
 
     matched_ids = pending_in_holding_pen(obj, _rejected_and_completed)
-    obj.extra_data['previously_rejected_matches'] = matched_ids
+    obj.extra_data["previously_rejected_matches"] = matched_ids
     return bool(matched_ids)
 
 
@@ -371,27 +370,27 @@ def pending_in_holding_pen(obj, validation_func):
 
     """
     config = {
-        'algorithm': [
+        "algorithm": [
             {
-                'queries': [
+                "queries": [
                     {
-                        'path': 'arxiv_eprints.value',
-                        'search_path': 'metadata.arxiv_eprints.value.raw',
-                        'type': 'exact',
+                        "path": "arxiv_eprints.value",
+                        "search_path": "metadata.arxiv_eprints.value.raw",
+                        "type": "exact",
                     },
                     {
-                        'path': 'dois.value',
-                        'search_path': 'metadata.dois.value.raw',
-                        'type': 'exact',
+                        "path": "dois.value",
+                        "search_path": "metadata.dois.value.raw",
+                        "type": "exact",
                     },
                 ],
-                'validator': validation_func,
+                "validator": validation_func,
             },
         ],
-        'index': 'holdingpen-hep',
+        "index": "holdingpen-hep",
     }
     matches = dedupe_list(match(obj.data, config))
-    return [int(el['_id']) for el in matches if int(el['_id']) != obj.id]
+    return [int(el["_id"]) for el in matches if int(el["_id"]) != obj.id]
 
 
 @with_debug_logging
@@ -435,10 +434,7 @@ def has_same_source(extra_data_key):
     """
 
     def _get_wfs_same_source(obj, eng):
-        current_source = get_value(
-            obj.data,
-            'acquisition_source.source'
-        ).lower()
+        current_source = get_value(obj.data, "acquisition_source.source").lower()
 
         try:
             workflows = obj.extra_data[extra_data_key]
@@ -455,7 +451,7 @@ def has_same_source(extra_data_key):
 
 
 def _has_same_source(current_wf_source, holdingpen_match_wf):
-    wf_source = get_value(holdingpen_match_wf.data, 'acquisition_source.source').lower()
+    wf_source = get_value(holdingpen_match_wf.data, "acquisition_source.source").lower()
     if wf_source == current_wf_source.lower():
         return True
 
@@ -465,7 +461,7 @@ def _halt_record_if_match_from_different_source(holdingpen_wf_eng, holdingpen_wf
         holdingpen_wf_eng.halt(msg="Waiting for matched worfklow to finish")
     except HaltProcessing:
         holdingpen_wf.status = ObjectStatus.HALTED
-        holdingpen_wf.extra_data['halted-by-match-with-different-source'] = True
+        holdingpen_wf.extra_data["halted-by-match-with-different-source"] = True
         holdingpen_wf_eng.save()
         holdingpen_wf.save()
 
@@ -491,15 +487,17 @@ def handle_matched_holdingpen_wfs(obj, eng):
         None
     """
     save_workflow(obj, eng)
-    current_wf_source = get_value(obj.data, 'acquisition_source.source')
-    stopping_steps = [mark('stopped-by-wf', int(obj.id)), stop_processing]
-    for holdingpen_wf_id in obj.extra_data['holdingpen_matches']:
+    current_wf_source = get_value(obj.data, "acquisition_source.source")
+    stopping_steps = [mark("stopped-by-wf", int(obj.id)), stop_processing]
+    for holdingpen_wf_id in obj.extra_data["holdingpen_matches"]:
         holdingpen_wf = workflow_object_class.get(holdingpen_wf_id)
         holdingpen_wf_eng = WorkflowEngine.from_uuid(holdingpen_wf.id_workflow)
 
         # halt workflow
         if not _has_same_source(current_wf_source, holdingpen_wf):
-            _halt_record_if_match_from_different_source(holdingpen_wf_eng, holdingpen_wf)
+            _halt_record_if_match_from_different_source(
+                holdingpen_wf_eng, holdingpen_wf
+            )
             continue
 
         # stop this holdingpen workflow by replacing its steps with a stop step
@@ -510,7 +508,7 @@ def handle_matched_holdingpen_wfs(obj, eng):
 @with_debug_logging
 def has_more_than_one_exact_match(obj, eng):
     """Does the record have more than one exact match."""
-    exact_matches = obj.extra_data['matches']['exact']
+    exact_matches = obj.extra_data["matches"]["exact"]
     return len(set(exact_matches)) > 1
 
 
@@ -521,10 +519,10 @@ def run_next_if_necessary(obj, eng):
     next_wf = None
     for wf_id in blocked_wfs:
         wf = workflow_object_class.get(wf_id)
-        if obj.id in wf.extra_data.get('holdingpen_matches', []):
-            wf.extra_data['holdingpen_matches'].remove(obj.id)
+        if obj.id in wf.extra_data.get("holdingpen_matches", []):
+            wf.extra_data["holdingpen_matches"].remove(obj.id)
             save_workflow(wf, eng)
-        if not wf.extra_data.get('holdingpen_matches', []) and not next_wf:
+        if not wf.extra_data.get("holdingpen_matches", []) and not next_wf:
             # If workflow is not blocked by any other workflow
             # And there is no next workflow set
             # then set is as next to restart

@@ -686,9 +686,7 @@ def test_affiliations_for_hidden_collections_works_correctly_with_unicode(
             "{inspirehep_url}/curation/literature/assign-institutions".format(
                 inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
             ),
-            json={
-                "authors": record['authors']
-            },
+            json={"authors": record["authors"]},
             headers=_get_headers_for_hep_root_table_request(),
             status_code=200,
         )
@@ -1233,7 +1231,24 @@ def test_core_selection_wf_already_created_show_created_wf(
             headers=_get_headers_for_hep_root_table_request(),
             status_code=200,
         )
-
+        request_mocker.register_uri(
+            "GET",
+            "{inspirehep_url}/matcher/exact-match".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={"matched_ids": []},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        request_mocker.register_uri(
+            "GET",
+            "{inspirehep_url}/matcher/fuzzy-match".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={"matched_data": {}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
         workflow_object = workflow_object_class.create(
             data=record, id_user=None, data_type="hep"
         )
