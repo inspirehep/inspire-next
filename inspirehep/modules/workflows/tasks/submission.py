@@ -200,6 +200,7 @@ def reply_ticket(template=None, context_factory=None, keep_new=False):
             return {}
         if current_app.config.get("FEATURE_FLAG_ENABLE_SNOW"):
             reply_snow_ticket(obj, ticket_id, context_factory, user, template)
+            return {}
         else:
             if not rt_instance:
                 obj.log.error("No RT instance available. Skipping!")
@@ -242,7 +243,28 @@ def reply_ticket(template=None, context_factory=None, keep_new=False):
 
 
 @backoff.on_exception(backoff.expo, rt.ConnectionError, base=4, max_tries=5)
-def close_snow_ticket(ticket_id):
+def close_snow_ticket(obj, ticket_id, context_factory, template=None):
+    if template:
+        user = User.query.get(obj.id_user)
+        if not user:
+            obj.log.error(
+                "No user found for object %s, skipping ticket creation", obj.id
+            )
+            return {}
+
+        template_context = context_factory(user, obj)
+        template = _get_ticket_template_name(template)
+        data = {
+            "ticket_id": str(ticket_id),
+            "template": template,
+            "template_context": template_context
+        }
+    else:
+        data = {"ticket_id": str(ticket_id)}
+        reason = obj.extra_data.get("reason")
+        if reason:
+            data["message"] = reason
+
     response = requests.post(
         "{inspirehep_url}/tickets/resolve".format(
             inspirehep_url=current_app.config["INSPIREHEP_URL"]
