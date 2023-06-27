@@ -200,6 +200,7 @@ def reply_ticket(template=None, context_factory=None, keep_new=False):
             return {}
         if current_app.config.get("FEATURE_FLAG_ENABLE_SNOW"):
             reply_snow_ticket(obj, ticket_id, context_factory, user, template)
+            return {}
         else:
             if not rt_instance:
                 obj.log.error("No RT instance available. Skipping!")

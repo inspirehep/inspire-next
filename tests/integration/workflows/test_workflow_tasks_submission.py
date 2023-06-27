@@ -31,8 +31,10 @@ def test_reply_ticket_calls_tickets_reply_when_template_is_not_set(workflow_app)
             obj = workflow_object_class.create(
                 data=data, extra_data=extra_data, id_user=1, data_type="hep"
             )
+            expected_result = {}
             _reply_ticket = reply_ticket()
-            _reply_ticket(obj, None)
+            result = _reply_ticket(obj, None)
+            assert expected_result == result
             assert (
                 request_mocker.request_history[0]._request.body
                 == '{"ticket_id": "1", "reply_message": "reply reason"}'
@@ -61,7 +63,9 @@ def test_reply_ticket_calls_tickets_reply_when_template_is_set(workflow_app):
             _reply_ticket = reply_ticket(
                 context_factory=reply_ticket_context, template="test.html"
             )
-            _reply_ticket(obj, None)
+            expected_result = {}
+            result = _reply_ticket(obj, None)
+            assert expected_result == result
             assert (
                 request_mocker.request_history[0]._request.body
                 == '{"template_context": {"reason": "", "record_url": "", "user_name": "admin@inspirehep.net", "title": "Partial Symmetries of Weak Interactions"}, "ticket_id": "1", "template": "test"}'
