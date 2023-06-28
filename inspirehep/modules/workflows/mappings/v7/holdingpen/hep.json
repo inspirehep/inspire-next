@@ -18,6 +18,12 @@
                     "matches": {
                         "type": "object"
                     },
+                    "_error_msg":{
+                        "type": "text"
+                    },
+                    "_last_task_name": {
+                        "type": "text"
+                    },
                     "relevance_prediction": {
                         "properties": {
                             "decision": {
