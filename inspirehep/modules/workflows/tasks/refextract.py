@@ -100,31 +100,26 @@ def extract_journal_info(obj, eng):
             )
             response.raise_for_status()
         except RequestException:
-            LOGGER.info("Couldn't extract publication info from url!")
-            raise WorkflowsError(
-                "Error from refextract: [{code}]: {message}".format(
-                    code=response.status_code,
-                    message=response.json()
-                )
-            )
-        extracted_publication_info = response.json().get('extracted_publication_infos', [])
-        for publication_info, extracted_publication_info in zip(publication_infos, extracted_publication_info):
-            if extracted_publication_info.get('volume'):
-                publication_info['journal_volume'] = extracted_publication_info['volume']
+            LOGGER.info("Couldn't extract publication info from url.")
+        else:
+            extracted_publication_info = response.json().get('extracted_publication_infos', [])
+            for publication_info, extracted_publication_info in zip(publication_infos, extracted_publication_info):
+                if extracted_publication_info.get('volume'):
+                    publication_info['journal_volume'] = extracted_publication_info['volume']
 
-            if extracted_publication_info.get('page'):
-                page_start, page_end, artid = split_page_artid(extracted_publication_info['page'])
-                if page_start:
-                    publication_info['page_start'] = page_start
-                if page_end:
-                    publication_info['page_end'] = page_end
-                if artid:
-                    publication_info['artid'] = artid
+                if extracted_publication_info.get('page'):
+                    page_start, page_end, artid = split_page_artid(extracted_publication_info['page'])
+                    if page_start:
+                        publication_info['page_start'] = page_start
+                    if page_end:
+                        publication_info['page_end'] = page_end
+                    if artid:
+                        publication_info['artid'] = artid
 
-            if extracted_publication_info.get('year'):
-                year = maybe_int(extracted_publication_info['year'])
-                if year:
-                    publication_info['year'] = year
+                if extracted_publication_info.get('year'):
+                    year = maybe_int(extracted_publication_info['year'])
+                    if year:
+                        publication_info['year'] = year
     else:
         for publication_info in obj.data['publication_info']:
             try:
