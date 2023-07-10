@@ -289,6 +289,13 @@ def mocked_external_services(workflow_app):
             headers=_get_headers_for_hep_root_table_request(),
             status_code=200,
         )
+        requests_mocker.register_uri(
+            "POST",
+            "http://web:8000/api/matcher/linked_references/",
+            json={"references": []},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
         if "INSPIREHEP_URL" in workflow_app.config:
             # HEP record upload
             requests_mocker.register_uri(
