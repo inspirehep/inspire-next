@@ -109,6 +109,9 @@ def extract_journal_info(obj, eng):
             )
         extracted_publication_info = response.json().get('extracted_publication_infos', [])
         for publication_info, extracted_publication_info in zip(publication_infos, extracted_publication_info):
+            if extracted_publication_info.get('title'):
+                publication_info['journal_title'] = extracted_publication_info['title']
+
             if extracted_publication_info.get('volume'):
                 publication_info['journal_volume'] = extracted_publication_info['volume']
 
