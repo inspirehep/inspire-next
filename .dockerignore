@@ -32,3 +32,6 @@
 Procfile*
 docker*
 gun
+
+**/__pycache__
+**/*.pyc
