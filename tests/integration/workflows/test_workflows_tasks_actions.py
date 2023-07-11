@@ -25,6 +25,7 @@
 from __future__ import absolute_import, division, print_function
 
 import mock
+from inspirehep.modules.workflows.tasks.refextract import extract_journal_info
 import pytest
 import requests_mock
 from calls import generate_record, insert_citing_record
@@ -1530,3 +1531,47 @@ def test_remove_inspire_categories_derived_from_core_arxiv_categories(workflow_a
         expected_inspire_categories
     )
     assert validate(obj.data["inspire_categories"], subschema) is None
+
+
+def test_extract_journal_info_hep_request(workflow_app):
+    schema = load_schema('hep')
+    subschema = schema['properties']['publication_info']
+
+    data = {
+        'publication_info': [
+            {'pubinfo_freetext': 'J. Math. Phys. 55, 082102 (2014)'},
+        ],
+    }
+    assert validate(data['publication_info'], subschema) is None
+    obj = workflow_object_class.create(data=data, id_user=1, data_type="hep")
+
+    with override_config(FEATURE_FLAG_ENABLE_REFEXTRACT_SERVICE=True):
+        with requests_mock.Mocker() as mock_request:
+            mock_request.register_uri(
+                "POST",
+                "{}/extract_journal_info".format(
+                    current_app.config["REFEXTRACT_SERVICE_URL"]
+                ),
+                json={
+                    "extracted_publication_infos": [
+                        {
+                            "title": "A test title",
+                            "year": 2014,
+                            'title': 'A test title'
+                        }
+                    ]
+                },
+            )
+
+            expected = [
+                {
+                    'pubinfo_freetext': 'J. Math. Phys. 55, 082102 (2014)',
+                    'year': 2014,
+                    'journal_title': 'A test title'
+                }
+            ]
+            assert extract_journal_info(obj, None) is None
+            result = obj.data['publication_info']
+
+            assert validate(result, subschema) is None
+            assert expected == result
