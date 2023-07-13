@@ -474,10 +474,6 @@ def match_references_hep(references):
     create_error(response)
 
 
-def match_references_based_on_flag(references):
-    return match_references(references)
-
-
 @with_debug_logging
 def refextract(obj, eng):
     """Extract references from various sources and add them to the workflow.
@@ -497,7 +493,10 @@ def refextract(obj, eng):
     if 'references' in obj.data:
         extracted_raw_references = dedupe_list(extract_references_from_raw_refs(obj.data['references']))
         obj.log.info('Extracted %d references from raw refs.', len(extracted_raw_references))
-        obj.data['references'] = match_references_based_on_flag(extracted_raw_references)
+        if current_app.config.get("FEATURE_FLAG_ENABLE_REFEXTRACT_SERVICE"):
+            obj.data['references'] = match_references_hep(extracted_raw_references)
+        else:
+            obj.data['references'] = match_references(extracted_raw_references)
         return
 
     matched_pdf_references, matched_text_references = [], []
@@ -511,12 +510,12 @@ def refextract(obj, eng):
                 url, source=source, custom_kbs_file=journal_kb_dict
             )
         )
-        matched_pdf_references = match_references_based_on_flag(pdf_references)
+        matched_pdf_references = match_references_hep(pdf_references)
     else:
         with get_document_in_workflow(obj) as tmp_document:
             if tmp_document:
                 pdf_references = dedupe_list(extract_references_from_pdf(tmp_document, source))
-                matched_pdf_references = match_references_based_on_flag(pdf_references)
+                matched_pdf_references = match_references(pdf_references)
 
     text = get_value(obj.extra_data, 'formdata.references')
     if text and current_app.config.get("FEATURE_FLAG_ENABLE_REFEXTRACT_SERVICE"):
@@ -525,10 +524,10 @@ def refextract(obj, eng):
                 text, source=source, custom_kbs_file=journal_kb_dict
             )
         )
-        matched_text_references = match_references_based_on_flag(text_references)
+        matched_text_references = match_references_hep(text_references)
     elif text:
         text_references = dedupe_list(extract_references_from_text(text, source))
-        matched_text_references = match_references_based_on_flag(text_references)
+        matched_text_references = match_references(text_references)
 
     if not matched_pdf_references and not matched_text_references:
         obj.log.info('No references extracted.')

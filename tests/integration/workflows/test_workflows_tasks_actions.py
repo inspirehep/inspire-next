@@ -1420,6 +1420,12 @@ def test_refextract_from_text_data(insert_hep_records_into_db, workflow_app):
                     ]
                 },
             )
+            mock_request.register_uri(
+                "POST",
+                "http://web:8000/api/matcher/linked_references/",
+                json={"references": [{"raw_refs": [{"source": "submitter"}]}]},
+                status_code=200,
+            )
 
             schema = load_schema("hep")
             subschema = schema["properties"]["acquisition_source"]
@@ -1435,7 +1441,6 @@ def test_refextract_from_text_data(insert_hep_records_into_db, workflow_app):
             obj = workflow_object_class.create(
                 data=data, extra_data=extra_data, id_user=1, data_type="hep"
             )
-
             refextract(obj, None) is None
             assert obj.data["references"][0]["raw_refs"][0]["source"] == "submitter"
             assert "references" in obj.data
@@ -1473,6 +1478,12 @@ def test_refextract_from_url(insert_hep_records_into_db, workflow_app):
                     ]
                 },
                 headers={"content-type": "application/json"},
+                status_code=200,
+            )
+            mock_request.register_uri(
+                "POST",
+                "http://web:8000/api/matcher/linked_references/",
+                json={"references": [{"raw_refs": [{"source": "submitter"}]}]},
                 status_code=200,
             )
 
