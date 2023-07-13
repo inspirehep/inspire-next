@@ -40,19 +40,21 @@ from invenio_search import current_search
 
 from inspirehep.factory import create_app
 from inspirehep.modules.fixtures.files import init_all_storage_paths
-from inspirehep.modules.fixtures.users import (init_authentication_token,
-                                               init_users_and_permissions)
+from inspirehep.modules.fixtures.users import (
+    init_authentication_token,
+    init_users_and_permissions,
+)
 from inspirehep.modules.records.api import InspireRecord
-from inspirehep.modules.workflows.utils import \
-    _get_headers_for_hep_root_table_request
+from inspirehep.modules.workflows.utils import _get_headers_for_hep_root_table_request
 
 # Use the helpers folder to store test helpers.
 # See: http://stackoverflow.com/a/33515264/374865
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "helpers"))
 
 
-from factories.db.invenio_records import \
-    cleanup as invenio_records_factory_cleanup  # noqa
+from factories.db.invenio_records import (
+    cleanup as invenio_records_factory_cleanup,
+)  # noqa
 
 HIGGS_ONTOLOGY = """<?xml version="1.0" encoding="UTF-8" ?>
 
@@ -123,7 +125,6 @@ def workflow_app(higgs_ontology):
         with mock.patch(
             "inspirehep.modules.records.receivers.index_modified_citations_from_record.apply_async"
         ):
-
             yield app
 
 
@@ -289,6 +290,48 @@ def mocked_external_services(workflow_app):
             headers=_get_headers_for_hep_root_table_request(),
             status_code=200,
         )
+        # requests_mocker.register_uri(
+        #     "POST",
+        #     "{}/extract_references_from_url".format(
+        #         workflow_app.config["REFEXTRACT_SERVICE_URL"]
+        #     ),
+        #     json={"references": [{"raw_refs": [{"source": "submitter"}]}]},
+        #     headers=_get_headers_for_hep_root_table_request(),
+        #     status_code=200,
+        # )
+        requests_mocker.register_uri(
+            "POST",
+            "{}/api/matcher/linked_references/".format(
+                workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={
+                "references": [
+                    {
+                        "record": {
+                            "$ref": "http://localhost:5000/api/listerature/1000",
+                        },
+                        "raw_refs": [
+                            {
+                                "source": "submitter",
+                                "schema": "That's a schema",
+                                "value": "That's a reference",
+                            }
+                        ],
+                    }
+                ]
+            },
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        # requests_mocker.register_uri(
+        #     "POST",
+        #     "{}/extract_references_from_text".format(
+        #         workflow_app.config["REFEXTRACT_SERVICE_URL"]
+        #     ),
+        #     json={"extracted_references": []},
+        #     headers=_get_headers_for_hep_root_table_request(),
+        #     status_code=200,
+        # )
         if "INSPIREHEP_URL" in workflow_app.config:
             # HEP record upload
             requests_mocker.register_uri(

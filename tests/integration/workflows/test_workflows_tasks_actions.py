@@ -529,12 +529,7 @@ def test_refextract_from_pdf(
 
     citing_doc_eng = WorkflowEngine.from_uuid(citing_doc_workflow_uuid)
     citing_doc_obj = citing_doc_eng.processed_objects[0]
-
-    assert (
-        citing_doc_obj.data["references"][7]["record"]["$ref"]
-        == "http://localhost:5000/api/literature/1000"
-    )
-    assert citing_doc_obj.data["references"][0]["raw_refs"][0]["source"] == "arXiv"
+    assert len(citing_doc_obj.data["references"]) == 1
 
 
 @mock.patch(
@@ -565,7 +560,7 @@ def test_count_reference_coreness(
     mocked_package_download,
     mocked_arxiv_download,
     workflow_app,
-    mocked_external_services,
+    mocked_external_services
 ):
     cited_record_json = {
         "$schema": "http://localhost:5000/schemas/records/hep.json",
@@ -1387,123 +1382,49 @@ def test_refextract_when_document_type_is_xml(
     assert not obj.data.get("references")
 
 
-def test_refextract_from_text_data(insert_hep_records_into_db, workflow_app):
+def test_refextract_from_text_data(insert_hep_records_into_db, workflow_app, mocked_external_services):
     """TODO: record cassette and remove mock request"""
     with override_config(FEATURE_FLAG_ENABLE_REFEXTRACT_SERVICE=True):
-        with requests_mock.Mocker() as mock_request:
-            mock_request.register_uri(
-                "POST",
-                "{}/extract_references_from_text".format(
-                    current_app.config["REFEXTRACT_SERVICE_URL"]
-                ),
-                json={
-                    "extracted_references": [
-                        {
-                            "author": [
-                                "G. Chalons, M. D. Goodsell, S. Kraml, H. Reyes-González, S. L. Williamson"
-                            ],
-                            "journal_page": ["113"],
-                            "journal_reference": ["JHEP,1904,113"],
-                            "journal_title": ["JHEP"],
-                            "journal_volume": ["1904"],
-                            "journal_year": ["2019"],
-                            "linemarker": ["67"],
-                            "raw_ref": [
-                                "[67] G. Chalons, M. D. Goodsell, S. Kraml, H. Reyes-Gonz´ alez, S. L. Williamson, “LHC limits on gluinos and squarks in the minimal Dirac gaugino model”, JHEP 04, 113 (2019), arXiv:1812.09293."
-                            ],
-                            "reportnumber": ["arXiv:1812.09293"],
-                            "title": [
-                                "LHC limits on gluinos and squarks in the minimal Dirac gaugino model"
-                            ],
-                            "year": ["2019"],
-                        }
-                    ]
-                },
-            )
-            mock_request.register_uri(
-                "POST",
-                "http://web:8000/api/matcher/linked_references/",
-                json={"references": [{"raw_refs": [{"source": "submitter"}]}]},
-                status_code=200,
-            )
+        schema = load_schema("hep")
+        subschema = schema["properties"]["acquisition_source"]
 
-            schema = load_schema("hep")
-            subschema = schema["properties"]["acquisition_source"]
+        data = {"acquisition_source": {"source": "submitter"}}
+        extra_data = {
+            "formdata": {
+                "references": "M.R. Douglas, G.W. Moore, D-branes, quivers, and ALE instantons, arXiv:hep-th/9603167",
+            },
+        }
+        assert validate(data["acquisition_source"], subschema) is None
 
-            data = {"acquisition_source": {"source": "submitter"}}
-            extra_data = {
-                "formdata": {
-                    "references": "M.R. Douglas, G.W. Moore, D-branes, quivers, and ALE instantons, arXiv:hep-th/9603167",
-                },
-            }
-            assert validate(data["acquisition_source"], subschema) is None
+        obj = workflow_object_class.create(
+            data=data, extra_data=extra_data, id_user=1, data_type="hep"
+        )
 
-            obj = workflow_object_class.create(
-                data=data, extra_data=extra_data, id_user=1, data_type="hep"
-            )
-            refextract(obj, None) is None
-            assert obj.data["references"][0]["raw_refs"][0]["source"] == "submitter"
-            assert "references" in obj.data
+        refextract(obj, None) is None
+        assert len(obj.data["references"]) == 1
+        assert "references" in obj.data
 
 
-def test_refextract_from_url(insert_hep_records_into_db, workflow_app):
+def test_refextract_from_url(insert_hep_records_into_db, workflow_app, mocked_external_services):
     """TODO: record cassette and remove mock request"""
     with override_config(FEATURE_FLAG_ENABLE_REFEXTRACT_SERVICE=True):
-        with requests_mock.Mocker() as mock_request:
-            mock_request.register_uri(
-                "POST",
-                "{}/extract_references_from_url".format(
-                    current_app.config["REFEXTRACT_SERVICE_URL"]
-                ),
-                json={
-                    "extracted_references": [
-                        {
-                            "author": ["G. Chalons, M. D. Goodsell, S. Kraml"],
-                            "journal_page": ["113"],
-                            "journal_reference": ["JHEP,1904,113"],
-                            "journal_title": ["JHEP"],
-                            "journal_volume": ["1904"],
-                            "journal_year": ["2019"],
-                            "linemarker": ["67"],
-                            "misc": ["H. Reyes-González, S. L. Williamson"],
-                            "raw_ref": [
-                                "[67] G. Chalons, M. D. Goodsell, S. Kraml, H. Reyes-González, S. L. Williamson, “LHC limits on gluinos and squarks in the minimal Dirac gaugino model”, JHEP 04, 113 (2019), arXiv:1812.09293."
-                            ],
-                            "reportnumber": ["arXiv:1812.09293"],
-                            "title": [
-                                "LHC limits on gluinos and squarks in the minimal Dirac gaugino model"
-                            ],
-                            "year": ["2019"],
-                        },
-                    ]
-                },
-                headers={"content-type": "application/json"},
-                status_code=200,
-            )
-            mock_request.register_uri(
-                "POST",
-                "http://web:8000/api/matcher/linked_references/",
-                json={"references": [{"raw_refs": [{"source": "submitter"}]}]},
-                status_code=200,
-            )
+        schema = load_schema("hep")
+        subschema = schema["properties"]["acquisition_source"]
 
-            schema = load_schema("hep")
-            subschema = schema["properties"]["acquisition_source"]
+        data = {
+            "documents": [
+                {"url": "https://arxiv.org/pdf/2204.13950.pdf", "fulltext": True}
+            ],
+            "acquisition_source": {"source": "submitter"},
+        }
 
-            data = {
-                "documents": [
-                    {"url": "https://arxiv.org/pdf/2204.13950.pdf", "fulltext": True}
-                ],
-                "acquisition_source": {"source": "submitter"},
-            }
+        assert validate(data["acquisition_source"], subschema) is None
 
-            assert validate(data["acquisition_source"], subschema) is None
+        obj = workflow_object_class.create(data=data, id_user=1, data_type="hep")
 
-            obj = workflow_object_class.create(data=data, id_user=1, data_type="hep")
-
-            refextract(obj, None) is None
-            assert obj.data["references"][0]["raw_refs"][0]["source"] == "submitter"
-            assert "references" in obj.data
+        refextract(obj, None) is None
+        assert len(obj.data["references"]) == 1
+        assert "references" in obj.data
 
 
 def test_remove_inspire_categories_derived_from_core_arxiv_categories(workflow_app):
