@@ -1723,10 +1723,9 @@ def test_workflow_checks_affiliations_if_record_is_not_important(
     ):
         workflow_id = build_workflow(record).id
         start("article", object_id=workflow_id)
-
-        collections_in_record = mocked_external_services.request_history[4].json()[
-            "_collections"
-        ]
+        collections_in_record = filter(
+            lambda x: x.path == '/literature',
+            mocked_external_services.request_history).pop().json().get('_collections')
         assert "CDS Hidden" in collections_in_record
         assert "HAL Hidden" in collections_in_record
         assert "Fermilab" in collections_in_record
@@ -1781,9 +1780,11 @@ def test_workflow_do_not_changes_to_hidden_if_record_authors_do_not_have_interes
         wf.save()
         wf.continue_workflow(delayed=False)
 
-    collections_in_record = mocked_external_services.request_history[4].json()[
-        "_collections"
-    ]
+    collections_in_record = filter(
+        lambda x: x.path == '/literature',
+        mocked_external_services.request_history
+    ).pop().json().get('_collections')
+
     assert "CDS Hidden" not in collections_in_record
     assert "HAL Hidden" not in collections_in_record
     assert "Fermilab" not in collections_in_record
@@ -1876,9 +1877,11 @@ def test_workflow_checks_affiliations_if_record_is_rejected_by_curator(
         wf.save()
         wf.continue_workflow(delayed=False)
 
-    collections_in_record = mocked_external_services.request_history[4].json()[
-        "_collections"
-    ]
+    collections_in_record = filter(
+        lambda x: x.path == '/literature',
+        mocked_external_services.request_history
+    ).pop().json().get('_collections')
+
     assert "CDS Hidden" in collections_in_record
     assert "HAL Hidden" in collections_in_record
     assert "Fermilab" in collections_in_record
