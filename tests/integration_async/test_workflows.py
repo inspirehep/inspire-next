@@ -324,6 +324,28 @@ def test_wf_replaces_old_workflow_which_is_in_halted_state(
             headers=_get_headers_for_hep_root_table_request(),
             status_code=200,
         )
+        request_mocker.register_uri(
+            "POST",
+            "http://web:8000/api/matcher/linked_references/",
+            json={
+                "references": [
+                    {
+                        "record": {
+                            "$ref": "http://localhost:5000/api/literature/1000",
+                        },
+                        "raw_refs": [
+                            {
+                                "source": "submitter",
+                                "schema": "That's a schema",
+                                "value": "That's a reference",
+                            }
+                        ],
+                    }
+                ]
+            },
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
 
         workflow = build_workflow(record)
 
@@ -379,6 +401,28 @@ def test_wf_rejects_automatically_when_previous_matched_wf_was_rejected(
             "http://web:8000/matcher/fuzzy-match",
             json={
                 "matched_data": []
+            },
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        request_mocker.register_uri(
+            "POST",
+            "http://web:8000/api/matcher/linked_references/",
+            json={
+                "references": [
+                    {
+                        "record": {
+                            "$ref": "http://localhost:5000/api/literature/1000",
+                        },
+                        "raw_refs": [
+                            {
+                                "source": "submitter",
+                                "schema": "That's a schema",
+                                "value": "That's a reference",
+                            }
+                        ],
+                    }
+                ]
             },
             headers=_get_headers_for_hep_root_table_request(),
             status_code=200,

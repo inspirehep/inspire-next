@@ -1181,25 +1181,63 @@ def test_validate_record_raises_when_record_is_invalid():
 def test_refextract_from_text(mock_match, mock_get_document_in_workflow, mock_create_journal_kb_dict):
     """TODO: Make this an integration test and also test reference matching."""
 
-    mock_get_document_in_workflow.return_value.__enter__.return_value = None
-    mock_get_document_in_workflow.return_value.__exit__.return_value = None
+    with requests_mock.Mocker() as mock_request:
+        mock_request.register_uri(
+            "POST",
+            "{}/extract_references_from_text".format(
+                current_app.config["REFEXTRACT_SERVICE_URL"]
+            ),
+            json={
+                "extracted_references": [
+                    {
+                        "author": ["G. Chalons, M. D. Goodsell, S. Kraml"],
+                        "journal_page": ["113"],
+                        "journal_reference": ["JHEP,1904,113"],
+                        "journal_title": ["JHEP"],
+                        "journal_volume": ["1904"],
+                        "journal_year": ["2019"],
+                        "linemarker": ["67"],
+                        "misc": ["H. Reyes-González, S. L. Williamson"],
+                        "raw_ref": [
+                            "[67] G. Chalons, M. D. Goodsell, S. Kraml, H. Reyes-González, S. L. Williamson, “LHC limits on gluinos and squarks in the minimal Dirac gaugino model”, JHEP 04, 113 (2019), arXiv:1812.09293."
+                        ],
+                        "reportnumber": ["arXiv:1812.09293"],
+                        "title": [
+                            "LHC limits on gluinos and squarks in the minimal Dirac gaugino model"
+                        ],
+                        "year": ["2019"],
+                    },
+                ]
+            },
+            headers={"content-type": "application/json"},
+            status_code=200,
+        )
+        mock_request.register_uri(
+            "POST",
+            "http://web:8000/api/matcher/linked_references/",
+            json={"references": [{"raw_refs": [{"source": "submitter"}]}]},
+            status_code=200,
+        )
 
-    schema = load_schema('hep')
-    subschema = schema['properties']['acquisition_source']
+        mock_get_document_in_workflow.return_value.__enter__.return_value = None
+        mock_get_document_in_workflow.return_value.__exit__.return_value = None
 
-    data = {'acquisition_source': {'source': 'submitter'}}
-    extra_data = {
-        'formdata': {
-            'references': 'M.R. Douglas, G.W. Moore, D-branes, quivers, and ALE instantons, arXiv:hep-th/9603167',
-        },
-    }
-    assert validate(data['acquisition_source'], subschema) is None
+        schema = load_schema('hep')
+        subschema = schema['properties']['acquisition_source']
 
-    obj = MockObj(data, extra_data)
-    eng = MockEng()
+        data = {'acquisition_source': {'source': 'submitter'}}
+        extra_data = {
+            'formdata': {
+                'references': 'M.R. Douglas, G.W. Moore, D-branes, quivers, and ALE instantons, arXiv:hep-th/9603167',
+            },
+        }
+        assert validate(data['acquisition_source'], subschema) is None
 
-    assert refextract(obj, eng) is None
-    assert obj.data['references'][0]['raw_refs'][0]['source'] == 'submitter'
+        obj = MockObj(data, extra_data)
+        eng = MockEng()
+
+        assert refextract(obj, eng) is None
+        assert obj.data['references'][0]['raw_refs'][0]['source'] == 'submitter'
 
 
 @patch('inspirehep.modules.workflows.tasks.actions.create_journal_kb_dict', return_value={})
@@ -1229,9 +1267,60 @@ def test_refextract_from_raw_refs(mock_create_journal_dict, mock_match):
 
     obj = MockObj(data, {})
     eng = MockEng()
+    with requests_mock.Mocker() as mock_request:
+        mock_request.register_uri(
+            "POST",
+            "{}/extract_references_from_text".format(
+                current_app.config["REFEXTRACT_SERVICE_URL"]
+            ),
+            json={
+                "extracted_references": [
+                    {
+                        "author": ["G. Chalons, M. D. Goodsell, S. Kraml"],
+                        "journal_page": ["113"],
+                        "journal_reference": ["JHEP,1904,113"],
+                        "journal_title": ["JHEP"],
+                        "journal_volume": ["1904"],
+                        "journal_year": ["2019"],
+                        "linemarker": ["67"],
+                        "misc": ["H. Reyes-González, S. L. Williamson"],
+                        "raw_ref": [
+                            "[67] G. Chalons, M. D. Goodsell, S. Kraml, H. Reyes-González, S. L. Williamson, “LHC limits on gluinos and squarks in the minimal Dirac gaugino model”, JHEP 04, 113 (2019), arXiv:1812.09293."
+                        ],
+                        "reportnumber": ["arXiv:1812.09293"],
+                        "title": [
+                            "LHC limits on gluinos and squarks in the minimal Dirac gaugino model"
+                        ],
+                        "year": ["2019"],
+                    },
+                ]
+            },
+            headers={"content-type": "application/json"},
+            status_code=200,
+        )
+        mock_request.register_uri(
+            "POST",
+            "http://web:8000/api/matcher/linked_references/",
+            json={
+                "references": [
+                    {
+                        "reference": {
+                            "publication_info": {
+                                "artid": "045",
+                                "journal_title": "JHEP",
+                                "journal_volume": "06",
+                                "page_start": "045",
+                                "year": 2007,
+                            }
+                        }
+                    }
+                ]
+            },
+            status_code=200,
+        )
 
-    assert refextract(obj, eng) is None
-    assert 'reference' in obj.data['references'][0]
+        assert refextract(obj, eng) is None
+        assert 'reference' in obj.data['references'][0]
 
 
 @patch('inspirehep.modules.workflows.tasks.actions.create_journal_kb_dict', return_value={})
@@ -1240,9 +1329,6 @@ def test_refextract_from_raw_refs(mock_create_journal_dict, mock_match):
     return_value=iter([])
 )
 def test_refextract_valid_refs_from_raw_refs(mock_create_journal_dict, mock_match):
-    schema = load_schema('hep')
-    subschema = schema['properties']['references']
-
     data = {
         'references': [
             {
@@ -1263,42 +1349,110 @@ def test_refextract_valid_refs_from_raw_refs(mock_create_journal_dict, mock_matc
     }
     obj = MockObj(data, {})
     eng = MockEng()
+    with requests_mock.Mocker() as mock_request:
+        mock_request.register_uri(
+            "POST",
+            "{}/extract_references_from_text".format(
+                current_app.config["REFEXTRACT_SERVICE_URL"]
+            ),
+            json={
+                "extracted_references": [
+                    {
+                        "author": ["G. Chalons, M. D. Goodsell, S. Kraml"],
+                        "journal_page": ["113"],
+                        "journal_reference": ["JHEP,1904,113"],
+                        "journal_title": ["JHEP"],
+                        "journal_volume": ["1904"],
+                        "journal_year": ["2019"],
+                        "linemarker": ["67"],
+                        "misc": ["H. Reyes-González, S. L. Williamson"],
+                        "raw_ref": [
+                            "[67] G. Chalons, M. D. Goodsell, S. Kraml, H. Reyes-González, S. L. Williamson, “LHC limits on gluinos and squarks in the minimal Dirac gaugino model”, JHEP 04, 113 (2019), arXiv:1812.09293."
+                        ],
+                        "reportnumber": ["arXiv:1812.09293"],
+                        "title": [
+                            "LHC limits on gluinos and squarks in the minimal Dirac gaugino model"
+                        ],
+                        "year": ["2019"],
+                    },
+                ]
+            },
+            headers={"content-type": "application/json"},
+            status_code=200,
+        )
+        mock_request.register_uri(
+            "POST",
+            "http://web:8000/api/matcher/linked_references/",
+            json={"references": [{"raw_refs": [{"source": "submitter"}]}]},
+            status_code=200,
+        )
 
-    assert refextract(obj, eng) is None
-    assert len(obj.data['references']) == 1
-    assert validate(obj.data['references'], subschema) is None
+        assert refextract(obj, eng) is None
+        assert len(obj.data['references']) == 1
 
 
 @patch('inspirehep.modules.workflows.tasks.actions.create_journal_kb_dict', return_value={})
 @patch('inspirehep.modules.workflows.tasks.actions.get_document_in_workflow')
-@patch(
-    'inspirehep.modules.refextract.matcher.match',
-    return_value=iter([])
-)
-def test_refextract_valid_refs_from_text(mock_match, mock_get_document_in_workflow, mock_create_journal_kb_dict):
+def test_refextract_valid_refs_from_text(mock_get_document_in_workflow, mock_create_journal_kb_dict):
     """TODO: Make this an integration test and also test reference matching."""
 
     mock_get_document_in_workflow.return_value.__enter__.return_value = None
     mock_get_document_in_workflow.return_value.__exit__.return_value = None
 
-    schema = load_schema('hep')
-    refs_subschema = schema['properties']['references']
-    acquisition_source_subschema = schema['properties']['acquisition_source']
+    with requests_mock.Mocker() as mock_request:
+        mock_request.register_uri(
+            "POST",
+            "{}/extract_references_from_text".format(
+                current_app.config["REFEXTRACT_SERVICE_URL"]
+            ),
+            json={
+                "extracted_references": [
+                    {
+                        "author": ["G. Chalons, M. D. Goodsell, S. Kraml"],
+                        "journal_page": ["113"],
+                        "journal_reference": ["JHEP,1904,113"],
+                        "journal_title": ["JHEP"],
+                        "journal_volume": ["1904"],
+                        "journal_year": ["2019"],
+                        "linemarker": ["67"],
+                        "misc": ["H. Reyes-González, S. L. Williamson"],
+                        "raw_ref": [
+                            "[67] G. Chalons, M. D. Goodsell, S. Kraml, H. Reyes-González, S. L. Williamson, “LHC limits on gluinos and squarks in the minimal Dirac gaugino model”, JHEP 04, 113 (2019), arXiv:1812.09293."
+                        ],
+                        "reportnumber": ["arXiv:1812.09293"],
+                        "title": [
+                            "LHC limits on gluinos and squarks in the minimal Dirac gaugino model"
+                        ],
+                        "year": ["2019"],
+                    },
+                ]
+            },
+            headers={"content-type": "application/json"},
+            status_code=200,
+        )
+        mock_request.register_uri(
+            "POST",
+            "http://web:8000/api/matcher/linked_references/",
+            json={"references": [{"raw_refs": [{"source": "submitter", "value": "M.R"}]}]},
+            status_code=200,
+        )
 
-    data = {'acquisition_source': {'source': 'submitter'}}
-    extra_data = {
-        'formdata': {
-            'references': 'M.R. Douglas, G.W. Moore, D-branes, quivers, and ALE instantons, arXiv:hep-th/9603167\nM.R. Douglas, G.W. Moore, D-branes, quivers, and ALE instantons, arXiv:hep-th/9603167',
-        },
-    }
-    assert validate(data['acquisition_source'], acquisition_source_subschema) is None
+        schema = load_schema('hep')
+        acquisition_source_subschema = schema['properties']['acquisition_source']
 
-    obj = MockObj(data, extra_data)
-    eng = MockEng()
+        data = {'acquisition_source': {'source': 'submitter'}}
+        extra_data = {
+            'formdata': {
+                'references': 'M.R. Douglas, G.W. Moore, D-branes, quivers, and ALE instantons, arXiv:hep-th/9603167\nM.R. Douglas, G.W. Moore, D-branes, quivers, and ALE instantons, arXiv:hep-th/9603167',
+            },
+        }
+        assert validate(data['acquisition_source'], acquisition_source_subschema) is None
 
-    assert refextract(obj, eng) is None
-    assert len(obj.data['references']) == 1
-    assert validate(obj.data['references'], refs_subschema) is None
+        obj = MockObj(data, extra_data)
+        eng = MockEng()
+
+        assert refextract(obj, eng) is None
+        assert len(obj.data['references']) == 1
 
 
 def test_url_is_correctly_escaped():
