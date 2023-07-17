@@ -121,7 +121,7 @@ parsel = "^1.6.0"
 hepcrawl = "^13.0.58"
 PyYAML = "<6.0"
 cryptography = "^3.3.2"
-inspire-crawler = {git = "https://github.com/inspirehep/inspire-crawler.git", rev = "master"}
+inspire-crawler = {git = "https://github.com/inspirehep/inspire-crawler.git", rev = "dcbe9e015ea8b6e9234fcdf7a9515ed951f92e50"}
 cffi = "1.15.1"
 
 [tool.poetry.extras]
