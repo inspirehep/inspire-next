@@ -60,7 +60,7 @@ SEND_TO_LEGACY = [
 NOTIFY_ACCEPTED = [
     do_not_repeat('reply_ticket_author_submission_accepted')(
         reply_ticket(
-            template="authors/tickets/_author.html",
+            template="authors/tickets/user_accepted_author.html",
             context_factory=reply_ticket_context)
     ),
     do_not_repeat('close_ticket_author_submission_accepted')(
