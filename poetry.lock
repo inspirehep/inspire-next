@@ -929,7 +929,7 @@ description = "Adds SQLAlchemy support to your Flask application."
 category = "main"
 optional = false
 python-versions = ">= 2.7, != 3.0.*, != 3.1.*, != 3.2.*, != 3.3.*"
-develop = true
+develop = false
 
 [package.dependencies]
 Flask = ">=0.10"
@@ -938,7 +938,8 @@ SQLAlchemy = ">=0.8.0"
 [package.source]
 type = "git"
 url = "https://github.com/inspirehep/flask-sqlalchemy.git"
-reference = "master"
+reference = "71abd94a1e2317a1365a25a31e719dbd9aafceea"
+resolved_reference = "71abd94a1e2317a1365a25a31e719dbd9aafceea"
 
 [[package]]
 name = "flask-webpackext"
@@ -1341,7 +1342,7 @@ celery = ">=4.1.0,<5.0"
 Flask = "0.12.5"
 Flask-Breadcrumbs = "0.4.0"
 Flask_Security = "3.0.0"
-Flask-SQLAlchemy = {git = "https://github.com/inspirehep/flask-sqlalchemy.git", rev = "master"}
+Flask-SQLAlchemy = {git = "https://github.com/inspirehep/flask-sqlalchemy.git", rev = "71abd94a1e2317a1365a25a31e719dbd9aafceea"}
 ftfy = "4.4.3"
 invenio-access = "1.3.0"
 invenio-accounts = "1.1.1"
@@ -1378,8 +1379,8 @@ tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "mock (>=2.0,<3.0)", "py
 [package.source]
 type = "git"
 url = "https://github.com/inspirehep/inspire-crawler.git"
-reference = "master"
-resolved_reference = "459b9d3f569362a1c3079cf527a4d3a5b6c82641"
+reference = "dcbe9e015ea8b6e9234fcdf7a9515ed951f92e50"
+resolved_reference = "dcbe9e015ea8b6e9234fcdf7a9515ed951f92e50"
 
 [[package]]
 name = "inspire-dojson"
@@ -4129,7 +4130,7 @@ xrootd = ["xrootdpyfs", "invenio-xrootd"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=2.7,<3.0"
-content-hash = "953edb60e5a0079b099d2a44452921db98d11ae9c166e91cd4d6d783de92fd85"
+content-hash = "d9dc1743c8e615fc8bd9d05361818971ebaf8ddfcf0de5ddcb796baba2c50ce1"
 
 [metadata.files]
 alabaster = [
