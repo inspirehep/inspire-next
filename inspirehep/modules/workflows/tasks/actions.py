@@ -462,11 +462,11 @@ def match_references_hep(references):
     data = {'references': references}
     inspirehep_url = current_app.config.get("INSPIREHEP_URL")
     response = requests.post(
-        "{inspirehep_url}/api/matcher/linked_references/".format(
+        "{inspirehep_url}/matcher/linked_references/".format(
             inspirehep_url=inspirehep_url,
         ),
         headers=headers,
-        json=json.dumps(data)
+        json=data
     )
     if response.status_code == 200:
         return response.json()['references']

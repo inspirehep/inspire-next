@@ -1214,7 +1214,7 @@ def test_refextract_from_text(mock_match, mock_get_document_in_workflow, mock_cr
         )
         mock_request.register_uri(
             "POST",
-            "http://web:8000/api/matcher/linked_references/",
+            "http://web:8000/matcher/linked_references/",
             json={"references": [{"raw_refs": [{"source": "submitter"}]}]},
             status_code=200,
         )
@@ -1300,7 +1300,7 @@ def test_refextract_from_raw_refs(mock_create_journal_dict, mock_match):
         )
         mock_request.register_uri(
             "POST",
-            "http://web:8000/api/matcher/linked_references/",
+            "http://web:8000/matcher/linked_references/",
             json={
                 "references": [
                     {
@@ -1382,7 +1382,7 @@ def test_refextract_valid_refs_from_raw_refs(mock_create_journal_dict, mock_matc
         )
         mock_request.register_uri(
             "POST",
-            "http://web:8000/api/matcher/linked_references/",
+            "http://web:8000/matcher/linked_references/",
             json={"references": [{"raw_refs": [{"source": "submitter"}]}]},
             status_code=200,
         )
@@ -1432,7 +1432,7 @@ def test_refextract_valid_refs_from_text(mock_get_document_in_workflow, mock_cre
         )
         mock_request.register_uri(
             "POST",
-            "http://web:8000/api/matcher/linked_references/",
+            "http://web:8000/matcher/linked_references/",
             json={"references": [{"raw_refs": [{"source": "submitter", "value": "M.R"}]}]},
             status_code=200,
         )

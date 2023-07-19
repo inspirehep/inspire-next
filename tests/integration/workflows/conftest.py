@@ -322,7 +322,7 @@ def mocked_external_services(workflow_app):
         )
         requests_mocker.register_uri(
             "POST",
-            "{}/api/matcher/linked_references/".format(
+            "{}/matcher/linked_references/".format(
                 workflow_app.config["INSPIREHEP_URL"]
             ),
             json={

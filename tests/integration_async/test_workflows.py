@@ -326,7 +326,7 @@ def test_wf_replaces_old_workflow_which_is_in_halted_state(
         )
         request_mocker.register_uri(
             "POST",
-            "http://web:8000/api/matcher/linked_references/",
+            "http://web:8000/matcher/linked_references/",
             json={
                 "references": [
                     {
@@ -407,7 +407,7 @@ def test_wf_rejects_automatically_when_previous_matched_wf_was_rejected(
         )
         request_mocker.register_uri(
             "POST",
-            "http://web:8000/api/matcher/linked_references/",
+            "http://web:8000/matcher/linked_references/",
             json={
                 "references": [
                     {
