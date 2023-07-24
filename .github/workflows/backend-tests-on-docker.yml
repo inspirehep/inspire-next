@@ -11,6 +11,9 @@ on:
       tag:
         description: The id of the image that has been buit
         value: ${{ jobs.Release.outputs.tag }}
+      type:
+        description: The event-type of the release
+        value: ${{ jobs.Release.outputs.type }}
 
 jobs:
   Build:
@@ -186,7 +189,7 @@ jobs:
           docker-compose -f docker-compose.test.yml run --rm unit
 
   Release:
-    if: github.event_name == 'push'
+    if: ${{ github.event_name == 'push' || github.event_name == 'release'}}
     needs: [Unit, Integration-async, Integration, Workflows-I, Workflows-II]
     runs-on: ubuntu-latest
     outputs:
@@ -204,6 +207,7 @@ jobs:
           echo "RELEASE=$(git tag --points-at HEAD)" >> $GITHUB_ENV
           echo "TAG=${RELEASE:-$(git describe --always --tags)}" >> $GITHUB_ENV
           echo "tag=${RELEASE:-$(git describe --always --tags)}" >> $GITHUB_OUTPUT
+          echo "type=${github.event_name == 'release' && 'release' || 'update' }" >> $GITHUB_OUTPUT““
       - name: deploy docker images
         id: deploy-docker-images
         shell: bash
