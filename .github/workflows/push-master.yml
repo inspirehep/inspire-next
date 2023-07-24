@@ -3,6 +3,8 @@ name: Push master
 on:
   push:
     branches: [master]
+  release:
+    types: [released]
 
 defaults:
   run:
@@ -22,7 +24,7 @@ jobs:
       - name: send event
         uses: cern-sis/gh-workflows/.github/actions/kubernetes-project-new-images@v5.6.0
         with:
-          event-type: update
+          event-type: ${{ github.event_name == 'release' && 'release' || 'update' }}
           images: |
             inspirehep/next@${{ needs.test.outputs.tag }}
             inspirehep/next-assets@${{ needs.test.outputs.tag }}
