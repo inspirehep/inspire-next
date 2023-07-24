@@ -24,7 +24,7 @@ jobs:
       - name: send event
         uses: cern-sis/gh-workflows/.github/actions/kubernetes-project-new-images@v5.6.0
         with:
-          event-type: ${{ github.event_name == 'release' && 'release' || 'update' }}
+          event-type: ${{ needs.test.outputs.type }}
           images: |
             inspirehep/next@${{ needs.test.outputs.tag }}
             inspirehep/next-assets@${{ needs.test.outputs.tag }}
