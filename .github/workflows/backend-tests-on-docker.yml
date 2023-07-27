@@ -11,10 +11,6 @@ on:
       tag:
         description: The id of the image that has been buit
         value: ${{ jobs.Release.outputs.tag }}
-      type:
-        description: The event-type of the release
-        value: ${{ jobs.Release.outputs.type }}
-
 jobs:
   Build:
     runs-on: ubuntu-latest
@@ -207,16 +203,6 @@ jobs:
           echo "RELEASE=$(git tag --points-at HEAD)" >> $GITHUB_ENV
           echo "TAG=${RELEASE:-$(git describe --always --tags)}" >> $GITHUB_ENV
           echo "tag=${RELEASE:-$(git describe --always --tags)}" >> $GITHUB_OUTPUT
-          
-          if [[ "${{ github.event_name }}" == "release" ]]; then
-            echo "Event type is release"
-            echo "type=release" >> $GITHUB_OUTPUT
-            echo "TYPE=release" >> $GITHUB_ENV
-          else
-            echo "Event type is update"
-            echo "type=update" >> $GITHUB_OUTPUT
-            echo "TYPE=update" >> $GITHUB_ENV
-          fi
       - name: deploy docker images
         id: deploy-docker-images
         shell: bash
@@ -224,4 +210,4 @@ jobs:
           DOCKER_USERNAME: ${{ secrets.DOCKER_USERNAME }}
           DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
           INSPIRE_BOT_TOKEN: ${{ secrets.INSPIRE_BOT_TOKEN }}
-        run: ./deploy-docker-image.sh $TAG $RELEASE $TYPE
+        run: ./deploy-docker-image.sh $TAG $RELEASE

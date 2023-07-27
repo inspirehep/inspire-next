@@ -21,13 +21,24 @@ jobs:
     needs: test
     runs-on: ubuntu-latest
     steps:
-      - name: send event
+      - name: send event (release)
+        if : ${{  github.event_name == 'release' }}
         uses: cern-sis/gh-workflows/.github/actions/kubernetes-project-new-images@v5.6.0
         with:
-          event-type: ${{ needs.test.outputs.type }}
+          event-type: release
           images: |
             inspirehep/next@${{ needs.test.outputs.tag }}
             inspirehep/next-assets@${{ needs.test.outputs.tag }}
             inspirehep/next-scrapyd@${{ needs.test.outputs.tag }}
           token: ${{ secrets.PAT_FIRE_EVENTS_ON_CERN_SIS_KUBERNETES }}
 
+      - name: send event (update)
+        if : ${{  github.event_name != 'release' }}
+        uses: cern-sis/gh-workflows/.github/actions/kubernetes-project-new-images@v5.6.0
+        with:
+          event-type: update
+          images: |
+            inspirehep/next@${{ needs.test.outputs.tag }}
+            inspirehep/next-assets@${{ needs.test.outputs.tag }}
+            inspirehep/next-scrapyd@${{ needs.test.outputs.tag }}
+          token: ${{ secrets.PAT_FIRE_EVENTS_ON_CERN_SIS_KUBERNETES }}
