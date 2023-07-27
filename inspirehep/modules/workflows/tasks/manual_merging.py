@@ -124,7 +124,7 @@ def save_roots(obj, eng):
                     dict(
                         source=update_root["source"],
                         record_uuid=new_uuid,
-                        json=update_root["json"],
+                        json=update_root["json_data"],
                     )
                 )
             requests.delete(
