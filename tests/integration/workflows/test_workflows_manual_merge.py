@@ -301,7 +301,7 @@ def test_save_roots_using_hep_root_table_api(workflow_app):
             {
                 "created": "20-02-2012 14:35:34.2345",
                 "updated": "20-02-2012 14:35:34.2345",
-                "json_data": {"version": "original"},
+                "json": {"version": "original"},
                 "record_uuid": str(head.id),
                 "source": "arxiv",
             }
@@ -310,14 +310,14 @@ def test_save_roots_using_hep_root_table_api(workflow_app):
             {
                 "created": "20-02-2012 14:35:34.2345",
                 "updated": "20-02-2012 14:35:34.2345",
-                "json_data": {"version": "updated"},
+                "json": {"version": "updated"},
                 "record_uuid": str(update.id),
                 "source": "arxiv",
             },
             {
                 "created": "20-02-2012 15:35:34.2345",
                 "updated": "20-02-2012 15:35:34.2345",
-                "json_data": {"version": "updated"},
+                "json": {"version": "updated"},
                 "record_uuid": str(update.id),
                 "source": "publisher",
             },
