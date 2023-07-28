@@ -124,7 +124,7 @@ def save_roots(obj, eng):
                     dict(
                         source=update_root["source"],
                         record_uuid=new_uuid,
-                        json=update_root["json_data"],
+                        json=update_root["json"],
                     )
                 )
             requests.delete(
@@ -180,7 +180,7 @@ def save_roots(obj, eng):
                 data={
                     "record_uuid": head_root["record_uuid"],
                     "source": head_root["source"],
-                    "json": head_root["json_data"],
+                    "json": head_root["json"],
                 },
             )
             if response.status_code != 200:
