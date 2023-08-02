@@ -132,7 +132,7 @@ def save_roots(obj, eng):
                     inspirehep_url=current_app.config["INSPIREHEP_URL"]
                 ),
                 headers=request_headers,
-                data={
+                json={
                     "record_uuid": update_root["record_uuid"],
                     "source": update_root["source"],
                 },
@@ -177,7 +177,7 @@ def save_roots(obj, eng):
                     inspirehep_url=current_app.config["INSPIREHEP_URL"]
                 ),
                 headers=_get_headers_for_hep_root_table_request(),
-                data={
+                json={
                     "record_uuid": head_root["record_uuid"],
                     "source": head_root["source"],
                     "json": head_root["json"],
