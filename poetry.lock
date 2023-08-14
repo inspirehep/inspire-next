@@ -1124,7 +1124,7 @@ Unidecode = ">=0.04.14"
 
 [[package]]
 name = "hepcrawl"
-version = "13.0.63"
+version = "13.0.64"
 description = "Scrapy project for feeds into INSPIRE-HEP (http://inspirehep.net)."
 category = "main"
 optional = false
@@ -1141,7 +1141,7 @@ ftputil = ">=3.3.1,<4.0"
 furl = ">=0.4.95"
 harvestingkit = ">=0.6.12"
 inspire-dojson = ">=63.0,<64.0"
-inspire-schemas = ">=61.3,<62.0"
+inspire-schemas = ">=61.5,<62.0"
 inspire-utils = ">=3.0.0,<4.0"
 LinkHeader = ">=0.4.3"
 pyasn1 = ">=0.1.8"
@@ -1372,7 +1372,7 @@ WTForms = "2.2.1"
 [package.extras]
 docs = ["Sphinx (>=1.5,<1.6)"]
 postgresql = ["invenio-db[versioning,postgresql] (==1.0.4)", "psycopg2-binary (==2.8.4)"]
-mysql = ["invenio-db[mysql,versioning] (==1.0.4)"]
+mysql = ["invenio-db[versioning,mysql] (==1.0.4)"]
 sqlite = ["invenio-db[versioning] (==1.0.4)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "mock (>=2.0,<3.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "requests_mock (>=1.4.0,<2.0)"]
 
@@ -1602,7 +1602,7 @@ ua-parser = ">=0.7.3"
 all = ["Sphinx (>=1.4.2,<1.6)", "celery (>=3.1.0,<4.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.0)", "mock (>=2.0.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-flask (>=0.10.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "selenium (>=3.0.1)"]
 celery = ["celery (>=3.1.0,<4.0)"]
 docs = ["Sphinx (>=1.4.2,<1.6)"]
-mysql = ["invenio-db[mysql,versioning] (>=1.0.0)"]
+mysql = ["invenio-db[versioning,mysql] (>=1.0.0)"]
 postgresql = ["invenio-db[versioning,postgresql] (>=1.0.0)"]
 sqlite = ["invenio-db[versioning] (>=1.0.0)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.0)", "mock (>=2.0.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-flask (>=0.10.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "selenium (>=3.0.1)"]
@@ -2007,7 +2007,7 @@ jsonschema = ">=2.5.1"
 admin = ["Flask-Admin (>=1.3.0)"]
 all = ["Flask-Admin (>=1.3.0)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.5.3)", "Flask-Menu (>=0.4.0)", "invenio-admin (>=1.0.0)", "isort (>=4.3.0)", "mock (>=1.0.0)", "pydocstyle (>=3.0.0)", "pytest-cov (>=2.7.1)", "pytest-pep8 (>=1.0.6)", "pytest (>=4.6.4,<5.0.0)", "invenio-pidstore (>=1.0.0)"]
 docs = ["Sphinx (>=1.5.1)"]
-mysql = ["invenio-db[mysql,versioning] (>=1.0.0)"]
+mysql = ["invenio-db[versioning,mysql] (>=1.0.0)"]
 pidstore = ["invenio-pidstore (>=1.0.0)"]
 postgresql = ["invenio-db[versioning,postgresql] (>=1.0.0)"]
 sqlite = ["invenio-db[versioning] (>=1.0.0)"]
@@ -2030,7 +2030,7 @@ invenio-records-rest = ">=1.6.3"
 [package.extras]
 all = ["Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-indexer (>=1.1.0)", "invenio-search[elasticsearch6] (>=1.2.0)", "isort (>=4.3.4)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.7.0)"]
 docs = ["Sphinx (>=1.5.1)"]
-mysql = ["invenio-db[mysql,versioning] (>=1.0.0)"]
+mysql = ["invenio-db[versioning,mysql] (>=1.0.0)"]
 postgresql = ["invenio-db[versioning,postgresql] (>=1.0.0)"]
 sqlite = ["invenio-db[versioning] (>=1.0.0)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-indexer (>=1.1.0)", "invenio-search[elasticsearch6] (>=1.2.0)", "isort (>=4.3.4)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.7.0)"]
@@ -2085,9 +2085,9 @@ invenio-pidstore = ">=1.0.0"
 invenio-records = ">=1.0.0"
 
 [package.extras]
-all = ["Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[mysql,versioning,postgresql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[mysql,versioning,postgresql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+all = ["Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[versioning,postgresql,mysql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[versioning,postgresql,mysql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 docs = ["Sphinx (>=1.5.1)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[mysql,versioning,postgresql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[versioning,postgresql,mysql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
 name = "invenio-rest"
@@ -4611,8 +4611,8 @@ harvestingkit = [
     {file = "HarvestingKit-0.6.17.tar.gz", hash = "sha256:e55d675e4b9042c6bf73300192e317794a3bd147987a5ed052a0e1a3380aff3e"},
 ]
 hepcrawl = [
-    {file = "hepcrawl-13.0.63-py2.py3-none-any.whl", hash = "sha256:4e73aebcfb7a75a149e71e9ba65fb7728218563ac9ac0cb5c30929be529871b9"},
-    {file = "hepcrawl-13.0.63.tar.gz", hash = "sha256:083675944580b4b14c99c7b9c81ea098e11f51df6bcf05d6feccbffdd39e01c3"},
+    {file = "hepcrawl-13.0.64-py2.py3-none-any.whl", hash = "sha256:3872b5034e8bf6c8c51355001c08d47c26a733d86567a23de3783eafe830ab45"},
+    {file = "hepcrawl-13.0.64.tar.gz", hash = "sha256:68ff62196d9d5b9711b80bf8c268b127e9fe43703747ca38b1eaeec165b6c234"},
 ]
 honcho = [
     {file = "honcho-1.0.1-py2.py3-none-any.whl", hash = "sha256:af5806bf13e3b20acdcb9ff8c0beb91eee6fe07393c3448dfad89667e6ac7576"},
