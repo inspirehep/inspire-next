@@ -57,6 +57,10 @@ def init_roles():
             name='jlabcurator',
             description='curator for JLAB related articles'
         )
+        ds.create_role(
+            name='chatbot',
+            description='chatbot'
+        )
     db.session.commit()
 
 
@@ -97,6 +101,12 @@ def init_users():
             email='johndoe@inspirehep.net',
             password=hash_password("123456"),
             active=True,
+        )
+        ds.create_user(
+            email='chatbot@inspirehep.net',
+            password=hash_password("123456"),
+            active=True,
+            roles=['chatbot']
         )
     db.session.commit()
 

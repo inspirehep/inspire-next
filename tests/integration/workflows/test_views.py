@@ -391,7 +391,7 @@ def test_aggregations(workflow_app):
                     "journal_title": "J.Geom.Phys.",
                     "journal_volume": "167",
                     "material": "publication",
-                    "year": 2021
+                    "year": 2021,
                 }
             ],
             "report_numbers": [{"source": "arXiv", "value": "MS-TP-21-05"}],
@@ -410,9 +410,7 @@ def test_aggregations(workflow_app):
 
     with workflow_app.test_client() as client:
         login_user_via_session(client, email="cataloger@inspirehep.net")
-        search_response = client.get(
-            "/api/holdingpen"
-        )
+        search_response = client.get("/api/holdingpen")
         result_data = json.loads(search_response.data)
 
     expected_aggregations = [
@@ -430,7 +428,7 @@ def test_aggregations(workflow_app):
         assert aggregation in result_aggregations
 
     assert len(expected_aggregations) == len(result_aggregations)
-    assert len(result_data["aggregations"]['journal']['buckets']) == 2
+    assert len(result_data["aggregations"]["journal"]["buckets"]) == 2
 
 
 def test_search(workflow_app):
@@ -527,3 +525,19 @@ def test_search(workflow_app):
 
     assert len(data_private_notes["hits"]["hits"]) == 1
     assert data_private_notes["hits"]["hits"][0]["_id"] == expected_wf_id
+
+
+def test_get_workflows_for_curator_view(workflow_app):
+    with workflow_app.test_client() as client:
+        login_user_via_session(client, email="chatbot@inspirehep.net")
+        response = client.get("/workflows/bugninja/get-workflows-for-curator")
+        assert response.status_code == 200
+        assert not json.loads(response.data)["message"]
+
+
+def test_get_workflows_root_error(workflow_app):
+    with workflow_app.test_client() as client:
+        login_user_via_session(client, email="chatbot@inspirehep.net")
+        response = client.get("/workflows/bugninja/get-workflows-root-error")
+        assert response.status_code == 200
+        assert not json.loads(response.data)["message"]
