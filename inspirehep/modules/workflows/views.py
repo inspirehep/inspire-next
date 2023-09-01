@@ -24,69 +24,53 @@
 
 from __future__ import absolute_import, division, print_function
 
-import re
-from os.path import join
 import copy
-
+import re
 from functools import wraps
+from os.path import join
 
-from flask import (
-    Blueprint,
-    abort,
-    current_app,
-    jsonify,
-    redirect,
-    request,
-)
+from flask import Blueprint, abort, current_app, jsonify, redirect, request
 from flask.views import MethodView
 from flask_login import current_user
 from inspire_schemas.api import validate
+from inspire_utils.record import get_value
 from inspire_utils.urls import ensure_scheme
-from invenio_oauth2server.provider import oauth2
 from invenio_db import db
-from invenio_workflows import (
-    ObjectStatus,
-    start,
-    workflow_object_class,
-    WorkflowEngine,
-)
+from invenio_oauth2server.provider import oauth2
+from invenio_workflows import (ObjectStatus, WorkflowEngine, start,
+                               workflow_object_class)
 from invenio_workflows.errors import WorkflowsMissingObject
 from jsonschema.exceptions import ValidationError
-from inspire_utils.record import get_value
 
 from inspirehep.modules.records.permissions import RecordPermission
 from inspirehep.modules.workflows.errors import (
-    CallbackError,
-    CallbackRecordNotFoundError,
-    CallbackValidationError,
-    CallbackWorkflowNotInWaitingEditState,
-    CallbackWorkflowNotFoundError,
-    CallbackWorkflowNotInMergeState,
+    CallbackError, CallbackRecordNotFoundError, CallbackValidationError,
+    CallbackWorkflowNotFoundError, CallbackWorkflowNotInMergeState,
     CallbackWorkflowNotInValidationError,
-)
+    CallbackWorkflowNotInWaitingEditState)
 from inspirehep.modules.workflows.loaders import workflow_loader
 from inspirehep.modules.workflows.models import WorkflowsPendingRecord
 from inspirehep.modules.workflows.utils import (
-    get_resolve_validation_callback_url,
-    get_validation_errors,
-)
-from inspirehep.utils.record_getter import get_db_record, RecordGetterError
+    get_resolve_validation_callback_url, get_validation_errors)
+from inspirehep.modules.workflows.utils.bugninjing import (
+    get_root_error, get_workflows_for_curators)
+from inspirehep.utils.record_getter import RecordGetterError, get_db_record
 from inspirehep.utils.tickets import get_rt_link_for_ticket
 
 callback_blueprint = Blueprint(
-    'inspire_workflows_callbacks',
+    "inspire_workflows_callbacks",
     __name__,
     url_prefix="/callback",
-    template_folder='templates',
+    template_folder="templates",
     static_folder="static",
 )
 
 
 workflow_blueprint = Blueprint(
-    'inspire_workflows',
+    "inspire_workflows",
     __name__,
     url_prefix="/workflows",
-    template_folder='templates',
+    template_folder="templates",
     static_folder="static",
 )
 
@@ -95,14 +79,42 @@ def require_api_auth():
     """
     Decorator to require API authentication using OAuth token.
     """
+
     def wrapper(f):
         f_oauth_required = oauth2.require_oauth()(f)
 
         @wraps(f)
         def decorated(*args, **kwargs):
             return f_oauth_required(*args, **kwargs)
+
         return decorated
+
     return wrapper
+
+
+def login_required_with_roles(roles=None):
+    """Login required with roles decorator.
+
+    :param roles (list(str)): a list of roles names.
+    """
+
+    def wrapper_function(func):
+        @wraps(func)
+        def wrapped_function(*args, **kwargs):
+            if not current_user.is_authenticated:
+                abort(401)
+
+            if roles:
+                # superuser can do everything
+                user_roles = {role.name for role in current_user.roles}
+                has_access = user_roles & set(roles)
+                if not has_access:
+                    abort(403)
+            return func(*args, **kwargs)
+
+        return wrapped_function
+
+    return wrapper_function
 
 
 @callback_blueprint.errorhandler(CallbackError)
@@ -128,19 +140,15 @@ def _continue_workflow(workflow_id, recid, result=None):
         workflow_object = workflow_object_class.get(workflow_id)
     except WorkflowsMissingObject:
         current_app.logger.error(
-            'No workflow object with the id %s could be found.',
+            "No workflow object with the id %s could be found.",
             workflow_id,
         )
         return False
 
-    workflow_object.extra_data['url'] = join(
-        base_url,
-        'record',
-        str(recid)
-    )
-    workflow_object.extra_data['recid'] = recid
-    workflow_object.data['control_number'] = recid
-    workflow_object.extra_data['callback_result'] = result
+    workflow_object.extra_data["url"] = join(base_url, "record", str(recid))
+    workflow_object.extra_data["recid"] = recid
+    workflow_object.data["control_number"] = recid
+    workflow_object.extra_data["callback_result"] = result
     workflow_object.save()
     db.session.commit()
     workflow_object.continue_workflow(delayed=True)
@@ -156,17 +164,17 @@ def _find_and_continue_workflow(workflow_id, recid, result=None):
     )
     if not workflow_found:
         current_app.logger.warning(
-            'The workflow %s was not found.',
+            "The workflow %s was not found.",
             workflow_id,
         )
         return {
-            'success': False,
-            'message': 'workflow with id %s not found.' % workflow_id,
+            "success": False,
+            "message": "workflow with id %s not found." % workflow_id,
         }
 
     return {
-        'success': True,
-        'message': 'workflow with id %s continued.' % workflow_id,
+        "success": True,
+        "message": "workflow with id %s continued." % workflow_id,
     }
 
 
@@ -175,27 +183,27 @@ def _put_workflow_in_error_state(workflow_id, error_message, result):
         workflow_object = workflow_object_class.get(workflow_id)
     except WorkflowsMissingObject:
         current_app.logger.error(
-            'No workflow object with the id %s could be found.',
+            "No workflow object with the id %s could be found.",
             workflow_id,
         )
         return {
-            'success': False,
-            'message': 'workflow with id %s not found.' % workflow_id,
+            "success": False,
+            "message": "workflow with id %s not found." % workflow_id,
         }
 
     workflow_object.status = ObjectStatus.ERROR
-    workflow_object.extra_data['callback_result'] = result
-    workflow_object.extra_data['_error_msg'] = error_message
+    workflow_object.extra_data["callback_result"] = result
+    workflow_object.extra_data["_error_msg"] = error_message
     workflow_object.save()
     db.session.commit()
 
     return {
-        'success': True,
-        'message': 'workflow %s updated with error.' % workflow_id,
+        "success": True,
+        "message": "workflow %s updated with error." % workflow_id,
     }
 
 
-@callback_blueprint.route('/workflows/webcoll', methods=['POST'])
+@callback_blueprint.route("/workflows/webcoll", methods=["POST"])
 def webcoll_callback():
     """Handle a callback from webcoll with the record ids processed.
 
@@ -212,7 +220,7 @@ def webcoll_callback():
 
 
     """
-    recids = dict(request.form).get('recids', [])
+    recids = dict(request.form).get("recids", [])
     pending_records = WorkflowsPendingRecord.query.filter(
         WorkflowsPendingRecord.record_id.in_(recids)
     ).all()
@@ -224,24 +232,24 @@ def webcoll_callback():
             workflow_id=workflow_id,
             recid=recid,
         )
-        if continue_response['success']:
+        if continue_response["success"]:
             current_app.logger.debug(
-                'Successfully restarted workflow %s',
+                "Successfully restarted workflow %s",
                 workflow_id,
             )
             response[recid] = {
-                'success': True,
-                'message': 'Successfully restarted workflow %s' % workflow_id,
+                "success": True,
+                "message": "Successfully restarted workflow %s" % workflow_id,
             }
         else:
             current_app.logger.debug(
-                'Error restarting workflow %s: %s',
+                "Error restarting workflow %s: %s",
                 workflow_id,
-                continue_response['message'],
+                continue_response["message"],
             )
             response[recid] = {
-                'success': False,
-                'message': continue_response['message'],
+                "success": False,
+                "message": continue_response["message"],
             }
 
         db.session.delete(pending_record)
@@ -251,26 +259,23 @@ def webcoll_callback():
 
 
 def _robotupload_has_error(result):
-    recid = int(result.get('recid'))
-    if not result.get('success'):
-        message = result.get(
-            'error_message',
-            'No error message from robotupload.'
-        )
+    recid = int(result.get("recid"))
+    if not result.get("success"):
+        message = result.get("error_message", "No error message from robotupload.")
     elif recid < 0:
         message = result.get(
-            'error_message',
-            'Failed to create record on robotupload.',
+            "error_message",
+            "Failed to create record on robotupload.",
         )
     else:
-        return False, ''
+        return False, ""
 
     return True, message
 
 
 def _is_an_update(workflow_id):
     workflow_object = workflow_object_class.get(workflow_id)
-    return bool(workflow_object.extra_data.get('is-update'))
+    return bool(workflow_object.extra_data.get("is-update"))
 
 
 def _is_an_authors_workflow(workflow_id):
@@ -280,13 +285,13 @@ def _is_an_authors_workflow(workflow_id):
 
 def _parse_robotupload_result(result, workflow_id):
     response = {}
-    recid = int(result.get('recid'))
+    recid = int(result.get("recid"))
 
     result_has_error, error_message = _robotupload_has_error(result)
     if result_has_error:
         response = {
-            'success': False,
-            'message': error_message,
+            "success": False,
+            "message": error_message,
         }
         return response
 
@@ -296,12 +301,11 @@ def _parse_robotupload_result(result, workflow_id):
         ).all()
         if already_pending_ones:
             current_app.logger.warning(
-                'The record %s was already found on the pending list.',
-                recid
+                "The record %s was already found on the pending list.", recid
             )
             response = {
-                'success': False,
-                'message': 'Recid %s already in pending list.' % recid,
+                "success": False,
+                "message": "Recid %s already in pending list." % recid,
             }
             return response
 
@@ -314,7 +318,7 @@ def _parse_robotupload_result(result, workflow_id):
             db.session.commit()
 
             current_app.logger.debug(
-                'Successfully added recid:workflow %s:%s to pending list.',
+                "Successfully added recid:workflow %s:%s to pending list.",
                 recid,
                 workflow_id,
             )
@@ -324,30 +328,30 @@ def _parse_robotupload_result(result, workflow_id):
         recid=recid,
         result=result,
     )
-    if continue_response['success']:
+    if continue_response["success"]:
         current_app.logger.debug(
-            'Successfully restarted workflow %s',
+            "Successfully restarted workflow %s",
             workflow_id,
         )
         response = {
-            'success': True,
-            'message': 'Successfully restarted workflow %s' % workflow_id,
+            "success": True,
+            "message": "Successfully restarted workflow %s" % workflow_id,
         }
     else:
         current_app.logger.debug(
-            'Error restarting workflow %s: %s',
+            "Error restarting workflow %s: %s",
             workflow_id,
-            continue_response['message'],
+            continue_response["message"],
         )
         response = {
-            'success': False,
-            'message': continue_response['message'],
+            "success": False,
+            "message": continue_response["message"],
         }
 
     return response
 
 
-@callback_blueprint.route('/workflows/robotupload', methods=['POST'])
+@callback_blueprint.route("/workflows/robotupload", methods=["POST"])
 def robotupload_callback():
     """Handle callback from robotupload.
 
@@ -413,31 +417,31 @@ def robotupload_callback():
     """
 
     request_data = request.get_json()
-    workflow_id = request_data.get('nonce', '')
-    results = request_data.get('results', [])
+    workflow_id = request_data.get("nonce", "")
+    results = request_data.get("results", [])
     responses = {}
     for result in results:
-        recid = int(result.get('recid'))
+        recid = int(result.get("recid"))
 
         if recid in responses:
             # this should never happen
-            current_app.logger.warning('Received duplicated recid: %s', recid)
+            current_app.logger.warning("Received duplicated recid: %s", recid)
             continue
 
         response = _parse_robotupload_result(
             result=result,
             workflow_id=workflow_id,
         )
-        if not response['success']:
+        if not response["success"]:
             error_set_result = _put_workflow_in_error_state(
                 workflow_id=workflow_id,
-                error_message='Error in robotupload: %s' % response['message'],
+                error_message="Error in robotupload: %s" % response["message"],
                 result=result,
             )
-            if not error_set_result['success']:
-                response['message'] += (
-                    '\nFailed to put the workflow in error state:%s' %
-                    error_set_result['message']
+            if not error_set_result["success"]:
+                response["message"] += (
+                    "\nFailed to put the workflow in error state:%s"
+                    % error_set_result["message"]
                 )
 
         responses[recid] = response
@@ -458,12 +462,14 @@ def _validate_workflow_schema(workflow_data):
 
     # Check for validation errors
     try:
-        validate(workflow_data['metadata'])
+        validate(workflow_data["metadata"])
     except ValidationError:
-        workflow_data['_extra_data']['validation_errors'] = \
-            get_validation_errors(workflow_data['metadata'], 'hep')
-        workflow_data['_extra_data']['callback_url'] = \
-            get_resolve_validation_callback_url()
+        workflow_data["_extra_data"]["validation_errors"] = get_validation_errors(
+            workflow_data["metadata"], "hep"
+        )
+        workflow_data["_extra_data"][
+            "callback_url"
+        ] = get_resolve_validation_callback_url()
         raise CallbackValidationError(workflow_data)
 
 
@@ -482,40 +488,42 @@ class ResolveMergeResource(MethodView):
     def put(self):
         """Handle callback for merge conflicts."""
         workflow_data = workflow_loader()
-        workflow_id = workflow_data['id']
+        workflow_id = workflow_data["id"]
 
         try:
             workflow = workflow_object_class.get(workflow_id)
         except WorkflowsMissingObject:
             raise CallbackWorkflowNotFoundError(workflow_id)
 
-        if workflow.status != ObjectStatus.HALTED or \
-           'callback_url' not in workflow.extra_data:
+        if (
+            workflow.status != ObjectStatus.HALTED
+            or "callback_url" not in workflow.extra_data
+        ):
             raise CallbackWorkflowNotInMergeState(workflow.id)
 
-        conflicts = get_value(workflow_data['_extra_data'], 'conflicts', default=[])
+        conflicts = get_value(workflow_data["_extra_data"], "conflicts", default=[])
 
-        workflow.data = workflow_data['metadata']
-        workflow.extra_data['conflicts'] = conflicts
+        workflow.data = workflow_data["metadata"]
+        workflow.extra_data["conflicts"] = conflicts
 
         if not conflicts:
             workflow.status = ObjectStatus.RUNNING
 
-            workflow.extra_data.pop('callback_url', None)
-            workflow.extra_data.pop('conflicts', None)
+            workflow.extra_data.pop("callback_url", None)
+            workflow.extra_data.pop("conflicts", None)
 
             workflow.save()
             db.session.commit()
             workflow.continue_workflow(delayed=True)
 
             data = {
-                'message': 'Workflow {} is continuing.'.format(workflow.id),
+                "message": "Workflow {} is continuing.".format(workflow.id),
             }
             return jsonify(data), 200
 
         # just save
         data = {
-            'message': 'Workflow {} has been saved with conflicts.'.format(workflow.id),
+            "message": "Workflow {} has been saved with conflicts.".format(workflow.id),
         }
         workflow.save()
         db.session.commit()
@@ -603,28 +611,30 @@ class ResolveValidationResource(MethodView):
         workflow_data = workflow_loader()
         _validate_workflow_schema(workflow_data)
 
-        workflow_id = workflow_data['id']
+        workflow_id = workflow_data["id"]
         try:
             workflow = workflow_object_class.get(workflow_id)
         except WorkflowsMissingObject:
             raise CallbackWorkflowNotFoundError(workflow_id)
 
-        if workflow.status != ObjectStatus.ERROR or \
-           'callback_url' not in workflow.extra_data:
+        if (
+            workflow.status != ObjectStatus.ERROR
+            or "callback_url" not in workflow.extra_data
+        ):
             raise CallbackWorkflowNotInValidationError(workflow_id)
 
-        workflow.data = workflow_data['metadata']
+        workflow.data = workflow_data["metadata"]
         workflow.status = ObjectStatus.RUNNING
 
-        workflow.extra_data.pop('callback_url', None)
-        workflow.extra_data.pop('validation_errors', None)
+        workflow.extra_data.pop("callback_url", None)
+        workflow.extra_data.pop("validation_errors", None)
 
         workflow.save()
         db.session.commit()
         workflow.continue_workflow(delayed=True)
 
         data = {
-            'message': 'Workflow {} is continuing.'.format(workflow.id),
+            "message": "Workflow {} is continuing.".format(workflow.id),
         }
         return jsonify(data), 200
 
@@ -644,108 +654,107 @@ class ResolveEditArticleResource(MethodView):
     def put(self):
         """Handle callback for merge conflicts."""
         workflow_data = workflow_loader()
-        workflow_id = workflow_data['id']
+        workflow_id = workflow_data["id"]
 
         try:
             workflow = workflow_object_class.get(workflow_id)
         except WorkflowsMissingObject:
             raise CallbackWorkflowNotFoundError(workflow_id)
 
-        if workflow.status != ObjectStatus.WAITING or \
-           'callback_url' not in workflow.extra_data:
+        if (
+            workflow.status != ObjectStatus.WAITING
+            or "callback_url" not in workflow.extra_data
+        ):
             raise CallbackWorkflowNotInWaitingEditState(workflow.id)
 
-        recid = workflow_data['metadata'].get('control_number')
+        recid = workflow_data["metadata"].get("control_number")
         try:
-            record = get_db_record('lit', recid)
+            record = get_db_record("lit", recid)
         except RecordGetterError:
             raise CallbackRecordNotFoundError(recid)
 
-        record_permission = RecordPermission.create(action='update', record=record)
+        record_permission = RecordPermission.create(action="update", record=record)
         if not record_permission.can():
             abort(403, record_permission)
 
         workflow_id = workflow.id
-        workflow.data = workflow_data['metadata']
+        workflow.data = workflow_data["metadata"]
         workflow.status = ObjectStatus.RUNNING
-        workflow.extra_data.pop('callback_url', None)
+        workflow.extra_data.pop("callback_url", None)
         workflow.save()
         db.session.commit()
         workflow.continue_workflow(delayed=True)
 
-        data = {'message': 'Workflow {} is continuing.'.format(workflow_id)}
-        ticket_id = workflow_data['_extra_data'].get('curation_ticket_id')
+        data = {"message": "Workflow {} is continuing.".format(workflow_id)}
+        ticket_id = workflow_data["_extra_data"].get("curation_ticket_id")
         if ticket_id:
-            data['redirect_url'] = get_rt_link_for_ticket(ticket_id)
+            data["redirect_url"] = get_rt_link_for_ticket(ticket_id)
 
         return jsonify(data), 200
 
 
 def start_edit_article_workflow(recid):
     try:
-        record = get_db_record('lit', recid)
+        record = get_db_record("lit", recid)
     except RecordGetterError:
         raise CallbackRecordNotFoundError(recid)
 
-    record_permission = RecordPermission.create(action='update', record=record)
+    record_permission = RecordPermission.create(action="update", record=record)
     if not record_permission.can():
         abort(403, record_permission)
     # has to be done before start() since, it is deattaching this session
     user_id = current_user.get_id()
-    eng_uuid = start('edit_article', data=record)
+    eng_uuid = start("edit_article", data=record)
     workflow_id = WorkflowEngine.from_uuid(eng_uuid).objects[0].id
     workflow = workflow_object_class.get(workflow_id)
     workflow.id_user = user_id
     if request.referrer:
-        base_rt_url = get_rt_link_for_ticket('').replace('?', '\?')
-        ticket_match = re.match(base_rt_url + '(?P<ticket_id>\d+)', request.referrer)
+        base_rt_url = get_rt_link_for_ticket("").replace("?", "\?")
+        ticket_match = re.match(base_rt_url + "(?P<ticket_id>\d+)", request.referrer)
         if ticket_match:
-            ticket_id = int(ticket_match.group('ticket_id'))
-            workflow.extra_data['curation_ticket_id'] = ticket_id
+            ticket_id = int(ticket_match.group("ticket_id"))
+            workflow.extra_data["curation_ticket_id"] = ticket_id
 
     workflow.save()
     db.session.commit()
-    url = "{}{}".format(current_app.config['WORKFLOWS_EDITOR_API_URL'], workflow_id)
+    url = "{}{}".format(current_app.config["WORKFLOWS_EDITOR_API_URL"], workflow_id)
     return redirect(location=url, code=302)
 
 
-@workflow_blueprint.route('/inspect_merge/<int:holdingpen_id>', methods=['GET'])
+@workflow_blueprint.route("/inspect_merge/<int:holdingpen_id>", methods=["GET"])
 def inspect_merge(holdingpen_id):
     wf = workflow_object_class.get(holdingpen_id)
-    revision_id = wf.extra_data.get('merger_head_revision', None)
+    revision_id = wf.extra_data.get("merger_head_revision", None)
     if revision_id is None:
-        abort(400, 'Cannot inspect merge operation on this workflow')
+        abort(400, "Cannot inspect merge operation on this workflow")
 
-    root = wf.extra_data.get('merger_original_root')
-    update = wf.extra_data['merger_root']
-    merged = get_db_record('lit', wf.data['control_number'])
+    root = wf.extra_data.get("merger_original_root")
+    update = wf.extra_data["merger_root"]
+    merged = get_db_record("lit", wf.data["control_number"])
     # XXX merged.revisions[revision_id] should work if not for the messed up
     # non-consecutive versions in prod
     head = merged.model.versions.filter_by(version_id=(revision_id + 1)).one().json
 
-    return jsonify(
-        root=root,
-        head=head,
-        update=update,
-        merged=merged
-    )
+    return jsonify(root=root, head=head, update=update, merged=merged)
 
 
-@workflow_blueprint.route('/authors', methods=['POST'])
+@workflow_blueprint.route("/authors", methods=["POST"])
 @require_api_auth()
 def start_workflow_for_author_submission():
-    submission_data = request.get_json()['data']
+    submission_data = request.get_json()["data"]
     workflow_object = workflow_object_class.create(
         data={},
-        id_user=submission_data['acquisition_source']['internal_uid'],
-        data_type='authors'
+        id_user=submission_data["acquisition_source"]["internal_uid"],
+        data_type="authors",
     )
-    submission_data['acquisition_source']['submission_number'] = str(workflow_object.id)
+    submission_data["acquisition_source"]["submission_number"] = str(workflow_object.id)
     workflow_object.data = submission_data
-    workflow_object.extra_data['is-update'] = bool(submission_data.get('control_number'))
-    workflow_object.extra_data['source_data'] = {
-        'data': copy.deepcopy(workflow_object.data),
-        'extra_data': copy.deepcopy(workflow_object.extra_data)
+    workflow_object.extra_data["is-update"] = bool(
+        submission_data.get("control_number")
+    )
+    workflow_object.extra_data["source_data"] = {
+        "data": copy.deepcopy(workflow_object.data),
+        "extra_data": copy.deepcopy(workflow_object.extra_data),
     }
 
     workflow_object.save()
@@ -753,37 +762,36 @@ def start_workflow_for_author_submission():
 
     workflow_object_id = workflow_object.id
 
-    start.delay(
-        'author', object_id=workflow_object.id)
+    start.delay("author", object_id=workflow_object.id)
 
-    return jsonify({'workflow_object_id': workflow_object_id})
+    return jsonify({"workflow_object_id": workflow_object_id})
 
 
-@workflow_blueprint.route('/literature', methods=['POST'])
+@workflow_blueprint.route("/literature", methods=["POST"])
 @require_api_auth()
 def start_workflow_for_literature_submission():
     json = request.get_json()
-    submission_data = json['data']
+    submission_data = json["data"]
 
     workflow_object = workflow_object_class.create(
         data={},
-        id_user=submission_data['acquisition_source']['internal_uid'],
-        data_type="hep"
+        id_user=submission_data["acquisition_source"]["internal_uid"],
+        data_type="hep",
     )
-    submission_data['acquisition_source']['submission_number'] = str(workflow_object.id)
+    submission_data["acquisition_source"]["submission_number"] = str(workflow_object.id)
     workflow_object.data = submission_data
-    workflow_object.extra_data['formdata'] = json['form_data']
+    workflow_object.extra_data["formdata"] = json["form_data"]
 
     # Add submission pdf from formdata.url
-    form_url = workflow_object.extra_data['formdata'].get('url')
-    if form_url and 'arxiv.org' not in form_url:
-        workflow_object.extra_data['submission_pdf'] = form_url
+    form_url = workflow_object.extra_data["formdata"].get("url")
+    if form_url and "arxiv.org" not in form_url:
+        workflow_object.extra_data["submission_pdf"] = form_url
 
     # Remember that source_data should be created at the end, with all fields already
     # filled. As first step in WF will overwrite everything with data form source_data
-    workflow_object.extra_data['source_data'] = {
-        'extra_data': copy.deepcopy(workflow_object.extra_data),
-        'data': copy.deepcopy(workflow_object.data),
+    workflow_object.extra_data["source_data"] = {
+        "extra_data": copy.deepcopy(workflow_object.extra_data),
+        "data": copy.deepcopy(workflow_object.data),
     }
 
     workflow_object.save()
@@ -793,29 +801,45 @@ def start_workflow_for_literature_submission():
 
     start.delay("article", object_id=workflow_object.id)
 
-    return jsonify({'workflow_object_id': workflow_object_id})
+    return jsonify({"workflow_object_id": workflow_object_id})
+
+
+@workflow_blueprint.route("/bugninja/get-workflows-for-curator", methods=["GET"])
+@login_required_with_roles(["chatbot", "superuser"])
+def get_workflows_for_curator():
+    message = get_workflows_for_curators()
+    return jsonify({"message": message})
+
+
+@workflow_blueprint.route("/bugninja/get-workflows-root-error", methods=["GET"])
+@login_required_with_roles(["chatbot", "superuser"])
+def get_workflows_root_error():
+    message = get_root_error()
+    return jsonify({"message": message})
 
 
 callback_resolve_validation = ResolveValidationResource.as_view(
-    'callback_resolve_validation')
+    "callback_resolve_validation"
+)
 callback_resolve_merge_conflicts = ResolveMergeResource.as_view(
-    'callback_resolve_merge_conflicts')
+    "callback_resolve_merge_conflicts"
+)
 callback_resolve_edit_article = ResolveEditArticleResource.as_view(
-    'callback_resolve_edit_article')
+    "callback_resolve_edit_article"
+)
 
 callback_blueprint.add_url_rule(
-    '/workflows/resolve_validation_errors',
+    "/workflows/resolve_validation_errors",
     view_func=callback_resolve_validation,
 )
 callback_blueprint.add_url_rule(
-    '/workflows/resolve_merge_conflicts',
+    "/workflows/resolve_merge_conflicts",
     view_func=callback_resolve_merge_conflicts,
 )
 workflow_blueprint.add_url_rule(
-    '/edit_article/<recid>',
+    "/edit_article/<recid>",
     view_func=start_edit_article_workflow,
 )
 callback_blueprint.add_url_rule(
-    '/workflows/resolve_edit_article',
-    view_func=callback_resolve_edit_article
+    "/workflows/resolve_edit_article", view_func=callback_resolve_edit_article
 )
