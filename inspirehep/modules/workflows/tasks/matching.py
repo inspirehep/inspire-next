@@ -113,6 +113,14 @@ def fuzzy_match(obj, eng):
         ``False`` otherwise.
 
     """
+    fuzzy_matching_data_keys = [
+        'abstracts',
+        'authors',
+        'titles',
+        'report_numbers',
+        'arxiv_eprints'
+    ]
+    fuzzy_match_data = {key: val for key, val in obj.data.iteritems() if key in fuzzy_matching_data_keys}
     matching_response = requests.get(
         "{inspirehep_url}/matcher/fuzzy-match".format(
             inspirehep_url=current_app.config["INSPIREHEP_URL"]
@@ -120,7 +128,7 @@ def fuzzy_match(obj, eng):
         headers=_get_headers_for_hep_root_table_request(),
         data=json.dumps(
             {
-                "data": obj.data,
+                "data": fuzzy_match_data,
             }
         ),
     )
