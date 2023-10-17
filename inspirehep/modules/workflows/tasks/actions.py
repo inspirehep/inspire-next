@@ -429,11 +429,16 @@ def populate_submission_document(obj, eng):
 
 @with_debug_logging
 def download_documents(obj, eng):
+    LOGGER.info('Start downloading documents')
+    obj.log.info('Start downloading documents')
     documents = obj.data.get('documents', [])
     for document in documents:
         filename = document['key']
         url = document['url']
         scheme = urlparse(url).scheme
+        obj.log.info('Downloading document %s:%s', filename, url)
+        LOGGER.info('Downloading document %s:%s', filename, url)
+
         if scheme == 'file':
             downloaded = copy_file_to_workflow(obj, filename, url)
         else:
