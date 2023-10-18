@@ -133,14 +133,6 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
-name = "backports-abc"
-version = "0.5"
-description = "A backport of recent additions to the 'collections.abc' module."
-category = "main"
-optional = true
-python-versions = "*"
-
-[[package]]
 name = "backports.functools-lru-cache"
 version = "1.6.1"
 description = "Backport of functools.lru_cache"
@@ -158,14 +150,6 @@ version = "1.0.0"
 description = "A backport of the get_terminal_size function from Python 3.3's shutil."
 category = "main"
 optional = false
-python-versions = "*"
-
-[[package]]
-name = "backports.ssl-match-hostname"
-version = "3.7.0.1"
-description = "The ssl.match_hostname() function from Python 3.5"
-category = "main"
-optional = true
 python-versions = "*"
 
 [[package]]
@@ -1140,7 +1124,7 @@ Unidecode = ">=0.04.14"
 
 [[package]]
 name = "hepcrawl"
-version = "13.0.68"
+version = "13.0.69"
 description = "Scrapy project for feeds into INSPIRE-HEP (http://inspirehep.net)."
 category = "main"
 optional = false
@@ -1346,8 +1330,8 @@ test = ["mock", "nose", "nose-cov", "requests-mock"]
 
 [[package]]
 name = "inspire-crawler"
-version = "3.0.44"
-description = "Crawler integration with INSPIRE-HEP."
+version = "3.0.9"
+description = ""
 category = "main"
 optional = false
 python-versions = "*"
@@ -1358,25 +1342,25 @@ autosemver = ">=0.2,<1.0"
 celery = ">=4.1.0,<5.0"
 Flask = "0.12.5"
 Flask-Breadcrumbs = "0.4.0"
-Flask-Security = "3.0.0"
+Flask_Security = "3.0.0"
 Flask-SQLAlchemy = {git = "https://github.com/inspirehep/flask-sqlalchemy.git", rev = "71abd94a1e2317a1365a25a31e719dbd9aafceea"}
 ftfy = "4.4.3"
 invenio-access = "1.3.0"
 invenio-accounts = "1.1.1"
 invenio-base = "1.2.0"
 invenio-celery = "1.1.0"
-invenio-db = "1.0.4"
+invenio_db = "1.0.4"
 invenio-files-rest = "1.0.5"
 invenio-i18n = "1.1.1"
 invenio-indexer = "1.1.1"
-invenio-oaiharvester = "1.0.0a4"
+invenio_oaiharvester = "1.0.0a4"
 invenio-pidstore = "1.1.0"
 invenio-records = "1.1.1"
 invenio-records-rest = "1.6.4"
-invenio-rest = "1.1.3"
+invenio_rest = "1.1.3"
 invenio-search = "1.2.3"
-invenio-workflows = "7.0.6"
-invenio-workflows-ui = "2.0.19"
+invenio_workflows = "7.0.6"
+invenio_workflows_ui = "2.0.19"
 itsdangerous = "<=2.0.1"
 jsonref = "0.2"
 jsonresolver = "0.2.1"
@@ -1389,12 +1373,11 @@ Werkzeug = "0.16.1"
 WTForms = "2.2.1"
 
 [package.extras]
-all = ["Sphinx (>=1.5,<1.6)", "check-manifest (>=0.25)", "coverage (>=4.0)", "mock (>=2.0.0,<3.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "requests-mock (>=1.4.0,<2.0)"]
 docs = ["Sphinx (>=1.5,<1.6)"]
-mysql = ["invenio-db[versioning,mysql] (==1.0.4)"]
+mysql = ["invenio-db[mysql,versioning] (==1.0.4)"]
 postgresql = ["invenio-db[postgresql,versioning] (==1.0.4)", "psycopg2-binary (==2.8.4)"]
 sqlite = ["invenio-db[versioning] (==1.0.4)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "mock (>=2.0.0,<3.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "requests-mock (>=1.4.0,<2.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "mock (>=2.0,<3.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "requests_mock (>=1.4.0,<2.0)"]
 
 [package.source]
 type = "git"
@@ -1622,7 +1605,7 @@ ua-parser = ">=0.7.3"
 all = ["Sphinx (>=1.4.2,<1.6)", "celery (>=3.1.0,<4.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.0)", "mock (>=2.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cov (>=1.8.0)", "pytest-flask (>=0.10.0)", "pytest-pep8 (>=1.0.6)", "selenium (>=3.0.1)"]
 celery = ["celery (>=3.1.0,<4.0)"]
 docs = ["Sphinx (>=1.4.2,<1.6)"]
-mysql = ["invenio-db[versioning,mysql] (>=1.0.0)"]
+mysql = ["invenio-db[mysql,versioning] (>=1.0.0)"]
 postgresql = ["invenio-db[postgresql,versioning] (>=1.0.0)"]
 sqlite = ["invenio-db[versioning] (>=1.0.0)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.0)", "mock (>=2.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cov (>=1.8.0)", "pytest-flask (>=0.10.0)", "pytest-pep8 (>=1.0.6)", "selenium (>=3.0.1)"]
@@ -2027,7 +2010,7 @@ jsonschema = ">=2.5.1"
 admin = ["Flask-Admin (>=1.3.0)"]
 all = ["Flask-Admin (>=1.3.0)", "Flask-Menu (>=0.4.0)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.5.3)", "invenio-admin (>=1.0.0)", "invenio-pidstore (>=1.0.0)", "isort (>=4.3.0)", "mock (>=1.0.0)", "pydocstyle (>=3.0.0)", "pytest (>=4.6.4,<5.0.0)", "pytest-cov (>=2.7.1)", "pytest-pep8 (>=1.0.6)"]
 docs = ["Sphinx (>=1.5.1)"]
-mysql = ["invenio-db[versioning,mysql] (>=1.0.0)"]
+mysql = ["invenio-db[mysql,versioning] (>=1.0.0)"]
 pidstore = ["invenio-pidstore (>=1.0.0)"]
 postgresql = ["invenio-db[postgresql,versioning] (>=1.0.0)"]
 sqlite = ["invenio-db[versioning] (>=1.0.0)"]
@@ -2050,7 +2033,7 @@ invenio-records-rest = ">=1.6.3"
 [package.extras]
 all = ["Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-indexer (>=1.1.0)", "invenio-search[elasticsearch6] (>=1.2.0)", "isort (>=4.3.4)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest (>=3.7.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
 docs = ["Sphinx (>=1.5.1)"]
-mysql = ["invenio-db[versioning,mysql] (>=1.0.0)"]
+mysql = ["invenio-db[mysql,versioning] (>=1.0.0)"]
 postgresql = ["invenio-db[postgresql,versioning] (>=1.0.0)"]
 sqlite = ["invenio-db[versioning] (>=1.0.0)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-indexer (>=1.1.0)", "invenio-search[elasticsearch6] (>=1.2.0)", "isort (>=4.3.4)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest (>=3.7.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
@@ -2105,9 +2088,9 @@ invenio-pidstore = ">=1.0.0"
 invenio-records = ">=1.0.0"
 
 [package.extras]
-all = ["Sphinx (>=1.5.1)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "check-manifest (>=0.25)", "coverage (>=4.0)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[postgresql,versioning,mysql] (>=1.0.0)", "invenio-db[postgresql,versioning,mysql] (>=1.0.0)", "isort (>=4.2.2)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest (>=2.8.0)", "pytest-cov (>=1.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest-pep8 (>=1.0.6)"]
+all = ["Sphinx (>=1.5.1)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "check-manifest (>=0.25)", "coverage (>=4.0)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[mysql,postgresql,versioning] (>=1.0.0)", "invenio-db[mysql,postgresql,versioning] (>=1.0.0)", "isort (>=4.2.2)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest (>=2.8.0)", "pytest-cov (>=1.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest-pep8 (>=1.0.6)"]
 docs = ["Sphinx (>=1.5.1)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[postgresql,versioning,mysql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[mysql,postgresql,versioning] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
 
 [[package]]
 name = "invenio-rest"
@@ -2605,9 +2588,6 @@ description = "Reader for the MaxMind DB format"
 category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
-
-[package.dependencies]
-ipaddress = "*"
 
 [[package]]
 name = "maxminddb-geolite2"
@@ -3564,21 +3544,6 @@ optional = false
 python-versions = "*"
 
 [[package]]
-name = "singledispatch"
-version = "3.7.0"
-description = "Backport functools.singledispatch from Python 3.4 to Python 2.6-3.3."
-category = "main"
-optional = true
-python-versions = ">=2.6"
-
-[package.dependencies]
-six = "*"
-
-[package.extras]
-docs = ["jaraco.packaging (>=8.2)", "rst.linker (>=1.9)", "sphinx"]
-testing = ["pytest (>=4.6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-flake8", "unittest2"]
-
-[[package]]
 name = "six"
 version = "1.14.0"
 description = "Python 2 and 3 compatibility utilities"
@@ -3815,12 +3780,6 @@ description = "Tornado is a Python web framework and asynchronous networking lib
 category = "main"
 optional = true
 python-versions = "*"
-
-[package.dependencies]
-backports-abc = ">=0.4"
-"backports.ssl-match-hostname" = "*"
-certifi = "*"
-singledispatch = "*"
 
 [[package]]
 name = "traitlets"
@@ -4179,14 +4138,14 @@ test = ["zope.event"]
 testing = ["coverage", "nose", "zope.event"]
 
 [extras]
-worker-node = ["flower", "superlance", "tornado"]
 all = ["coverage", "docutils", "flake8-future-import", "flower", "freezegun", "gunicorn", "hepcrawl", "honcho", "ipdb", "mock", "pytest", "pytest-cov", "pytest-vcr", "requests-mock", "sphinx", "superlance", "tornado"]
-crawler-node = ["hepcrawl"]
-web-node = ["gunicorn", "honcho"]
-tests = ["coverage", "flake8-future-import", "freezegun", "mock", "pytest", "pytest-cov", "pytest-vcr", "requests-mock"]
-xrootd = ["xrootdpyfs", "invenio-xrootd"]
-docs = ["docutils", "sphinx"]
 build-node = ["ipdb"]
+crawler-node = ["hepcrawl"]
+docs = ["docutils", "sphinx"]
+tests = ["coverage", "flake8-future-import", "freezegun", "mock", "pytest", "pytest-cov", "pytest-vcr", "requests-mock"]
+web-node = ["gunicorn", "honcho"]
+worker-node = ["flower", "superlance", "tornado"]
+xrootd = ["xrootdpyfs", "invenio-xrootd"]
 
 [metadata]
 lock-version = "1.1"
@@ -4240,10 +4199,6 @@ backoff = [
     {file = "backoff-1.10.0-py2.py3-none-any.whl", hash = "sha256:5e73e2cbe780e1915a204799dba0a01896f45f4385e636bcca7a0614d879d0cd"},
     {file = "backoff-1.10.0.tar.gz", hash = "sha256:b8fba021fac74055ac05eb7c7bfce4723aedde6cd0a504e5326bcb0bdd6d19a4"},
 ]
-backports-abc = [
-    {file = "backports_abc-0.5-py2.py3-none-any.whl", hash = "sha256:52089f97fe7a9aa0d3277b220c1d730a85aefd64e1b2664696fe35317c5470a7"},
-    {file = "backports_abc-0.5.tar.gz", hash = "sha256:033be54514a03e255df75c5aee8f9e672f663f93abb723444caec8fe43437bde"},
-]
 "backports.functools-lru-cache" = [
     {file = "backports.functools_lru_cache-1.6.1-py2.py3-none-any.whl", hash = "sha256:0bada4c2f8a43d533e4ecb7a12214d9420e66eb206d54bf2d682581ca4b80848"},
     {file = "backports.functools_lru_cache-1.6.1.tar.gz", hash = "sha256:8fde5f188da2d593bd5bc0be98d9abc46c95bb8a9dde93429570192ee6cc2d4a"},
@@ -4251,9 +4206,6 @@ backports-abc = [
 "backports.shutil-get-terminal-size" = [
     {file = "backports.shutil_get_terminal_size-1.0.0-py2.py3-none-any.whl", hash = "sha256:0975ba55054c15e346944b38956a4c9cbee9009391e41b86c68990effb8c1f64"},
     {file = "backports.shutil_get_terminal_size-1.0.0.tar.gz", hash = "sha256:713e7a8228ae80341c70586d1cc0a8caa5207346927e23d09dcbcaf18eadec80"},
-]
-"backports.ssl-match-hostname" = [
-    {file = "backports.ssl_match_hostname-3.7.0.1.tar.gz", hash = "sha256:bb82e60f9fbf4c080eabd957c39f0641f0fc247d9a16e31e26d594d8f42b9fd2"},
 ]
 "backports.tempfile" = [
     {file = "backports.tempfile-1.0-py2.py3-none-any.whl", hash = "sha256:05aa50940946f05759696156a8c39be118169a0e0f94a49d0bb106503891ff54"},
@@ -4679,8 +4631,8 @@ harvestingkit = [
     {file = "HarvestingKit-0.6.17.tar.gz", hash = "sha256:e55d675e4b9042c6bf73300192e317794a3bd147987a5ed052a0e1a3380aff3e"},
 ]
 hepcrawl = [
-    {file = "hepcrawl-13.0.68-py2.py3-none-any.whl", hash = "sha256:0c2a308f9924064e3f7c176d0f901e4e81ec26f2bd6726d62c06e0ce7fc00304"},
-    {file = "hepcrawl-13.0.68.tar.gz", hash = "sha256:e29e679426cbee95bbf32af65cd448df7c322f8c53d78e4418a3d94868478463"},
+    {file = "hepcrawl-13.0.69-py2.py3-none-any.whl", hash = "sha256:c34cfc8c216720f9df44e4b8ae5761413e898f8d1da57d2781e05ad5654ebf9b"},
+    {file = "hepcrawl-13.0.69.tar.gz", hash = "sha256:caff20e2be02c9261f0dddeafa30772642bada8f9a9bd2ee88543660ef5ae90c"},
 ]
 honcho = [
     {file = "honcho-1.0.1-py2.py3-none-any.whl", hash = "sha256:af5806bf13e3b20acdcb9ff8c0beb91eee6fe07393c3448dfad89667e6ac7576"},
@@ -5520,10 +5472,6 @@ simplejson = [
 simplekv = [
     {file = "simplekv-0.14.0-py3-none-any.whl", hash = "sha256:109ac55e5124ec02cc3625948eac41ad06c6f891500880061dbab99bc34d14f6"},
     {file = "simplekv-0.14.0.tar.gz", hash = "sha256:d951549bb3d9dbe944ae3308fde66702c4f0478c94c785139a37da4129cd8882"},
-]
-singledispatch = [
-    {file = "singledispatch-3.7.0-py2.py3-none-any.whl", hash = "sha256:bc77afa97c8a22596d6d4fc20f1b7bdd2b86edc2a65a4262bdd7cc3cc19aa989"},
-    {file = "singledispatch-3.7.0.tar.gz", hash = "sha256:c1a4d5c1da310c3fd8fccfb8d4e1cb7df076148fd5d858a819e37fffe44f3092"},
 ]
 six = [
     {file = "six-1.14.0-py2.py3-none-any.whl", hash = "sha256:8f3cd2e254d8f793e7f3d6d9df77b92252b52637291d0f0da013c76ea2724b6c"},
