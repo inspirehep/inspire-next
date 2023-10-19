@@ -161,7 +161,11 @@ def reply_snow_ticket(obj, ticket_id, context_factory, user, template=None):
             ),
             headers=_get_headers_for_hep_root_table_request(),
             data=json.dumps(
-                {"ticket_id": str(ticket_id), "reply_message": reply_message}
+                {
+                    "ticket_id": str(ticket_id),
+                    "reply_message": reply_message,
+                    "user_email": user.email
+                }
             ),
         )
         response.raise_for_status()
@@ -178,6 +182,7 @@ def reply_snow_ticket(obj, ticket_id, context_factory, user, template=None):
                     "ticket_id": str(ticket_id),
                     "template": template,
                     "template_context": template_context,
+                    "user_email": user.email
                 }
             ),
         )
