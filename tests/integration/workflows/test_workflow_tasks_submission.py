@@ -37,7 +37,7 @@ def test_reply_ticket_calls_tickets_reply_when_template_is_not_set(workflow_app)
             assert expected_result == result
             assert (
                 request_mocker.request_history[0]._request.body
-                == '{"ticket_id": "1", "reply_message": "reply reason"}'
+                == '{"ticket_id": "1", "user_email": "admin@inspirehep.net", "reply_message": "reply reason"}'
             )
 
 
@@ -68,7 +68,7 @@ def test_reply_ticket_calls_tickets_reply_when_template_is_set(workflow_app):
             assert expected_result == result
             assert (
                 request_mocker.request_history[0]._request.body
-                == '{"template_context": {"reason": "", "record_url": "", "user_name": "admin@inspirehep.net", "title": "Partial Symmetries of Weak Interactions"}, "ticket_id": "1", "template": "test"}'
+                == '{"user_email": "admin@inspirehep.net", "template_context": {"reason": "", "record_url": "", "user_name": "admin@inspirehep.net", "title": "Partial Symmetries of Weak Interactions"}, "ticket_id": "1", "template": "test"}'
             )
 
 
