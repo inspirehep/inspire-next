@@ -34,6 +34,6 @@ js = NpmBundle(
     npm={
         'invenio-search-js': '~1.4.0',
         'angular-loading-bar': '~0.9.0',
-        'inspire-next-search-js': '~2.0.82'
+        'inspire-next-search-js': '~2.0.83'
     },
 )
