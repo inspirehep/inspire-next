@@ -73,7 +73,8 @@ jobs:
             --ignore tests/integration/workflows/test_workflows_tasks_upload.py \
             --ignore tests/integration/workflows/test_arxiv_workflow.py \
             --ignore tests/integration/workflows/test_edit_article.py \
-            --ignore tests/integration/workflows/test_views.py
+            --ignore tests/integration/workflows/test_views.py \
+            --ignore tests/integration/workflows/test_workflow_tasks_submission
 
   Workflows-II:
     runs-on: ubuntu-latest

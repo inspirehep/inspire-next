@@ -95,9 +95,11 @@ def submit_snow_ticket(obj, queue, template, context, caller, recid, ticket_id_k
         data=json.dumps(ticket_payload),
     )
     response.raise_for_status()
-    ticket_id = response.json()["ticket_id"]
+    response_json = response.json()
+    ticket_id = response_json["ticket_id"]
 
     obj.extra_data[ticket_id_key] = ticket_id
+    obj.extra_data["ticket_url"] = response_json["ticket_url"]
     obj.log.info("Ticket {0} created".format(ticket_id))
     return ticket_id
 
