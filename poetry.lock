@@ -133,6 +133,14 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
+name = "backports-abc"
+version = "0.5"
+description = "A backport of recent additions to the 'collections.abc' module."
+category = "main"
+optional = true
+python-versions = "*"
+
+[[package]]
 name = "backports.functools-lru-cache"
 version = "1.6.1"
 description = "Backport of functools.lru_cache"
@@ -1124,7 +1132,7 @@ Unidecode = ">=0.04.14"
 
 [[package]]
 name = "hepcrawl"
-version = "13.0.70"
+version = "13.0.71"
 description = "Scrapy project for feeds into INSPIRE-HEP (http://inspirehep.net)."
 category = "main"
 optional = false
@@ -2591,6 +2599,9 @@ category = "main"
 optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
+[package.dependencies]
+ipaddress = "*"
+
 [[package]]
 name = "maxminddb-geolite2"
 version = "2018.703"
@@ -3554,6 +3565,21 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "singledispatch"
+version = "3.7.0"
+description = "Backport functools.singledispatch from Python 3.4 to Python 2.6-3.3."
+category = "main"
+optional = true
+python-versions = ">=2.6"
+
+[package.dependencies]
+six = "*"
+
+[package.extras]
+docs = ["jaraco.packaging (>=8.2)", "rst.linker (>=1.9)", "sphinx"]
+testing = ["pytest (>=4.6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-flake8", "unittest2"]
+
+[[package]]
 name = "six"
 version = "1.14.0"
 description = "Python 2 and 3 compatibility utilities"
@@ -3790,6 +3816,11 @@ description = "Tornado is a Python web framework and asynchronous networking lib
 category = "main"
 optional = true
 python-versions = "*"
+
+[package.dependencies]
+backports-abc = ">=0.4"
+certifi = "*"
+singledispatch = "*"
 
 [[package]]
 name = "traitlets"
@@ -4208,6 +4239,10 @@ babel = [
 backoff = [
     {file = "backoff-1.10.0-py2.py3-none-any.whl", hash = "sha256:5e73e2cbe780e1915a204799dba0a01896f45f4385e636bcca7a0614d879d0cd"},
     {file = "backoff-1.10.0.tar.gz", hash = "sha256:b8fba021fac74055ac05eb7c7bfce4723aedde6cd0a504e5326bcb0bdd6d19a4"},
+]
+backports-abc = [
+    {file = "backports_abc-0.5-py2.py3-none-any.whl", hash = "sha256:52089f97fe7a9aa0d3277b220c1d730a85aefd64e1b2664696fe35317c5470a7"},
+    {file = "backports_abc-0.5.tar.gz", hash = "sha256:033be54514a03e255df75c5aee8f9e672f663f93abb723444caec8fe43437bde"},
 ]
 "backports.functools-lru-cache" = [
     {file = "backports.functools_lru_cache-1.6.1-py2.py3-none-any.whl", hash = "sha256:0bada4c2f8a43d533e4ecb7a12214d9420e66eb206d54bf2d682581ca4b80848"},
@@ -4641,8 +4676,8 @@ harvestingkit = [
     {file = "HarvestingKit-0.6.17.tar.gz", hash = "sha256:e55d675e4b9042c6bf73300192e317794a3bd147987a5ed052a0e1a3380aff3e"},
 ]
 hepcrawl = [
-    {file = "hepcrawl-13.0.70-py2.py3-none-any.whl", hash = "sha256:9a02a0a428c6d549cecb14f6bee5be6aab4603f4709c92fd37b9a8e1d8a30cd4"},
-    {file = "hepcrawl-13.0.70.tar.gz", hash = "sha256:b374e8188a8d5406a8082f9dc1d88f42ed711a6a4e22e138928fe4e45e3c7963"},
+    {file = "hepcrawl-13.0.71-py2.py3-none-any.whl", hash = "sha256:b034de9aa9436a53fe5c4d12342aa6f0129a7919490dd36295e5eac0c5dd8af9"},
+    {file = "hepcrawl-13.0.71.tar.gz", hash = "sha256:2de1d7ef38e59d7e68b3b2ca551e7e59e038cfe6627334770aa9651c43f556de"},
 ]
 honcho = [
     {file = "honcho-1.0.1-py2.py3-none-any.whl", hash = "sha256:af5806bf13e3b20acdcb9ff8c0beb91eee6fe07393c3448dfad89667e6ac7576"},
@@ -5485,6 +5520,10 @@ simplejson = [
 simplekv = [
     {file = "simplekv-0.14.0-py3-none-any.whl", hash = "sha256:109ac55e5124ec02cc3625948eac41ad06c6f891500880061dbab99bc34d14f6"},
     {file = "simplekv-0.14.0.tar.gz", hash = "sha256:d951549bb3d9dbe944ae3308fde66702c4f0478c94c785139a37da4129cd8882"},
+]
+singledispatch = [
+    {file = "singledispatch-3.7.0-py2.py3-none-any.whl", hash = "sha256:bc77afa97c8a22596d6d4fc20f1b7bdd2b86edc2a65a4262bdd7cc3cc19aa989"},
+    {file = "singledispatch-3.7.0.tar.gz", hash = "sha256:c1a4d5c1da310c3fd8fccfb8d4e1cb7df076148fd5d858a819e37fffe44f3092"},
 ]
 six = [
     {file = "six-1.14.0-py2.py3-none-any.whl", hash = "sha256:8f3cd2e254d8f793e7f3d6d9df77b92252b52637291d0f0da013c76ea2724b6c"},
