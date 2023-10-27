@@ -104,7 +104,7 @@ def test_create_ticket_calls_tickets_create_with_template(workflow_app):
             request_mocker.register_uri(
                 "POST",
                 "http://web:8000/tickets/create-with-template",
-                json={"ticket_id": "123"},
+                json={"ticket_id": "123", "ticket_url": "http//test.com/1"},
                 headers=_get_headers_for_hep_root_table_request(),
                 status_code=200,
             )
