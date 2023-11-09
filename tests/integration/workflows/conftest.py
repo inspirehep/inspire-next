@@ -291,6 +291,13 @@ def mocked_external_services(workflow_app):
             status_code=200,
         )
         requests_mocker.register_uri(
+            "GET",
+            "http://web:8000/curation/literature/normalize-journal-titles",
+            json={"normalized_journal_titles": {}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        requests_mocker.register_uri(
             "POST",
             "{}/extract_references_from_url".format(
                 workflow_app.config["REFEXTRACT_SERVICE_URL"]

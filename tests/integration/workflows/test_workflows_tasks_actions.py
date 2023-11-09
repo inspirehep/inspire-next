@@ -126,259 +126,318 @@ def insert_literature_in_db(workflow_app):
 def test_normalize_journal_titles_known_journals_with_ref(
     workflow_app, insert_journals_in_db
 ):
-    record = {
-        "_collections": ["Literature"],
-        "titles": ["A title"],
-        "document_type": ["book", "note", "report"],
-        "publication_info": [
-            {
-                "journal_title": "A Test Journal1",
-                "journal_record": {
-                    "$ref": "http://localhost:5000/api/journals/1936475"
+    with requests_mock.Mocker() as request_mocker:
+        request_mocker.register_uri(
+            "GET",
+            "http://web:8000/curation/literature/normalize-journal-titles",
+            json={"normalized_journal_titles": {"A Test Journal1": "Test.Jou.1", "Test.Jou.2": "Test.Jou.2"}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        record = {
+            "_collections": ["Literature"],
+            "titles": ["A title"],
+            "document_type": ["book", "note", "report"],
+            "publication_info": [
+                {
+                    "journal_title": "A Test Journal1",
+                    "journal_record": {
+                        "$ref": "http://localhost:5000/api/journals/1936475"
+                    },
                 },
-            },
-            {"cnum": "C01-01-01"},
-            {
-                "journal_title": "Test.Jou.2",
-                "journal_record": {
-                    "$ref": "http://localhost:5000/api/journals/1936476"
+                {"cnum": "C01-01-01"},
+                {
+                    "journal_title": "Test.Jou.2",
+                    "journal_record": {
+                        "$ref": "http://localhost:5000/api/journals/1936476"
+                    },
                 },
-            },
-        ],
-    }
+            ],
+        }
 
-    obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
+        obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
 
-    normalize_journal_titles(obj, None)
+        normalize_journal_titles(obj, None)
 
-    assert obj.data["publication_info"][0]["journal_title"] == "Test.Jou.1"
-    assert obj.data["publication_info"][2]["journal_title"] == "Test.Jou.2"
-    assert obj.data["publication_info"][0]["journal_record"] == {
-        "$ref": "http://localhost:5000/api/journals/1936475"
-    }
-    assert obj.data["publication_info"][2]["journal_record"] == {
-        "$ref": "http://localhost:5000/api/journals/1936476"
-    }
-    assert len(obj.extra_data["journal_inspire_categories"]) == 2
-    assert {"term": "Astrophysics"} in obj.extra_data["journal_inspire_categories"]
-    assert {"term": "Accelerators"} in obj.extra_data["journal_inspire_categories"]
+        assert obj.data["publication_info"][0]["journal_title"] == "Test.Jou.1"
+        assert obj.data["publication_info"][2]["journal_title"] == "Test.Jou.2"
+        assert obj.data["publication_info"][0]["journal_record"] == {
+            "$ref": "http://localhost:5000/api/journals/1936475"
+        }
+        assert obj.data["publication_info"][2]["journal_record"] == {
+            "$ref": "http://localhost:5000/api/journals/1936476"
+        }
+        assert len(obj.extra_data["journal_inspire_categories"]) == 2
+        assert {"term": "Astrophysics"} in obj.extra_data["journal_inspire_categories"]
+        assert {"term": "Accelerators"} in obj.extra_data["journal_inspire_categories"]
 
 
 def test_normalize_journal_titles_known_journals_with_ref_from_variants(
     workflow_app, insert_journals_in_db
 ):
-    record = {
-        "_collections": ["Literature"],
-        "titles": ["A title"],
-        "document_type": ["book", "note", "report"],
-        "publication_info": [
-            {
-                "journal_title": "A Test Journal1 Variant 2",
-                "journal_record": {
-                    "$ref": "http://localhost:5000/api/journals/1936475"
+    with requests_mock.Mocker() as request_mocker:
+        request_mocker.register_uri(
+            "GET",
+            "http://web:8000/curation/literature/normalize-journal-titles",
+            json={"normalized_journal_titles": {"A Test Journal1 Variant 2": "Test.Jou.1", "A Test Journal2 Variant 3": "Test.Jou.2"}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        record = {
+            "_collections": ["Literature"],
+            "titles": ["A title"],
+            "document_type": ["book", "note", "report"],
+            "publication_info": [
+                {
+                    "journal_title": "A Test Journal1 Variant 2",
+                    "journal_record": {
+                        "$ref": "http://localhost:5000/api/journals/1936475"
+                    },
                 },
-            },
-            {"cnum": "C01-01-01"},
-            {
-                "journal_title": "A Test Journal2 Variant 3",
-                "journal_record": {
-                    "$ref": "http://localhost:5000/api/journals/1936476"
+                {"cnum": "C01-01-01"},
+                {
+                    "journal_title": "A Test Journal2 Variant 3",
+                    "journal_record": {
+                        "$ref": "http://localhost:5000/api/journals/1936476"
+                    },
                 },
-            },
-        ],
-    }
+            ],
+        }
 
-    obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
+        obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
 
-    normalize_journal_titles(obj, None)
+        normalize_journal_titles(obj, None)
 
-    assert obj.data["publication_info"][0]["journal_title"] == "Test.Jou.1"
-    assert obj.data["publication_info"][2]["journal_title"] == "Test.Jou.2"
-    assert obj.data["publication_info"][0]["journal_record"] == {
-        "$ref": "http://localhost:5000/api/journals/1936475"
-    }
-    assert obj.data["publication_info"][2]["journal_record"] == {
-        "$ref": "http://localhost:5000/api/journals/1936476"
-    }
-    assert len(obj.extra_data["journal_inspire_categories"]) == 2
-    assert {"term": "Astrophysics"} in obj.extra_data["journal_inspire_categories"]
-    assert {"term": "Accelerators"} in obj.extra_data["journal_inspire_categories"]
+        assert obj.data["publication_info"][0]["journal_title"] == "Test.Jou.1"
+        assert obj.data["publication_info"][2]["journal_title"] == "Test.Jou.2"
+        assert obj.data["publication_info"][0]["journal_record"] == {
+            "$ref": "http://localhost:5000/api/journals/1936475"
+        }
+        assert obj.data["publication_info"][2]["journal_record"] == {
+            "$ref": "http://localhost:5000/api/journals/1936476"
+        }
+        assert len(obj.extra_data["journal_inspire_categories"]) == 2
+        assert {"term": "Astrophysics"} in obj.extra_data["journal_inspire_categories"]
+        assert {"term": "Accelerators"} in obj.extra_data["journal_inspire_categories"]
 
 
 def test_normalize_journal_titles_known_journals_no_ref(
     workflow_app, insert_journals_in_db
 ):
-    record = {
-        "_collections": ["Literature"],
-        "titles": ["A title"],
-        "document_type": ["book", "note", "report"],
-        "publication_info": [
-            {"journal_title": "A Test Journal1"},
-            {"cnum": "C01-01-01"},
-            {"journal_title": "Test.Jou.2"},
-        ],
-    }
+    with requests_mock.Mocker() as request_mocker:
+        request_mocker.register_uri(
+            "GET",
+            "http://web:8000/curation/literature/normalize-journal-titles",
+            json={"normalized_journal_titles": {"A Test Journal1": "Test.Jou.1", "Test.Jou.2": "Test.Jou.2"}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
 
-    obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
+        record = {
+            "_collections": ["Literature"],
+            "titles": ["A title"],
+            "document_type": ["book", "note", "report"],
+            "publication_info": [
+                {"journal_title": "A Test Journal1"},
+                {"cnum": "C01-01-01"},
+                {"journal_title": "Test.Jou.2"},
+            ],
+        }
 
-    normalize_journal_titles(obj, None)
+        obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
 
-    assert obj.data["publication_info"][0]["journal_title"] == "Test.Jou.1"
-    assert obj.data["publication_info"][2]["journal_title"] == "Test.Jou.2"
-    assert obj.data["publication_info"][0]["journal_record"] == {
-        "$ref": "http://localhost:5000/api/journals/1936475"
-    }
-    assert obj.data["publication_info"][2]["journal_record"] == {
-        "$ref": "http://localhost:5000/api/journals/1936476"
-    }
-    assert len(obj.extra_data["journal_inspire_categories"]) == 2
-    assert {"term": "Astrophysics"} in obj.extra_data["journal_inspire_categories"]
-    assert {"term": "Accelerators"} in obj.extra_data["journal_inspire_categories"]
+        normalize_journal_titles(obj, None)
+
+        assert obj.data["publication_info"][0]["journal_title"] == "Test.Jou.1"
+        assert obj.data["publication_info"][2]["journal_title"] == "Test.Jou.2"
+        assert obj.data["publication_info"][0]["journal_record"] == {
+            "$ref": "http://localhost:5000/api/journals/1936475"
+        }
+        assert obj.data["publication_info"][2]["journal_record"] == {
+            "$ref": "http://localhost:5000/api/journals/1936476"
+        }
+        assert len(obj.extra_data["journal_inspire_categories"]) == 2
+        assert {"term": "Astrophysics"} in obj.extra_data["journal_inspire_categories"]
+        assert {"term": "Accelerators"} in obj.extra_data["journal_inspire_categories"]
 
 
 def test_normalize_journal_titles_known_journals_wrong_ref(
     workflow_app, insert_journals_in_db
 ):
-    record = {
-        "_collections": ["Literature"],
-        "titles": ["A title"],
-        "document_type": ["book", "note", "report"],
-        "publication_info": [
-            {"journal_title": "A Test Journal1", "journal_record": {"$ref": "wrong1"}},
-            {"cnum": "C01-01-01"},
-            {"journal_title": "Test.Jou.2", "journal_record": {"$ref": "wrong2"}},
-        ],
-    }
+    with requests_mock.Mocker() as request_mocker:
+        request_mocker.register_uri(
+            "GET",
+            "http://web:8000/curation/literature/normalize-journal-titles",
+            json={"normalized_journal_titles": {"A Test Journal1": "Test.Jou.1", "Test.Jou.2": "Test.Jou.2"}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        record = {
+            "_collections": ["Literature"],
+            "titles": ["A title"],
+            "document_type": ["book", "note", "report"],
+            "publication_info": [
+                {"journal_title": "A Test Journal1", "journal_record": {"$ref": "wrong1"}},
+                {"cnum": "C01-01-01"},
+                {"journal_title": "Test.Jou.2", "journal_record": {"$ref": "wrong2"}},
+            ],
+        }
 
-    obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
+        obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
 
-    normalize_journal_titles(obj, None)
+        normalize_journal_titles(obj, None)
 
-    assert obj.data["publication_info"][0]["journal_title"] == "Test.Jou.1"
-    assert obj.data["publication_info"][2]["journal_title"] == "Test.Jou.2"
-    assert obj.data["publication_info"][0]["journal_record"] == {
-        "$ref": "http://localhost:5000/api/journals/1936475"
-    }
-    assert obj.data["publication_info"][2]["journal_record"] == {
-        "$ref": "http://localhost:5000/api/journals/1936476"
-    }
-    assert len(obj.extra_data["journal_inspire_categories"]) == 2
-    assert {"term": "Astrophysics"} in obj.extra_data["journal_inspire_categories"]
-    assert {"term": "Accelerators"} in obj.extra_data["journal_inspire_categories"]
+        assert obj.data["publication_info"][0]["journal_title"] == "Test.Jou.1"
+        assert obj.data["publication_info"][2]["journal_title"] == "Test.Jou.2"
+        assert obj.data["publication_info"][0]["journal_record"] == {
+            "$ref": "http://localhost:5000/api/journals/1936475"
+        }
+        assert obj.data["publication_info"][2]["journal_record"] == {
+            "$ref": "http://localhost:5000/api/journals/1936476"
+        }
+        assert len(obj.extra_data["journal_inspire_categories"]) == 2
+        assert {"term": "Astrophysics"} in obj.extra_data["journal_inspire_categories"]
+        assert {"term": "Accelerators"} in obj.extra_data["journal_inspire_categories"]
 
 
 def test_normalize_journal_titles_unknown_journals_with_ref(
     workflow_app, insert_journals_in_db
 ):
-    record = {
-        "_collections": ["Literature"],
-        "titles": ["A title"],
-        "document_type": ["book", "note", "report"],
-        "publication_info": [
-            {
-                "journal_title": "Unknown1",
-                "journal_record": {
-                    "$ref": "http://localhost:5000/api/journals/0000000"
+    with requests_mock.Mocker() as request_mocker:
+        request_mocker.register_uri(
+            "GET",
+            "http://web:8000/curation/literature/normalize-journal-titles",
+            json={"normalized_journal_titles": {"Unknown1": "Unknown1", "Unknown2": "Unknown2"}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        record = {
+            "_collections": ["Literature"],
+            "titles": ["A title"],
+            "document_type": ["book", "note", "report"],
+            "publication_info": [
+                {
+                    "journal_title": "Unknown1",
+                    "journal_record": {
+                        "$ref": "http://localhost:5000/api/journals/0000000"
+                    },
                 },
-            },
-            {"cnum": "C01-01-01"},
-            {
-                "journal_title": "Unknown2",
-                "journal_record": {
-                    "$ref": "http://localhost:5000/api/journals/1111111"
+                {"cnum": "C01-01-01"},
+                {
+                    "journal_title": "Unknown2",
+                    "journal_record": {
+                        "$ref": "http://localhost:5000/api/journals/1111111"
+                    },
                 },
-            },
-        ],
-    }
+            ],
+        }
 
-    obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
+        obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
 
-    normalize_journal_titles(obj, None)
+        normalize_journal_titles(obj, None)
 
-    assert obj.data["publication_info"][0]["journal_title"] == "Unknown1"
-    assert obj.data["publication_info"][2]["journal_title"] == "Unknown2"
-    assert obj.data["publication_info"][0]["journal_record"] == {
-        "$ref": "http://localhost:5000/api/journals/0000000"
-    }
-    assert obj.data["publication_info"][2]["journal_record"] == {
-        "$ref": "http://localhost:5000/api/journals/1111111"
-    }
-    assert not obj.extra_data.get("journal_inspire_categories")
+        assert obj.data["publication_info"][0]["journal_title"] == "Unknown1"
+        assert obj.data["publication_info"][2]["journal_title"] == "Unknown2"
+        assert obj.data["publication_info"][0]["journal_record"] == {
+            "$ref": "http://localhost:5000/api/journals/0000000"
+        }
+        assert obj.data["publication_info"][2]["journal_record"] == {
+            "$ref": "http://localhost:5000/api/journals/1111111"
+        }
+        assert not obj.extra_data.get("journal_inspire_categories")
 
 
 def test_normalize_journal_titles_unknown_journals_no_ref(
     workflow_app, insert_journals_in_db
 ):
-    record = {
-        "_collections": ["Literature"],
-        "titles": ["A title"],
-        "document_type": ["book", "note", "report"],
-        "publication_info": [
-            {"journal_title": "Unknown1"},
-            {"cnum": "C01-01-01"},
-            {"journal_title": "Unknown2"},
-        ],
-    }
+    with requests_mock.Mocker() as request_mocker:
+        request_mocker.register_uri(
+            "GET",
+            "http://web:8000/curation/literature/normalize-journal-titles",
+            json={"normalized_journal_titles": {"Unknown1": "Unknown1", "Unknown2": "Unknown2"}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
 
-    obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
+        record = {
+            "_collections": ["Literature"],
+            "titles": ["A title"],
+            "document_type": ["book", "note", "report"],
+            "publication_info": [
+                {"journal_title": "Unknown1"},
+                {"cnum": "C01-01-01"},
+                {"journal_title": "Unknown2"},
+            ],
+        }
 
-    normalize_journal_titles(obj, None)
+        obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
 
-    assert obj.data["publication_info"][0]["journal_title"] == "Unknown1"
-    assert obj.data["publication_info"][2]["journal_title"] == "Unknown2"
-    assert "journal_record" not in obj.data["publication_info"][0]
-    assert "journal_record" not in obj.data["publication_info"][2]
-    assert not obj.extra_data.get("journal_inspire_categories")
+        normalize_journal_titles(obj, None)
+
+        assert obj.data["publication_info"][0]["journal_title"] == "Unknown1"
+        assert obj.data["publication_info"][2]["journal_title"] == "Unknown2"
+        assert "journal_record" not in obj.data["publication_info"][0]
+        assert "journal_record" not in obj.data["publication_info"][2]
+        assert not obj.extra_data.get("journal_inspire_categories")
 
 
 def test_normalize_journal_titles_doesnt_assign_categories_from_journals_in_references(
     workflow_app, insert_journals_in_db
 ):
-    record = {
-        "_collections": ["Literature"],
-        "titles": ["A title"],
-        "document_type": ["book", "note", "report"],
-        "publication_info": [
-            {
-                "journal_title": "A Test Journal1",
-                "journal_record": {
-                    "$ref": "http://localhost:5000/api/journals/1936475"
-                },
-            },
-        ],
-        "references": [
-            {
-                "reference": {
-                    "authors": [{"full_name": "A, Papaetrou"}],
-                    "misc": [
-                        "A static solution of the equations of the gravitational field for an arbitrary charge distribution"
-                    ],
-                    "publication_info": {
-                        "artid": "191",
-                        "journal_record": {
-                            "$ref": "http://localhost:5000/api/journals/1936476"
-                        },
-                        "journal_title": "Proc.Roy.Irish Acad.A",
-                        "journal_volume": "51",
-                        "page_start": "191",
-                        "year": 1947,
+    with requests_mock.Mocker() as request_mocker:
+        request_mocker.register_uri(
+            "GET",
+            "http://web:8000/curation/literature/normalize-journal-titles",
+            json={"normalized_journal_titles": {"A Test Journal1": "Test.Jou.1", "Proc.Roy.Irish Acad.A": "Proc.Roy.Irish Acad.A"}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+
+        record = {
+            "_collections": ["Literature"],
+            "titles": ["A title"],
+            "document_type": ["book", "note", "report"],
+            "publication_info": [
+                {
+                    "journal_title": "A Test Journal1",
+                    "journal_record": {
+                        "$ref": "http://localhost:5000/api/journals/1936475"
                     },
+                },
+            ],
+            "references": [
+                {
+                    "reference": {
+                        "authors": [{"full_name": "A, Papaetrou"}],
+                        "misc": [
+                            "A static solution of the equations of the gravitational field for an arbitrary charge distribution"
+                        ],
+                        "publication_info": {
+                            "artid": "191",
+                            "journal_record": {
+                                "$ref": "http://localhost:5000/api/journals/1936476"
+                            },
+                            "journal_title": "Proc.Roy.Irish Acad.A",
+                            "journal_volume": "51",
+                            "page_start": "191",
+                            "year": 1947,
+                        },
+                    }
                 }
-            }
-        ],
-    }
+            ],
+        }
 
-    obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
+        obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
 
-    normalize_journal_titles(obj, None)
+        normalize_journal_titles(obj, None)
 
-    assert obj.data["publication_info"][0]["journal_title"] == "Test.Jou.1"
-    assert obj.data["publication_info"][0]["journal_record"] == {
-        "$ref": "http://localhost:5000/api/journals/1936475"
-    }
-    assert len(obj.extra_data["journal_inspire_categories"]) == 1
-    assert {"term": "Astrophysics"} in obj.extra_data["journal_inspire_categories"]
-    assert {"term": "Accelerators"} not in obj.extra_data["journal_inspire_categories"]
+        assert obj.data["publication_info"][0]["journal_title"] == "Test.Jou.1"
+        assert obj.data["publication_info"][0]["journal_record"] == {
+            "$ref": "http://localhost:5000/api/journals/1936475"
+        }
+        assert len(obj.extra_data["journal_inspire_categories"]) == 1
+        assert {"term": "Astrophysics"} in obj.extra_data["journal_inspire_categories"]
+        assert {"term": "Accelerators"} not in obj.extra_data["journal_inspire_categories"]
 
 
 def test_update_inspire_categories(workflow_app):
@@ -744,43 +803,52 @@ def test_replace_collection_to_hidden_sets_proper_hidden_collections_on_metadata
 
 
 def test_normalize_journal_titles_in_references(workflow_app, insert_journals_in_db):
-    record = {
-        "_collections": ["Literature"],
-        "titles": ["A title"],
-        "document_type": ["book", "note", "report"],
-        "references": [
-            {
-                "reference": {
-                    "publication_info": {
-                        "journal_title": "A Test Journal1",
+    with requests_mock.Mocker() as request_mocker:
+        request_mocker.register_uri(
+            "GET",
+            "http://web:8000/curation/literature/normalize-journal-titles",
+            json={"normalized_journal_titles": {"A Test Journal1": "Test.Jou.1", "Something not in db": "Something not in db"}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+
+        record = {
+            "_collections": ["Literature"],
+            "titles": ["A title"],
+            "document_type": ["book", "note", "report"],
+            "references": [
+                {
+                    "reference": {
+                        "publication_info": {
+                            "journal_title": "A Test Journal1",
+                        }
                     }
-                }
-            },
-            {
-                "reference": {
-                    "publication_info": {
-                        "journal_title": "Something not in db",
+                },
+                {
+                    "reference": {
+                        "publication_info": {
+                            "journal_title": "Something not in db",
+                        }
                     }
-                }
-            },
-        ],
-    }
+                },
+            ],
+        }
 
-    obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
+        obj = workflow_object_class.create(data=record, id_user=1, data_type="hep")
 
-    normalize_journal_titles(obj, None)
+        normalize_journal_titles(obj, None)
 
-    assert (
-        obj.data["references"][0]["reference"]["publication_info"]["journal_title"]
-        == "Test.Jou.1"
-    )
-    assert obj.data["references"][0]["reference"]["publication_info"][
-        "journal_record"
-    ] == {"$ref": "http://localhost:5000/api/journals/1936475"}
-    assert (
-        obj.data["references"][1]["reference"]["publication_info"]["journal_title"]
-        == "Something not in db"
-    )
+        assert (
+            obj.data["references"][0]["reference"]["publication_info"]["journal_title"]
+            == "Test.Jou.1"
+        )
+        assert obj.data["references"][0]["reference"]["publication_info"][
+            "journal_record"
+        ] == {"$ref": "http://localhost:5000/api/journals/1936475"}
+        assert (
+            obj.data["references"][1]["reference"]["publication_info"]["journal_title"]
+            == "Something not in db"
+        )
 
 
 def test_normalize_collaborations(workflow_app):
@@ -1226,6 +1294,13 @@ def test_core_selection_wf_already_created_show_created_wf(
             "GET",
             "http://web:8000/curation/literature/collaborations-normalization",
             json={"normalized_collaborations": [], "accelerator_experiments": []},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        request_mocker.register_uri(
+            "GET",
+            "http://web:8000/curation/literature/normalize-journal-titles",
+            json={"normalized_journal_titles": {}},
             headers=_get_headers_for_hep_root_table_request(),
             status_code=200,
         )

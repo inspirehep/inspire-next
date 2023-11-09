@@ -92,7 +92,6 @@ from inspirehep.modules.workflows.utils import (
     delete_empty_key
 )
 from inspirehep.modules.workflows.utils.grobid_authors_parser import GrobidAuthors
-from inspirehep.utils.normalizers import normalize_journal_title
 from inspirehep.utils.url import is_pdf_link
 
 
@@ -611,6 +610,26 @@ def preserve_root(obj, eng):
     obj.save()
 
 
+@backoff.on_exception(backoff.expo, (BadGatewayError, requests.exceptions.ConnectionError), base=4, max_tries=5)
+def _get_all_journal_titles_to_normalize(obj_data):
+    """Get all journal titles to normalize."""
+
+    publication_journal_titles = get_value(obj_data, 'publication_info.journal_title', [])
+    references_journal_titles = get_value(obj_data, 'references.reference.publication_info.journal_title', [])
+    all_titles_to_normalize = publication_journal_titles + references_journal_titles
+
+    response = requests.get(
+        "{inspirehep_url}/curation/literature/normalize-journal-titles".format(
+            inspirehep_url=current_app.config["INSPIREHEP_URL"]
+        ),
+        headers=_get_headers_for_hep_root_table_request(),
+        data=json.dumps({'journal_titles_list': all_titles_to_normalize})
+    )
+    response.raise_for_status()
+    normalized_journal_titles_mapping = response.json()['normalized_journal_titles']
+    return normalized_journal_titles_mapping
+
+
 @with_debug_logging
 def normalize_journal_titles(obj, eng):
     """Normalize the journal titles
@@ -632,27 +651,29 @@ def normalize_journal_titles(obj, eng):
     Returns:
        None
     """
+    normalized_journal_titles_mapping = _get_all_journal_titles_to_normalize(obj.data)
     publications = obj.data.get('publication_info', [])
 
     for publication in publications:
-        normalize_journal_title_entry(obj, publication, add_inspire_categories=True)
+        if 'journal_title' not in publication:
+            continue
+        normalized_journal_title = normalized_journal_titles_mapping[publication['journal_title']]
+        normalize_journal_title_entry(obj, publication, normalized_journal_title, add_inspire_categories=True)
 
     references = obj.data.get("references", [])
     for reference in references:
-        publication_info = get_value(reference, 'reference.publication_info')
-        if not publication_info:
+        publication_info = get_value(reference, 'reference.publication_info', {})
+        journal_title = publication_info.get('journal_title')
+        if not journal_title:
             continue
-        normalize_journal_title_entry(obj, publication_info)
+        normalized_joutnal_title = normalized_journal_titles_mapping[journal_title]
+        normalize_journal_title_entry(obj, publication_info, normalized_joutnal_title)
 
     if obj.extra_data.get('journal_inspire_categories'):
         obj.extra_data['journal_inspire_categories'] = dedupe_list(obj.extra_data['journal_inspire_categories'])
 
 
-def normalize_journal_title_entry(obj, publication_info, add_inspire_categories=False):
-    if 'journal_title' not in publication_info:
-        return
-
-    normalized_title = normalize_journal_title(publication_info['journal_title'])
+def normalize_journal_title_entry(obj, publication_info, normalized_title, add_inspire_categories=False):
     publication_info['journal_title'] = normalized_title
 
     ref_query = RecordMetadata.query.filter(
