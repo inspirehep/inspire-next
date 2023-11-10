@@ -98,10 +98,10 @@ def test_create_ticket_when_source_is_publishing(
     ticket_publishing_content = "content=Queue%3A+HEP_publishing"
     wf.continue_workflow()
 
-    assert ticket_publishing_content in mocked_external_services.request_history[4].text
+    assert ticket_publishing_content in mocked_external_services.request_history[5].text
     assert wf.extra_data["curation_ticket_id"]
     assert (
-        mocked_external_services.request_history[4].url
+        mocked_external_services.request_history[5].url
         == "http://rt.inspire/ticket/new"
     )
 
@@ -132,10 +132,10 @@ def test_create_ticket_when_source_is_not_publishing(
     ticket_curation_content = "content=Queue%3A+HEP_curation"
     wf.continue_workflow()
 
-    assert ticket_curation_content in mocked_external_services.request_history[4].text
+    assert ticket_curation_content in mocked_external_services.request_history[5].text
     assert wf.extra_data["curation_ticket_id"]
     assert (
-        mocked_external_services.request_history[4].url
+        mocked_external_services.request_history[5].url
         == "http://rt.inspire/ticket/new"
     )
 
@@ -171,6 +171,13 @@ def test_set_fermilab_collection_from_report_number(
                 ],
                 "ambiguous_affiliations": [],
             },
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        mock.register_uri(
+            "GET",
+            "http://web:8000/curation/literature/normalize-journal-titles",
+            json={"normalized_journal_titles": {}},
             headers=_get_headers_for_hep_root_table_request(),
             status_code=200,
         )

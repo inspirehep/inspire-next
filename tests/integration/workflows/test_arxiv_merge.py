@@ -895,7 +895,7 @@ def test_conflict_creates_ticket(
             wf_id=wf.id
         )
 
-        assert mocked_external_services.request_history[1].text.startswith(
+        assert mocked_external_services.request_history[2].text.startswith(
             expected_ticket
         )
         assert wf.extra_data["conflict-ticket-id"]
@@ -907,10 +907,10 @@ def test_conflict_creates_ticket(
         wf.continue_workflow()
 
         assert (
-            mocked_external_services.request_history[2].url == expected_ticket_close_url
+            mocked_external_services.request_history[3].url == expected_ticket_close_url
         )
         assert (
-            mocked_external_services.request_history[2].text
+            mocked_external_services.request_history[3].text
             == "content=Status%3A+resolved"
         )
 

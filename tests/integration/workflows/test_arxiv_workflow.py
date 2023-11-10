@@ -461,6 +461,13 @@ def test_article_workflow_continues_when_record_is_valid(
             headers=_get_headers_for_hep_root_table_request(),
             status_code=200,
         )
+        requests_mocker.register_uri(
+            "GET",
+            "http://web:8000/curation/literature/normalize-journal-titles",
+            json={"normalized_journal_titles": {}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
 
         workflow_id = build_workflow(valid_record).id
         eng_uuid = start("article", object_id=workflow_id)
@@ -511,6 +518,13 @@ def test_update_exact_matched_goes_trough_the_workflow(
                 inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
             ),
             json={"matched_ids": [record["control_number"]]},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        requests_mocker.register_uri(
+            "GET",
+            "http://web:8000/curation/literature/normalize-journal-titles",
+            json={"normalized_journal_titles": {}},
             headers=_get_headers_for_hep_root_table_request(),
             status_code=200,
         )
@@ -611,6 +625,13 @@ def test_fuzzy_matched_goes_trough_the_workflow(
             headers=_get_headers_for_hep_root_table_request(),
             status_code=200,
         )
+        requests_mocker.register_uri(
+            "GET",
+            "http://web:8000/curation/literature/normalize-journal-titles",
+            json={"normalized_journal_titles": {}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
 
         workflow_id = build_workflow(record).id
         eng_uuid = start("article", object_id=workflow_id)
@@ -672,6 +693,13 @@ def test_validation_error_callback_with_a_valid(
             headers=_get_headers_for_hep_root_table_request(),
             status_code=200,
         )
+        requests_mocker.register_uri(
+            "GET",
+            "http://web:8000/curation/literature/normalize-journal-titles",
+            json={"normalized_journal_titles": {}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
 
         workflow_id = build_workflow(valid_record).id
         eng_uuid = start("article", object_id=workflow_id)
@@ -725,6 +753,13 @@ def test_validation_error_callback_with_validation_error(
                 inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
             ),
             json={"matched_data": {}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        requests_mocker.register_uri(
+            "GET",
+            "http://web:8000/curation/literature/normalize-journal-titles",
+            json={"normalized_journal_titles": {}},
             headers=_get_headers_for_hep_root_table_request(),
             status_code=200,
         )
@@ -789,6 +824,13 @@ def test_validation_error_callback_with_missing_worfklow(
             headers=_get_headers_for_hep_root_table_request(),
             status_code=200,
         )
+        requests_mocker.register_uri(
+            "GET",
+            "http://web:8000/curation/literature/normalize-journal-titles",
+            json={"normalized_journal_titles": {}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
 
         workflow_id = build_workflow(invalid_record).id
         eng_uuid = start("article", object_id=workflow_id)
@@ -833,6 +875,14 @@ def test_validation_error_callback_with_malformed_with_invalid_types(
             headers=_get_headers_for_hep_root_table_request(),
             status_code=200,
         )
+        requests_mocker.register_uri(
+            "GET",
+            "http://web:8000/curation/literature/normalize-journal-titles",
+            json={"normalized_journal_titles": {}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+
         requests_mocker.register_uri(
             "GET",
             "{inspirehep_url}/matcher/fuzzy-match".format(
@@ -1157,6 +1207,14 @@ def test_workflows_halts_on_multiple_exact_matches(workflow_app):
         )
         requests_mocker.register_uri(
             "GET",
+            "http://web:8000/curation/literature/normalize-journal-titles",
+            json={"normalized_journal_titles": {}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+
+        requests_mocker.register_uri(
+            "GET",
             "{inspirehep_url}/matcher/fuzzy-match".format(
                 inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
             ),
@@ -1446,6 +1504,14 @@ def test_update_record_goes_through_api_version_of_store_record_without_issue(
         )
         mocked_external_services.register_uri(
             "GET",
+            "http://web:8000/curation/literature/normalize-journal-titles",
+            json={"normalized_journal_titles": {}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+
+        mocked_external_services.register_uri(
+            "GET",
             "http://web:8000/curation/literature/affiliations-normalization",
             json={
                 "normalized_affiliations": [
@@ -1540,6 +1606,13 @@ def test_update_record_goes_through_api_version_of_store_record_wrong_api_addres
         )
         mocked_external_services.register_uri(
             "GET",
+            "{inspirehep_url}/curation/literature/normalize-journal-titles".format(inspirehep_url=workflow_app.config["INSPIREHEP_URL"]),
+            json={"normalized_journal_titles": {}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        mocked_external_services.register_uri(
+            "GET",
             "http://web:8000/curation/literature/affiliations-normalization",
             json={
                 "normalized_affiliations": [
@@ -1620,6 +1693,16 @@ def test_update_record_goes_through_api_version_of_store_record_connection_timeo
         )
         mocked_external_services.register_uri(
             "GET",
+            "{inspirehep_url}/curation/literature/normalize-journal-titles".format(
+                inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
+            ),
+            json={"normalized_journal_titles": {}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+
+        mocked_external_services.register_uri(
+            "GET",
             "{inspirehep_url}/matcher/exact-match".format(
                 inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
             ),
@@ -1633,6 +1716,13 @@ def test_update_record_goes_through_api_version_of_store_record_connection_timeo
                 inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
             ),
             json={"matched_data": {}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        mocked_external_services.register_uri(
+            "GET",
+            "http://web:8000/curation/literature/normalize-journal-titles",
+            json={"normalized_journal_titles": {}},
             headers=_get_headers_for_hep_root_table_request(),
             status_code=200,
         )
@@ -1723,9 +1813,15 @@ def test_workflow_checks_affiliations_if_record_is_not_important(
     ):
         workflow_id = build_workflow(record).id
         start("article", object_id=workflow_id)
-        collections_in_record = filter(
-            lambda x: x.path == '/literature',
-            mocked_external_services.request_history).pop().json().get('_collections')
+        collections_in_record = (
+            filter(
+                lambda x: x.path == "/literature",
+                mocked_external_services.request_history,
+            )
+            .pop()
+            .json()
+            .get("_collections")
+        )
         assert "CDS Hidden" in collections_in_record
         assert "HAL Hidden" in collections_in_record
         assert "Fermilab" in collections_in_record
@@ -1780,10 +1876,14 @@ def test_workflow_do_not_changes_to_hidden_if_record_authors_do_not_have_interes
         wf.save()
         wf.continue_workflow(delayed=False)
 
-    collections_in_record = filter(
-        lambda x: x.path == '/literature',
-        mocked_external_services.request_history
-    ).pop().json().get('_collections')
+    collections_in_record = (
+        filter(
+            lambda x: x.path == "/literature", mocked_external_services.request_history
+        )
+        .pop()
+        .json()
+        .get("_collections")
+    )
 
     assert "CDS Hidden" not in collections_in_record
     assert "HAL Hidden" not in collections_in_record
@@ -1855,6 +1955,13 @@ def test_workflow_checks_affiliations_if_record_is_rejected_by_curator(
     )
     mocked_external_services.register_uri(
         "GET",
+        "http://web:8000/curation/literature/normalize-journal-titles",
+        json={"normalized_journal_titles": {}},
+        headers=_get_headers_for_hep_root_table_request(),
+        status_code=200,
+    )
+    mocked_external_services.register_uri(
+        "GET",
         "{inspirehep_url}/matcher/fuzzy-match".format(
             inspirehep_url=workflow_app.config["INSPIREHEP_URL"]
         ),
@@ -1877,10 +1984,14 @@ def test_workflow_checks_affiliations_if_record_is_rejected_by_curator(
         wf.save()
         wf.continue_workflow(delayed=False)
 
-    collections_in_record = filter(
-        lambda x: x.path == '/literature',
-        mocked_external_services.request_history
-    ).pop().json().get('_collections')
+    collections_in_record = (
+        filter(
+            lambda x: x.path == "/literature", mocked_external_services.request_history
+        )
+        .pop()
+        .json()
+        .get("_collections")
+    )
 
     assert "CDS Hidden" in collections_in_record
     assert "HAL Hidden" in collections_in_record
@@ -1944,7 +2055,7 @@ def test_grobid_extracts_authors_correctly(
         {
             u"raw_affiliations": [
                 {
-                    "value": u"Department of Mathematics and Statistics, University of Prince Edward Island, 550 University Avenue, Charlottetown, PEI, Canada C1A 4P3."
+                    u"value": u"Department of Mathematics and Statistics, University of Prince Edward Island, 550 University Avenue, Charlottetown, PEI, Canada C1A 4P3."
                 }
             ],
             u"emails": [u"nsaad@upei.ca"],
