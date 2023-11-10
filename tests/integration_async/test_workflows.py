@@ -325,6 +325,13 @@ def test_wf_replaces_old_workflow_which_is_in_halted_state(
             status_code=200,
         )
         request_mocker.register_uri(
+            "GET",
+            "http://web:8000/curation/literature/normalize-journal-titles",
+            json={"normalized_journal_titles": {}},
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        request_mocker.register_uri(
             "POST",
             "http://web:8000/matcher/linked_references/",
             json={
@@ -402,6 +409,13 @@ def test_wf_rejects_automatically_when_previous_matched_wf_was_rejected(
             json={
                 "matched_data": []
             },
+            headers=_get_headers_for_hep_root_table_request(),
+            status_code=200,
+        )
+        request_mocker.register_uri(
+            "GET",
+            "http://web:8000/curation/literature/normalize-journal-titles",
+            json={"normalized_journal_titles": {}},
             headers=_get_headers_for_hep_root_table_request(),
             status_code=200,
         )
