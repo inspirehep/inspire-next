@@ -453,7 +453,8 @@ def download_documents(obj, eng):
             obj.log.error(
                 'Cannot download document from %s', url)
     delete_empty_key(obj, 'documents')
-    save_workflow(obj, eng)
+    if current_app.config['FEATURE_FLAG_ENABLE_SAVE_WORFLOW_ON_DOWNLOAD_DOCUMENTS']:
+        save_workflow(obj, eng)
     LOGGER.info('Documents downloaded: %s', len(obj.data.get('documents', [])))
 
 
