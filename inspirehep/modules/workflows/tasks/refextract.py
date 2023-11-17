@@ -92,12 +92,12 @@ def extract_journal_info(obj, eng):
         refextract_request_headers = {
             "content-type": "application/json",
         }
+        response = requests.post(
+            "{}/extract_journal_info".format(current_app.config["REFEXTRACT_SERVICE_URL"]),
+            headers=refextract_request_headers,
+            data=json.dumps({"publication_infos": publication_infos, "journal_kb_data": kbs_journal_dict})
+        )
         try:
-            response = requests.post(
-                "{}/extract_journal_info".format(current_app.config["REFEXTRACT_SERVICE_URL"]),
-                headers=refextract_request_headers,
-                data=json.dumps({"publication_infos": publication_infos, "journal_kb_data": kbs_journal_dict})
-            )
             response.raise_for_status()
         except RequestException:
             LOGGER.info("Couldn't extract publication info from url!")
