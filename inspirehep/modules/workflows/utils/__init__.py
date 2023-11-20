@@ -259,7 +259,7 @@ def timeout_with_config(config_key):
 @with_debug_logging
 def get_document_url_for_reference_extraction(obj):
     documents = obj.data.get("documents", [])
-    fulltexts = [document for document in documents if document.get("fulltext")]
+    fulltexts = [document for document in documents if (document.get("fulltext") and document.get("key", "").endswith(".pdf"))]
     documents = fulltexts or documents
 
     if not documents:
