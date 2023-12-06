@@ -88,7 +88,7 @@ def submit_snow_ticket(obj, queue, template, context, caller, recid, ticket_id_k
         ticket_payload["recid"] = str(recid)
     ticket_payload['subject'] = context.get('subject', 'No subject')
     response = requests.post(
-        "{inspirehep_url}/tickets/create-with-template".format(
+        "{inspirehep_url}/tickets/create".format(
             inspirehep_url=current_app.config["INSPIREHEP_URL"]
         ),
         headers=_get_headers_for_hep_root_table_request(),
@@ -155,40 +155,35 @@ def create_ticket(
     backoff.expo, requests.exceptions.RequestException, base=4, max_tries=5
 )
 def reply_snow_ticket(obj, ticket_id, context_factory, user, template=None):
-    if not template:
-        reply_message = obj.extra_data.get("reason", "")
-        response = requests.post(
-            "{inspirehep_url}/tickets/reply".format(
-                inspirehep_url=current_app.config["INSPIREHEP_URL"]
-            ),
-            headers=_get_headers_for_hep_root_table_request(),
-            data=json.dumps(
-                {
-                    "ticket_id": str(ticket_id),
-                    "reply_message": reply_message,
-                    "user_email": user.email
-                }
-            ),
-        )
-        response.raise_for_status()
-    else:
+    if template:
         template_context = context_factory(user, obj)
         template = _get_ticket_template_name(template)
-        response = requests.post(
-            "{inspirehep_url}/tickets/reply-with-template".format(
-                inspirehep_url=current_app.config["INSPIREHEP_URL"]
-            ),
-            headers=_get_headers_for_hep_root_table_request(),
-            data=json.dumps(
-                {
-                    "ticket_id": str(ticket_id),
-                    "template": template,
-                    "template_context": template_context,
-                    "user_email": user.email
-                }
-            ),
+        data = json.dumps(
+            {
+                "ticket_id": str(ticket_id),
+                "template": template,
+                "template_context": template_context,
+                "user_email": user.email
+            }
         )
-        response.raise_for_status()
+    else:
+        reply_message = obj.extra_data.get("reason", "")
+        data = json.dumps(
+            {
+                "ticket_id": str(ticket_id),
+                "reply_message": reply_message,
+                "user_email": user.email
+            }
+        )
+
+    response = requests.post(
+        "{inspirehep_url}/tickets/reply".format(
+            inspirehep_url=current_app.config["INSPIREHEP_URL"]
+        ),
+        headers=_get_headers_for_hep_root_table_request(),
+        data=data
+    )
+    response.raise_for_status()
 
 
 def reply_ticket(template=None, context_factory=None, keep_new=False):
@@ -222,13 +217,6 @@ def reply_ticket(template=None, context_factory=None, keep_new=False):
                 obj.log.error("No ticket ID found!")
                 return {}
 
-            user = User.query.get(obj.id_user)
-            if not user:
-                obj.log.error(
-                    "No user found for object %s, skipping ticket creation", obj.id
-                )
-                return {}
-
             if template:
                 context = {}
                 if context_factory:
@@ -250,18 +238,34 @@ def reply_ticket(template=None, context_factory=None, keep_new=False):
 
 
 @backoff.on_exception(backoff.expo, rt.ConnectionError, base=4, max_tries=5)
-def close_snow_ticket(ticket_id):
+def close_snow_ticket(obj, ticket_id, context_factory, template=None):
+    if template:
+        user = User.query.get(obj.id_user)
+        if not user:
+            obj.log.error(
+                "No user found for object %s, skipping ticket creation", obj.id
+            )
+            return {}
+
+        template_context = context_factory(user, obj)
+        template = _get_ticket_template_name(template)
+        data = json.dumps({"ticket_id": str(ticket_id),
+                           "template": template,
+                          "template_context": template_context})
+    else:
+        data = json.dumps({"ticket_id": str(ticket_id)})
+
     response = requests.post(
         "{inspirehep_url}/tickets/resolve".format(
             inspirehep_url=current_app.config["INSPIREHEP_URL"]
         ),
         headers=_get_headers_for_hep_root_table_request(),
-        data=json.dumps({"ticket_id": str(ticket_id)}),
+        data=data
     )
     response.raise_for_status()
 
 
-def close_ticket(ticket_id_key="ticket_id"):
+def close_ticket(ticket_id_key="ticket_id", template=None, context_factory=None):
     """Close the ticket associated with this record found in given key."""
 
     @with_debug_logging
@@ -272,7 +276,7 @@ def close_ticket(ticket_id_key="ticket_id"):
             obj.log.error("No ticket ID found!")
             return {}
         if current_app.config["FEATURE_FLAG_ENABLE_SNOW"]:
-            close_snow_ticket(ticket_id)
+            close_snow_ticket(obj, ticket_id, context_factory, template)
         else:
             if not rt_instance:
                 obj.log.error("No RT instance available. Skipping!")
