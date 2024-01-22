@@ -211,11 +211,12 @@ ENHANCE_RECORD = [
 ]
 
 
-NOTIFY_NOT_ACCEPTED = [
+NOTIFY_AND_CLOSE_NOT_ACCEPTED = [
     IF(
         is_submission,
-        do_not_repeat('reply_ticket_submission_not_accepted')(
-            reply_ticket(
+        do_not_repeat('close_ticket_submission_not_accepted')(
+            close_ticket(
+                ticket_id_key="ticket_id",
                 context_factory=reply_ticket_context
             ),
         ),
@@ -223,11 +224,12 @@ NOTIFY_NOT_ACCEPTED = [
 ]
 
 
-NOTIFY_ALREADY_EXISTING = [
+NOTIFY_AND_CLOSE_ALREADY_EXISTING = [
     reject_record('Article was already found on INSPIRE'),
     mark('approved', False),
-    do_not_repeat('reply_ticket_user_submission_already_in_inspire')(
-        reply_ticket(
+    do_not_repeat('close_ticket_user_submission_already_in_inspire')(
+        close_ticket(
+            ticket_id_key="ticket_id",
             template=(
                 "literaturesuggest/tickets/"
                 "user_rejected_exists.html"
@@ -235,19 +237,17 @@ NOTIFY_ALREADY_EXISTING = [
             context_factory=reply_ticket_context
         ),
     ),
-    do_not_repeat('close_ticket_user_submission_already_in_inspire')(
-        close_ticket(ticket_id_key="ticket_id")
-    ),
     save_workflow,
     stop_processing,
 ]
 
 
-NOTIFY_ACCEPTED = [
+NOTIFY_AND_CLOSE_ACCEPTED = [
     IF(
         is_submission,
-        do_not_repeat('reply_ticket_user_submission_accepted')(
-            reply_ticket(
+        do_not_repeat('close_ticket_user_submission_accepted')(
+            close_ticket(
+                ticket_id_key="ticket_id",
                 template='literaturesuggest/tickets/user_accepted.html',
                 context_factory=reply_ticket_context,
             ),
@@ -352,7 +352,7 @@ STOP_IF_EXISTING_SUBMISSION = [
         is_submission,
         IF(
             is_marked('is-update'),
-            NOTIFY_ALREADY_EXISTING
+            NOTIFY_AND_CLOSE_ALREADY_EXISTING
         )
     )
 ]
@@ -626,18 +626,12 @@ class Article(object):
                     STORE_RECORD +
                     SEND_TO_LEGACY +
                     STORE_ROOT +
-                    NOTIFY_ACCEPTED +
+                    NOTIFY_AND_CLOSE_ACCEPTED +
                     NOTIFY_CURATOR_IF_NEEDED +
                     CREATE_CORE_SELECTION_WF
                 ),
-                NOTIFY_NOT_ACCEPTED,
+                NOTIFY_AND_CLOSE_NOT_ACCEPTED,
             ),
-            IF(
-                is_submission,
-                do_not_repeat('close_ticket_user_submission')(
-                    close_ticket(ticket_id_key="ticket_id")
-                ),
-            )
         ] +
         FIND_NEXT_AND_RUN_IF_NECESSARY
     )

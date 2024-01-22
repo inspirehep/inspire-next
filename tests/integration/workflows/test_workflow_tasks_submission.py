@@ -46,7 +46,7 @@ def test_reply_ticket_calls_tickets_reply_when_template_is_set(workflow_app):
         with requests_mock.Mocker() as request_mocker:
             request_mocker.register_uri(
                 "POST",
-                "http://web:8000/tickets/reply-with-template",
+                "http://web:8000/tickets/reply",
                 json={"message": "Ticket was updated with the reply"},
                 headers=_get_headers_for_hep_root_table_request(),
                 status_code=200,
@@ -103,7 +103,7 @@ def test_create_ticket_calls_tickets_create_with_template(workflow_app):
         with requests_mock.Mocker() as request_mocker:
             request_mocker.register_uri(
                 "POST",
-                "http://web:8000/tickets/create-with-template",
+                "http://web:8000/tickets/create",
                 json={"ticket_id": "123", "ticket_url": "http//test.com/1"},
                 headers=_get_headers_for_hep_root_table_request(),
                 status_code=200,
