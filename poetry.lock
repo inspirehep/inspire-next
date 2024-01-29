@@ -1419,7 +1419,7 @@ tests = ["flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest (
 
 [[package]]
 name = "inspire-json-merger"
-version = "11.0.32"
+version = "11.0.34"
 description = "INSPIRE-specific configuration of the JSON Merger."
 category = "main"
 optional = false
@@ -4734,8 +4734,7 @@ inspire-dojson = [
     {file = "inspire_dojson-63.1.5-py2-none-any.whl", hash = "sha256:21c25249e233e9b4d0461f6b5a55ef9f1a2504de6809e97ad5fac0f1980c3ec8"},
 ]
 inspire-json-merger = [
-    {file = "inspire-json-merger-11.0.32.tar.gz", hash = "sha256:8db3e7114ad99f1adf2ee5ab184ea5ca3489e60b4f150f132f6bc73723bc2651"},
-    {file = "inspire_json_merger-11.0.32-py2-none-any.whl", hash = "sha256:74f1e8ed4b5868e783ef927884f91faf43cd97dd848b92c40cd0bbdd070bae55"},
+    {file = "inspire_json_merger-11.0.34-py2.py3-none-any.whl", hash = "sha256:3d22ad0b450746bbf5bf81d7e6743f23e6020b013806658faaec41b46e207be8"},
 ]
 inspire-matcher = [
     {file = "inspire-matcher-9.0.17.tar.gz", hash = "sha256:90b2e687b0256f0626725050a3d004cc3ce5681903acb713841fd124e45bf936"},
