@@ -258,7 +258,7 @@ def close_snow_ticket(obj, ticket_id, context_factory, template=None):
         data = {"ticket_id": str(ticket_id)}
         reason = obj.extra_data.get("reason")
         if reason:
-            data["reason"] = reason
+            data["message"] = reason
 
     response = requests.post(
         "{inspirehep_url}/tickets/resolve".format(
