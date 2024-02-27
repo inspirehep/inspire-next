@@ -249,18 +249,23 @@ def close_snow_ticket(obj, ticket_id, context_factory, template=None):
 
         template_context = context_factory(user, obj)
         template = _get_ticket_template_name(template)
-        data = json.dumps({"ticket_id": str(ticket_id),
-                           "template": template,
-                          "template_context": template_context})
+        data = {
+            "ticket_id": str(ticket_id),
+            "template": template,
+            "template_context": template_context
+        }
     else:
-        data = json.dumps({"ticket_id": str(ticket_id)})
+        data = {"ticket_id": str(ticket_id)}
+        reason = obj.extra_data.get("reason")
+        if reason:
+            data["message"] = reason
 
     response = requests.post(
         "{inspirehep_url}/tickets/resolve".format(
             inspirehep_url=current_app.config["INSPIREHEP_URL"]
         ),
         headers=_get_headers_for_hep_root_table_request(),
-        data=data
+        data=json.dumps(data)
     )
     response.raise_for_status()
 
