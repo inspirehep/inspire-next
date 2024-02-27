@@ -94,7 +94,7 @@ def test_close_ticket_calls_snow_resolve(workflow_app):
             _close_ticket = close_ticket()
             _close_ticket(obj, None)
             assert (
-                request_mocker.request_history[0]._request.body == '{"ticket_id": "1", "message": "reply reason"}'
+                request_mocker.request_history[0]._request.body == '{"message": "reply reason", "ticket_id": "1"}'
             )
 
 
