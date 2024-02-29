@@ -58,6 +58,7 @@ from inspirehep.modules.workflows.models import WorkflowsAudit, WorkflowsRecordS
 from inspirehep.utils.url import retrieve_uri
 from invenio_workflows import ObjectStatus
 
+
 LOGGER = getStackTraceLogger(__name__)
 
 
@@ -722,6 +723,7 @@ def create_error(response):
     )
 
 
+@timeout_with_config('WORKFLOWS_DELETE_KEYS_TIMEOUT')
 def delete_empty_key(obj, key):
     if key in obj.data and len(obj.data[key]) == 0:
         LOGGER.info('Deleting %s from workflow. Key is empty.', key)

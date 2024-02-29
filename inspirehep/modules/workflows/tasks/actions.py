@@ -89,7 +89,8 @@ from inspirehep.modules.workflows.utils import (
     get_validation_errors,
     log_workflows_action,
     with_debug_logging, check_mark, set_mark, get_mark, get_record_from_hep,
-    delete_empty_key
+    delete_empty_key,
+    timeout_with_config
 )
 from inspirehep.modules.workflows.utils.grobid_authors_parser import GrobidAuthors
 from inspirehep.utils.url import is_pdf_link
@@ -424,22 +425,28 @@ def populate_submission_document(obj, eng):
         LOGGER.info('Submission document not found or in an incorrect format (%s)', submission_pdf)
     delete_empty_key(obj, 'documents')
     save_workflow(obj, eng)
+    return
 
 
 @with_debug_logging
+@timeout_with_config('WORKFLOWS_DOWNLOAD_DOCUMENT_TIMEOUT')
 def download_documents(obj, eng):
     LOGGER.info('Downloading documents for %s', obj.id)
     documents = obj.data.get('documents', [])
     for document in documents:
-        filename = document['key']
         url = document['url']
+        if url.startswith('/api/files/'):
+            continue
+        filename = document['key']
         scheme = urlparse(url).scheme
         LOGGER.info(
             'Downloading document key:%s url:%s scheme:%s', document['key'], document['url'], scheme
         )
         if scheme == 'file':
+            LOGGER.info('Copying file to workflow [%s]: %s %s', obj.id, filename, url)
             downloaded = copy_file_to_workflow(obj, filename, url)
         else:
+            LOGGER.info('Downloading file to workflow [%s]: %s %s', obj.id, filename, url)
             downloaded = download_file_to_workflow(
                 workflow=obj,
                 name=filename,
@@ -456,6 +463,7 @@ def download_documents(obj, eng):
     if current_app.config['FEATURE_FLAG_ENABLE_SAVE_WORFLOW_ON_DOWNLOAD_DOCUMENTS']:
         save_workflow(obj, eng)
     LOGGER.info('Documents downloaded: %s', len(obj.data.get('documents', [])))
+    return
 
 
 @backoff.on_exception(backoff.expo, (BadGatewayError, requests.exceptions.ConnectionError), base=4, max_tries=5)
