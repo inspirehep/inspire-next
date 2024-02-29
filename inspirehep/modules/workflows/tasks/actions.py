@@ -423,7 +423,11 @@ def populate_submission_document(obj, eng):
     else:
         LOGGER.info('Submission document not found or in an incorrect format (%s)', submission_pdf)
     delete_empty_key(obj, 'documents')
-    save_workflow(obj, eng)
+
+    if current_app.config['FEATURE_FLAG_ENABLE_SAVE_WORKFLOW_ON_DOWNLOAD_DOCUMENTS']:
+        save_workflow(obj, eng)
+    else:
+        obj.save()
 
 
 @with_debug_logging
@@ -435,7 +439,7 @@ def download_documents(obj, eng):
         url = document['url']
         scheme = urlparse(url).scheme
         LOGGER.info(
-            'Downloading document key:%s url:%s scheme:%s', document['key'], document['url'], scheme
+            'Downloading document for %s key:%s url:%s scheme:%s', obj.id, document['key'], document['url'], scheme
         )
         if scheme == 'file':
             downloaded = copy_file_to_workflow(obj, filename, url)
@@ -448,14 +452,16 @@ def download_documents(obj, eng):
         if downloaded:
             document['url'] = '/api/files/{bucket}/{key}'.format(
                 bucket=obj.files[filename].bucket_id, key=quote(filename))
-            obj.log.info('Document downloaded from %s', url)
+            obj.log.info('Document downloaded for %s from %s', obj.id, url)
         else:
             obj.log.error(
-                'Cannot download document from %s', url)
+                'Cannot download document for %s from %s', obj.id, url)
     delete_empty_key(obj, 'documents')
-    if current_app.config['FEATURE_FLAG_ENABLE_SAVE_WORFLOW_ON_DOWNLOAD_DOCUMENTS']:
+    if current_app.config['FEATURE_FLAG_ENABLE_SAVE_WORKFLOW_ON_DOWNLOAD_DOCUMENTS']:
         save_workflow(obj, eng)
-    LOGGER.info('Documents downloaded: %s', len(obj.data.get('documents', [])))
+    else:
+        obj.save()
+    LOGGER.info('Documents downloaded for %s: %s', obj.id, len(obj.data.get('documents', [])))
 
 
 @backoff.on_exception(backoff.expo, (BadGatewayError, requests.exceptions.ConnectionError), base=4, max_tries=5)
