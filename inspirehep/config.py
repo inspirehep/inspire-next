@@ -58,7 +58,9 @@ FEATURE_FLAG_ENABLE_SEND_TO_LEGACY = True
 """This feature flag will prevent to send a ``replace`` update to legacy."""
 FEATURE_FLAG_USE_ROOT_TABLE_ON_HEP = False
 FEATURE_FLAG_ENABLE_SNOW = False
-FEATURE_FLAG_ENABLE_SAVE_WORKFLOW_ON_DOWNLOAD_DOCUMENTS = True
+# This flag is to help with empty key documents from the merge process
+FEATURE_FLAG_ENABLE_DELETE_EMPTY_KEY_DOCUMENTS = True
+
 # Default language and timezone
 # =============================
 BABEL_DEFAULT_LANGUAGE = 'en'
