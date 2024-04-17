@@ -1091,7 +1091,11 @@ def post_pdf_to_grobid(obj, grobid_api_path, **kwargs):
         data.update(kwargs)
         grobid_url = current_app.config["GROBID_URL"]
         try:
-            response = requests.post(urljoin(grobid_url, grobid_api_path), files=data)
+            response = requests.post(
+                urljoin(grobid_url, grobid_api_path),
+                files=data,
+                headers={'Accept': 'application/xml'}
+            )
             response.raise_for_status()
         except GROBID_EXCEPTIONS:
             LOGGER.warning("(%s) Grobid request failed due to the GROBID serivce error!" % str(obj.id))
