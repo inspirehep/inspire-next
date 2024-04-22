@@ -38,7 +38,7 @@ from mocks import MockEng, MockObj
 
 from inspirehep.modules.workflows.tasks.actions import jlab_ticket_needed, load_from_source_data, \
     extract_authors_from_pdf, is_suitable_for_pdf_authors_extraction, is_fermilab_report, add_collection, \
-    check_if_france_in_fulltext, check_if_france_in_raw_affiliations
+    check_if_france_in_fulltext, check_if_france_in_raw_affiliations, check_if_core_and_uk_in_fulltext
 
 
 def test_match_approval_gets_match_recid():
@@ -579,3 +579,81 @@ def test_check_if_france_in_fulltext_when_france_in_text_body(mocked_get_documen
                 france_in_fulltext = check_if_france_in_fulltext(obj, eng)
 
     assert france_in_fulltext
+
+
+@patch("inspirehep.modules.workflows.tasks.actions.get_document_in_workflow")
+def test_check_if_uk_in_fulltext_not_core(mocked_get_document, app):
+    fake_grobid_response = "<country key=\"UK\">England</country>"
+    obj = MagicMock()
+    obj.data = {
+        'core': False
+    }
+    obj.extra_data = {}
+    eng = None
+    new_config = {"GROBID_URL": "http://grobid_url.local"}
+    with patch.dict(current_app.config, new_config):
+        with requests_mock.Mocker() as requests_mocker:
+            requests_mocker.register_uri(
+                'POST', 'http://grobid_url.local/api/processFulltextDocument',
+                text=fake_grobid_response,
+                headers={'content-type': 'application/xml'},
+                status_code=200,
+            )
+            with tempfile.NamedTemporaryFile() as tmp_file:
+                mocked_get_document.return_value.__enter__.return_value = tmp_file.name
+                uk_in_fulltext_and_core = check_if_core_and_uk_in_fulltext(
+                    obj, eng)
+
+    assert not uk_in_fulltext_and_core
+
+
+@patch("inspirehep.modules.workflows.tasks.actions.get_document_in_workflow")
+def test_check_if_uk_in_fulltext_core(mocked_get_document, app):
+    fake_grobid_response = "<country key=\"UK\">England</country>"
+    obj = MagicMock()
+    obj.data = {
+        'core': True
+    }
+    obj.extra_data = {}
+    eng = None
+    new_config = {"GROBID_URL": "http://grobid_url.local"}
+    with patch.dict(current_app.config, new_config):
+        with requests_mock.Mocker() as requests_mocker:
+            requests_mocker.register_uri(
+                'POST', 'http://grobid_url.local/api/processFulltextDocument',
+                text=fake_grobid_response,
+                headers={'content-type': 'application/xml'},
+                status_code=200,
+            )
+            with tempfile.NamedTemporaryFile() as tmp_file:
+                mocked_get_document.return_value.__enter__.return_value = tmp_file.name
+                uk_in_fulltext_and_core = check_if_core_and_uk_in_fulltext(
+                    obj, eng)
+
+    assert uk_in_fulltext_and_core
+
+
+@patch("inspirehep.modules.workflows.tasks.actions.get_document_in_workflow")
+def test_check_if_uk_in_fulltext_core_case_insensitive(mocked_get_document, app):
+    fake_grobid_response = "<country>unitEd KiNgdOm</country>"
+    obj = MagicMock()
+    obj.data = {
+        'core': True
+    }
+    obj.extra_data = {}
+    eng = None
+    new_config = {"GROBID_URL": "http://grobid_url.local"}
+    with patch.dict(current_app.config, new_config):
+        with requests_mock.Mocker() as requests_mocker:
+            requests_mocker.register_uri(
+                'POST', 'http://grobid_url.local/api/processFulltextDocument',
+                text=fake_grobid_response,
+                headers={'content-type': 'application/xml'},
+                status_code=200,
+            )
+            with tempfile.NamedTemporaryFile() as tmp_file:
+                mocked_get_document.return_value.__enter__.return_value = tmp_file.name
+                uk_in_fulltext_and_core = check_if_core_and_uk_in_fulltext(
+                    obj, eng)
+
+    assert uk_in_fulltext_and_core

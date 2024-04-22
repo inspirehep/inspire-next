@@ -1706,6 +1706,7 @@ dictConfig(
 QUEUE_TO_FUNCTIONAL_CATEGORY_MAPPING = {
     "HEP_add_user": "Literature submissions",
     "HAL_curation": "HAL curation",
+    "UK_curation": "UK curation",
     "HEP_curation": "arXiv curation",
     "HEP_curation_jlab": "arXiv curation",
     "HEP_publishing": "Publisher curation",
