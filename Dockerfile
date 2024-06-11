@@ -29,30 +29,30 @@ FROM centos:7
 RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
     yum update -y && \
     yum install -y \
-        ImageMagick \
-        transfig \
-        file \
-        firefox \
-        gcc \
-        gcc-c++ \
-        git \
-        kstart \
-        libffi-devel \
-        libxml2-devel \
-        libxslt-devel \
-        mailcap \
-        make \
-        openssl-devel \
-        poppler-utils \
-        postgresql \
-        postgresql-libs \
-        postgresql-devel \
-        python-pip \
-        python-devel \
-        python2-xrootd \
-        wget \
-        Xvfb \
-        && \
+    ImageMagick \
+    transfig \
+    file \
+    firefox \
+    gcc \
+    gcc-c++ \
+    git \
+    kstart \
+    libffi-devel \
+    libxml2-devel \
+    libxslt-devel \
+    mailcap \
+    make \
+    openssl-devel \
+    poppler-utils \
+    postgresql \
+    postgresql-libs \
+    postgresql-devel \
+    python-pip \
+    python-devel \
+    python2-xrootd \
+    wget \
+    Xvfb \
+    && \
     yum clean all
 
 ENV NODE_VERSION 6.17.1
@@ -71,10 +71,10 @@ ENV NODE_PATH $NVM_DIR/v$NODE_VERSION/lib/node_modules
 ENV PATH $NVM_DIR/versions/node/v$NODE_VERSION/bin:$PATH
 
 RUN npm install -g \
-        node-sass@3.8.0 \
-        clean-css@^3.4.24 \
-        requirejs \
-        uglify-js
+    node-sass@3.8.0 \
+    clean-css@^3.4.24 \
+    requirejs \
+    uglify-js
 
 ENV PATH="/root/.poetry/bin:${PATH}" \
     POETRY_VIRTUALENVS_CREATE=false \
@@ -85,17 +85,20 @@ WORKDIR /code
 RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/4ec09d4e6b8ca007e67bb873c96277b54986fbdb/get-poetry.py \
     | sed -E 's/(self\._get\(self\.METADATA_URL\).decode)\(\)/\1("utf-8")/' \
     | python && \
-    poetry --version && \
-    pip install --no-cache-dir --upgrade pip==20.3.4 && \
-    pip install --no-cache-dir --upgrade setuptools && \
-    pip install --no-cache-dir --upgrade wheel && \
-    pip install --no-cache-dir typing==3.7.4.1
+    poetry --version
+
+RUN  pip install --upgrade --trusted-host pypi.org --trusted-host pypi.python.org \
+    --trusted-host files.pythonhosted.org pip==20.3.4 \
+    && pip install --trusted-host pypi.org --trusted-host pypi.python.org \
+    --trusted-host files.pythonhosted.org setuptools wheel typing==3.7.4.1
 
 COPY . .
 
 RUN poetry export --without-hashes -E all -E xrootd -f requirements.txt > requirements.poetry.txt && \
-    pip install --ignore-installed --requirement requirements.poetry.txt && \
-    pip install -e .
+    pip install --trusted-host pypi.org --trusted-host pypi.python.org \
+    --trusted-host files.pythonhosted.org --ignore-installed --requirement requirements.poetry.txt && \
+    pip install --trusted-host pypi.org --trusted-host pypi.python.org \
+    --trusted-host files.pythonhosted.org -e .
 
 WORKDIR /usr/var/inspirehep-instance/static
 
