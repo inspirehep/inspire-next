@@ -82,10 +82,10 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [package.extras]
-azure-pipelines = ["coverage", "hypothesis", "pympler", "pytest (>=4.3.0)", "pytest-azurepipelines", "six", "zope.interface"]
-dev = ["coverage", "hypothesis", "pre-commit", "pympler", "pytest (>=4.3.0)", "six", "sphinx", "zope.interface"]
 docs = ["sphinx", "zope.interface"]
 tests = ["coverage", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "zope.interface"]
+azure-pipelines = ["coverage", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "zope.interface", "pytest-azurepipelines"]
+dev = ["coverage", "hypothesis", "pympler", "pytest (>=4.3.0)", "six", "zope.interface", "sphinx", "pre-commit"]
 
 [[package]]
 name = "automat"
@@ -100,7 +100,7 @@ attrs = ">=19.2.0"
 six = "*"
 
 [package.extras]
-visualize = ["Twisted (>=16.1.1)", "graphviz (>0.5.1)"]
+visualize = ["graphviz (>0.5.1)", "Twisted (>=16.1.1)"]
 
 [[package]]
 name = "autosemver"
@@ -149,8 +149,8 @@ optional = false
 python-versions = ">=2.6"
 
 [package.extras]
-docs = ["jaraco.packaging (>=3.2)", "rst.linker (>=1.9)", "sphinx"]
-testing = ["pytest (>=3.5,!=3.7.3)", "pytest-black-multipy", "pytest-checkdocs (>=1.2.3)", "pytest-cov", "pytest-flake8"]
+docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
+testing = ["pytest (>=3.5,!=3.7.3)", "pytest-checkdocs (>=1.2.3)", "pytest-flake8", "pytest-black-multipy", "pytest-cov"]
 
 [[package]]
 name = "backports.shutil-get-terminal-size"
@@ -191,9 +191,9 @@ python-versions = "*"
 six = ">=1.10"
 
 [package.extras]
-all = ["Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0)", "pytest (>=3.6.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest-runner (>=2.7.0)"]
 docs = ["Sphinx (>=1.4.2)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0)", "pytest (>=3.6.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest-runner (>=2.7.0)"]
+all = ["Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest-runner (>=2.7.0)", "pytest (>=3.6.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest-runner (>=2.7.0)", "pytest (>=3.6.0)"]
 
 [[package]]
 name = "beautifulsoup4"
@@ -207,8 +207,8 @@ python-versions = "*"
 soupsieve = ">=1.2"
 
 [package.extras]
-html5lib = ["html5lib"]
 lxml = ["lxml"]
+html5lib = ["html5lib"]
 
 [[package]]
 name = "billiard"
@@ -300,38 +300,38 @@ pytz = ">0.0-dev"
 vine = "1.3.0"
 
 [package.extras]
-arangodb = ["pyArango (>=1.3.2)"]
-auth = ["cryptography"]
-azureblockblob = ["azure-common (==1.1.5)", "azure-storage (==0.36.0)", "azure-storage-common (==1.1.0)"]
-brotli = ["brotli (>=1.0.0)", "brotlipy (>=0.7.0)"]
-cassandra = ["cassandra-driver"]
-consul = ["python-consul"]
-cosmosdbsql = ["pydocumentdb (==2.3.2)"]
-couchbase = ["couchbase", "couchbase-cffi"]
-couchdb = ["pycouchdb"]
-django = ["Django (>=1.11)"]
-dynamodb = ["boto3 (>=1.9.178)"]
-elasticsearch = ["elasticsearch"]
-eventlet = ["eventlet (>=0.24.1)"]
-gevent = ["gevent"]
-librabbitmq = ["librabbitmq (>=1.5.0)"]
-lzma = ["backports.lzma"]
-memcache = ["pylibmc"]
-mongodb = ["pymongo[srv] (>=3.3.0)"]
-msgpack = ["msgpack"]
-pymemcache = ["python-memcached"]
-pyro = ["pyro4"]
 redis = ["redis (>=3.2.0)"]
-riak = ["riak (>=2.0)"]
+consul = ["python-consul"]
+zookeeper = ["kazoo (>=1.3.1)"]
+brotli = ["brotli (>=1.0.0)", "brotlipy (>=0.7.0)"]
+gevent = ["gevent"]
+azureblockblob = ["azure-storage (==0.36.0)", "azure-common (==1.1.5)", "azure-storage-common (==1.1.0)"]
+cassandra = ["cassandra-driver"]
+lzma = ["backports.lzma"]
+msgpack = ["msgpack"]
+eventlet = ["eventlet (>=0.24.1)"]
 s3 = ["boto3 (>=1.9.125)"]
+couchdb = ["pycouchdb"]
+arangodb = ["pyArango (>=1.3.2)"]
+dynamodb = ["boto3 (>=1.9.178)"]
+yaml = ["PyYAML (>=3.10)"]
+sqs = ["boto3 (>=1.9.125)", "pycurl (==7.43.0.2)"]
+zstd = ["zstandard"]
+riak = ["riak (>=2.0)"]
+sqlalchemy = ["sqlalchemy"]
+librabbitmq = ["librabbitmq (>=1.5.0)"]
+mongodb = ["pymongo[srv] (>=3.3.0)"]
+pymemcache = ["python-memcached"]
+auth = ["cryptography"]
 slmq = ["softlayer-messaging (>=1.0.3)"]
 solar = ["ephem"]
-sqlalchemy = ["sqlalchemy"]
-sqs = ["boto3 (>=1.9.125)", "pycurl (==7.43.0.2)"]
+cosmosdbsql = ["pydocumentdb (==2.3.2)"]
 tblib = ["tblib (>=1.3.0)", "tblib (>=1.5.0)"]
-yaml = ["PyYAML (>=3.10)"]
-zookeeper = ["kazoo (>=1.3.1)"]
-zstd = ["zstandard"]
+couchbase = ["couchbase", "couchbase-cffi"]
+django = ["Django (>=1.11)"]
+pyro = ["pyro4"]
+memcache = ["pylibmc"]
+elasticsearch = ["elasticsearch"]
 
 [[package]]
 name = "certifi"
@@ -407,8 +407,8 @@ optional = false
 python-versions = ">=2.6"
 
 [package.extras]
-docs = ["jaraco.packaging (>=3.2)", "rst.linker (>=1.9)", "sphinx"]
-testing = ["pytest (>=3.5,!=3.7.3)", "pytest-black-multipy", "pytest-checkdocs (>=1.2)", "pytest-flake8"]
+docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
+testing = ["pytest (>=3.5,!=3.7.3)", "pytest-checkdocs (>=1.2)", "pytest-flake8", "pytest-black-multipy"]
 
 [[package]]
 name = "constantly"
@@ -467,11 +467,11 @@ ipaddress = {version = "*", markers = "python_version < \"3\""}
 six = ">=1.4.1"
 
 [package.extras]
-docs = ["sphinx (>=1.6.5,!=1.8.0,!=3.1.0,!=3.1.1)", "sphinx-rtd-theme"]
-docstest = ["doc8", "pyenchant (>=1.6.11)", "sphinxcontrib-spelling (>=4.0.1)", "twine (>=1.12.0)"]
+test = ["pytest (>=3.6.0,!=3.9.0,!=3.9.1,!=3.9.2)", "pretend", "iso8601", "pytz", "hypothesis (>=1.11.4,!=3.79.2)"]
 pep8test = ["black", "flake8", "flake8-import-order", "pep8-naming"]
+docstest = ["doc8", "pyenchant (>=1.6.11)", "twine (>=1.12.0)", "sphinxcontrib-spelling (>=4.0.1)"]
 ssh = ["bcrypt (>=3.1.5)"]
-test = ["hypothesis (>=1.11.4,!=3.79.2)", "iso8601", "pretend", "pytest (>=3.6.0,!=3.9.0,!=3.9.1,!=3.9.2)", "pytz"]
+docs = ["sphinx (>=1.6.5,!=1.8.0,!=3.1.0,!=3.1.1)", "sphinx-rtd-theme"]
 
 [[package]]
 name = "cssselect"
@@ -499,8 +499,8 @@ python-versions = "*"
 develop = true
 
 [package.extras]
-all = ["Sphinx (>=1.4.4)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "numpy (>=1.11.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "sphinx-rtd-theme (>=0.1.9)"]
 docs = ["Sphinx (>=1.4.4)", "sphinx-rtd-theme (>=0.1.9)"]
+all = ["Sphinx (>=1.4.4)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "numpy (>=1.11.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "sphinx-rtd-theme (>=0.1.9)"]
 numpy = ["numpy (>=1.11.0)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
 
@@ -531,10 +531,10 @@ lxml = ">=3.4"
 simplejson = ">=3.8.1"
 
 [package.extras]
-all = ["Sphinx (>=1.5.2)", "Sphinx (>=1.5.2)", "check-manifest (>=0.25)", "check-manifest (>=0.25)", "coverage (>=4.0)", "coverage (>=4.0)", "coverage (>=4.0.0)", "coverage (>=4.0.0)", "isort (>=4.2.2)", "isort (>=4.2.2)", "jsonschema (>=2.5.1)", "jsonschema (>=2.5.1)", "jsonschema (>=2.5.1)", "jsonschema (>=2.5.1)", "mock (>=1.0.0)", "mock (>=1.0.0)", "pydocstyle (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cache (>=1.0)", "pytest-cov (>=2.1.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)", "pytest-pep8 (>=1.0.6)"]
 docs = ["Sphinx (>=1.5.2)"]
+all = ["Sphinx (>=1.5.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "coverage (>=4.0.0)", "isort (>=4.2.2)", "jsonschema (>=2.5.1)", "mock (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "jsonschema (>=2.5.1)", "Sphinx (>=1.5.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "coverage (>=4.0.0)", "isort (>=4.2.2)", "jsonschema (>=2.5.1)", "mock (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "jsonschema (>=2.5.1)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "coverage (>=4.0.0)", "isort (>=4.2.2)", "jsonschema (>=2.5.1)", "mock (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 jsonschema = ["jsonschema (>=2.5.1)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "coverage (>=4.0.0)", "isort (>=4.2.2)", "jsonschema (>=2.5.1)", "mock (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)"]
 
 [[package]]
 name = "dulwich"
@@ -550,8 +550,8 @@ urllib3 = ">=1.24.1"
 
 [package.extras]
 fastimport = ["fastimport"]
-https = ["urllib3[secure] (>=1.24.1)"]
 pgp = ["gpg"]
+https = ["urllib3[secure] (>=1.24.1)"]
 
 [[package]]
 name = "editdistance"
@@ -573,8 +573,8 @@ python-versions = "*"
 urllib3 = ">=1.21.1"
 
 [package.extras]
-develop = ["coverage", "mock", "nose", "nosexcover", "pyaml", "requests (>=2.0.0,<3.0.0)", "sphinx (<1.7)", "sphinx-rtd-theme"]
 requests = ["requests (>=2.4.0,<3.0.0)"]
+develop = ["requests (>=2.0.0,<3.0.0)", "nose", "coverage", "mock", "pyaml", "nosexcover", "sphinx (<1.7)", "sphinx-rtd-theme"]
 
 [[package]]
 name = "elasticsearch-dsl"
@@ -591,7 +591,7 @@ python-dateutil = "*"
 six = "*"
 
 [package.extras]
-develop = ["coverage (<5.0.0)", "mock", "pytest (>=3.0.0)", "pytest-cov", "pytest-mock", "pytz", "sphinx", "sphinx-rtd-theme"]
+develop = ["mock", "pytest (>=3.0.0)", "pytest-cov", "pytest-mock", "pytz", "coverage (<5.0.0)", "sphinx", "sphinx-rtd-theme"]
 
 [[package]]
 name = "entrypoints"
@@ -668,8 +668,8 @@ Flask = ">=0.7"
 wtforms = "*"
 
 [package.extras]
-aws = ["boto"]
 azure = ["azure-storage-blob"]
+aws = ["boto"]
 
 [[package]]
 name = "flask-alembic"
@@ -725,9 +725,9 @@ Flask-Menu = ">=0.2"
 six = ">=1.10.0"
 
 [package.extras]
-all = ["Sphinx (>=1.4.2)", "Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "check-manifest (>=0.25)", "coverage (>=4.0)", "coverage (>=4.0)", "isort (>=4.2.2)", "isort (>=4.2.2)", "mock (>=1.0.0)", "mock (>=1.0.0)", "pydocstyle (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest-pep8 (>=1.0.6)"]
 docs = ["Sphinx (>=1.4.2)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
+all = ["Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
 name = "flask-caching"
@@ -753,9 +753,9 @@ celery = {version = ">=3.1", markers = "python_version < \"3.7\""}
 Flask = ">=0.10"
 
 [package.extras]
-all = ["Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.4)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-mock (>=1.6.0)", "pytest-pep8 (>=1.0.6)"]
 docs = ["Sphinx (>=1.4.2)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.4)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-mock (>=1.6.0)", "pytest-pep8 (>=1.0.6)"]
+all = ["Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.4)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "pytest-mock (>=1.6.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.4)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "pytest-mock (>=1.6.0)"]
 
 [[package]]
 name = "flask-cli"
@@ -770,9 +770,9 @@ click = ">=2.0"
 Flask = ">=0.10"
 
 [package.extras]
-all = ["Sphinx (>=1.3)", "Sphinx (>=1.3)", "check-manifest (>=0.25)", "check-manifest (>=0.25)", "coverage (>=4.0)", "coverage (>=4.0)", "isort (>=4.2.2)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest-pep8 (>=1.0.6)"]
 docs = ["Sphinx (>=1.3)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
+all = ["Sphinx (>=1.3)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.3)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
 name = "flask-collect"
@@ -809,9 +809,9 @@ python-versions = "*"
 Flask = ">=0.10"
 
 [package.extras]
-all = ["Sphinx (>=1.4.2)", "Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "check-manifest (>=0.25)", "coverage (>=4.0)", "coverage (>=4.0)", "isort (>=4.2.2)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest-pep8 (>=1.0.6)"]
 docs = ["Sphinx (>=1.4.2)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
+all = ["Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
 name = "flask-kvsession"
@@ -864,10 +864,10 @@ Flask = ">=0.10.1"
 six = ">=1.9.0"
 
 [package.extras]
-all = ["check-manifest (>=0.25)", "coverage (>=4.0)", "flask-classy (>=0.6.10)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)", "sphinx (>=1.3)"]
-classy = ["flask-classy (>=0.6.10)"]
 docs = ["sphinx (>=1.3)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "flask-classy (>=0.6.10)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)"]
+all = ["sphinx (>=1.3)", "flask-classy (>=0.6.10)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)"]
+tests = ["flask-classy (>=0.6.10)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)"]
+classy = ["flask-classy (>=0.6.10)"]
 
 [[package]]
 name = "flask-oauthlib"
@@ -913,9 +913,9 @@ itsdangerous = ">=0.21"
 passlib = ">=1.7"
 
 [package.extras]
-all = ["Flask-CLI (>=0.4.0)", "Flask-CLI (>=0.4.0)", "Flask-Mongoengine (>=0.7.0)", "Flask-Mongoengine (>=0.7.0)", "Flask-Peewee (>=0.6.5)", "Flask-Peewee (>=0.6.5)", "Flask-SQLAlchemy (>=1.0)", "Flask-SQLAlchemy (>=1.0)", "Flask-Sphinx-Themes (>=1.0.1)", "Flask-Sphinx-Themes (>=1.0.1)", "Sphinx (>=1.4.2)", "Sphinx (>=1.4.2)", "bcrypt (>=1.0.2)", "bcrypt (>=1.0.2)", "check-manifest (>=0.25)", "check-manifest (>=0.25)", "coverage (>=4.0)", "coverage (>=4.0)", "isort (>=4.2.2)", "isort (>=4.2.2)", "mock (>=1.3.0)", "mock (>=1.3.0)", "mongoengine (>=0.10.0)", "mongoengine (>=0.10.0)", "pony (>=0.7.1)", "pony (>=0.7.1)", "pydocstyle (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=3.0.5)", "pytest (>=3.0.5)", "pytest-cache (>=1.0)", "pytest-cache (>=1.0)", "pytest-cov (>=2.4.0)", "pytest-cov (>=2.4.0)", "pytest-flakes (>=1.0.1)", "pytest-flakes (>=1.0.1)", "pytest-pep8 (>=1.0.6)", "pytest-pep8 (>=1.0.6)", "pytest-translations (>=1.0.4)", "pytest-translations (>=1.0.4)", "sqlalchemy (>=0.8.0)", "sqlalchemy (>=0.8.0)"]
 docs = ["Flask-Sphinx-Themes (>=1.0.1)", "Sphinx (>=1.4.2)"]
-tests = ["Flask-CLI (>=0.4.0)", "Flask-Mongoengine (>=0.7.0)", "Flask-Peewee (>=0.6.5)", "Flask-SQLAlchemy (>=1.0)", "bcrypt (>=1.0.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "mongoengine (>=0.10.0)", "pony (>=0.7.1)", "pydocstyle (>=1.0.0)", "pytest (>=3.0.5)", "pytest-cache (>=1.0)", "pytest-cov (>=2.4.0)", "pytest-flakes (>=1.0.1)", "pytest-pep8 (>=1.0.6)", "pytest-translations (>=1.0.4)", "sqlalchemy (>=0.8.0)"]
+all = ["Flask-Sphinx-Themes (>=1.0.1)", "Sphinx (>=1.4.2)", "Flask-CLI (>=0.4.0)", "Flask-Mongoengine (>=0.7.0)", "Flask-Peewee (>=0.6.5)", "Flask-SQLAlchemy (>=1.0)", "bcrypt (>=1.0.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "mongoengine (>=0.10.0)", "pony (>=0.7.1)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=2.4.0)", "pytest-flakes (>=1.0.1)", "pytest-pep8 (>=1.0.6)", "pytest-translations (>=1.0.4)", "pytest (>=3.0.5)", "sqlalchemy (>=0.8.0)", "Flask-Sphinx-Themes (>=1.0.1)", "Sphinx (>=1.4.2)", "Flask-CLI (>=0.4.0)", "Flask-Mongoengine (>=0.7.0)", "Flask-Peewee (>=0.6.5)", "Flask-SQLAlchemy (>=1.0)", "bcrypt (>=1.0.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "mongoengine (>=0.10.0)", "pony (>=0.7.1)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=2.4.0)", "pytest-flakes (>=1.0.1)", "pytest-pep8 (>=1.0.6)", "pytest-translations (>=1.0.4)", "pytest (>=3.0.5)", "sqlalchemy (>=0.8.0)"]
+tests = ["Flask-CLI (>=0.4.0)", "Flask-Mongoengine (>=0.7.0)", "Flask-Peewee (>=0.6.5)", "Flask-SQLAlchemy (>=1.0)", "bcrypt (>=1.0.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "mongoengine (>=0.10.0)", "pony (>=0.7.1)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=2.4.0)", "pytest-flakes (>=1.0.1)", "pytest-pep8 (>=1.0.6)", "pytest-translations (>=1.0.4)", "pytest (>=3.0.5)", "sqlalchemy (>=0.8.0)"]
 
 [[package]]
 name = "flask-shell-ipython"
@@ -963,9 +963,9 @@ pynpm = ">=0.1.1"
 pywebpack = ">=1.0.0"
 
 [package.extras]
-all = ["Sphinx (>=1.5.1)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "check-manifest (>=0.25)", "coverage (>=4.0)", "coverage (>=4.0)", "isort (>=4.2.2)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest-pep8 (>=1.0.6)", "sphinx-click (>=1.4.0)", "sphinx-click (>=1.4.0)"]
 docs = ["Sphinx (>=1.5.1)", "sphinx-click (>=1.4.0)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
+all = ["Sphinx (>=1.5.1)", "sphinx-click (>=1.4.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.5.1)", "sphinx-click (>=1.4.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
 name = "flask-wtf"
@@ -1107,9 +1107,9 @@ optional = true
 python-versions = ">=2.6, !=3.0.*, !=3.1.*"
 
 [package.extras]
-eventlet = ["eventlet (>=0.9.7)"]
-gevent = ["gevent (>=0.13)"]
 tornado = ["tornado (>=0.2)"]
+gevent = ["gevent (>=0.13)"]
+eventlet = ["eventlet (>=0.9.7)"]
 
 [[package]]
 name = "harvestingkit"
@@ -1172,9 +1172,9 @@ structlog = "20.1.0"
 Twisted = ">=18.9.0,<19.0"
 
 [package.extras]
-all = ["Sphinx (>=1.5,<2.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "deepdiff (==3.3.0)", "docutils (==0.17.1)", "freezegun (>=0.3.9)", "isort (==4.2.2)", "mock (>=2.0.0,<3.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)", "pyyaml", "requests-mock (>=1.3.0)", "sphinxcontrib-napoleon (>=0.6.1)"]
 docs = ["Sphinx (>=1.5,<2.0)", "docutils (==0.17.1)", "sphinxcontrib-napoleon (>=0.6.1)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "deepdiff (==3.3.0)", "freezegun (>=0.3.9)", "isort (==4.2.2)", "mock (>=2.0.0,<3.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)", "pyyaml", "requests-mock (>=1.3.0)"]
+all = ["pyyaml", "Sphinx (>=1.5,<2.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "deepdiff (==3.3.0)", "docutils (==0.17.1)", "freezegun (>=0.3.9)", "isort (==4.2.2)", "mock (>=2.0.0,<3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "requests-mock (>=1.3.0)", "sphinxcontrib-napoleon (>=0.6.1)"]
+tests = ["pyyaml", "check-manifest (>=0.25)", "coverage (>=4.0)", "deepdiff (==3.3.0)", "freezegun (>=0.3.9)", "isort (==4.2.2)", "mock (>=2.0.0,<3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=2.1.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "requests-mock (>=1.3.0)"]
 
 [[package]]
 name = "honcho"
@@ -1203,11 +1203,11 @@ six = ">=1.9"
 webencodings = "*"
 
 [package.extras]
-all = ["chardet (>=2.2)", "datrie", "genshi", "lxml"]
-chardet = ["chardet (>=2.2)"]
+all = ["genshi", "chardet (>=2.2)", "datrie", "lxml"]
 datrie = ["datrie"]
-genshi = ["genshi"]
+chardet = ["chardet (>=2.2)"]
 lxml = ["lxml"]
+genshi = ["genshi"]
 
 [[package]]
 name = "htmlparser"
@@ -1257,20 +1257,20 @@ python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [[package]]
 name = "idutils"
-version = "1.1.11"
+version = "1.1.14"
 description = "Small library for persistent identifiers used in scholarly communication."
 category = "main"
 optional = false
 python-versions = "*"
 
 [package.dependencies]
-isbnid-fork = ">=0.4.4"
+isbnlib = ">=3.10.8"
 six = ">=1.10"
 
 [package.extras]
-all = ["Sphinx (>=3)", "pytest-cache (>=1.0)", "pytest-invenio (>=1.4.0)", "pytest-runner (>=2.6.2)"]
-docs = ["Sphinx (>=3)"]
-tests = ["pytest-cache (>=1.0)", "pytest-invenio (>=1.4.0)", "pytest-runner (>=2.6.2)"]
+docs = ["Sphinx (>=4.2.0)"]
+all = ["Sphinx (>=4.2.0)", "pytest-cache (>=1.0)", "pytest-runner (>=2.6.2)", "pytest-invenio (>=1.4.0)"]
+tests = ["pytest-cache (>=1.0)", "pytest-runner (>=2.6.2)", "pytest-invenio (>=1.4.0)"]
 
 [[package]]
 name = "imagesize"
@@ -1295,8 +1295,8 @@ pathlib2 = {version = "*", markers = "python_version < \"3\""}
 zipp = ">=0.5"
 
 [package.extras]
-docs = ["rst.linker", "sphinx"]
-testing = ["importlib-resources", "packaging"]
+docs = ["sphinx", "rst.linker"]
+testing = ["packaging", "importlib-resources"]
 
 [[package]]
 name = "incremental"
@@ -1318,7 +1318,7 @@ optional = false
 python-versions = "*"
 
 [package.extras]
-test = ["Pygments (>=1.2)", "flake8 (>=2.4.0)", "isort (>=4.2.2)", "pytest (>=2.2.3)", "six (>=1.4.1)"]
+test = ["pytest (>=2.2.3)", "Pygments (>=1.2)", "six (>=1.4.1)", "flake8 (>=2.4.0)", "isort (>=4.2.2)"]
 
 [[package]]
 name = "influxdb"
@@ -1335,7 +1335,7 @@ requests = ">=2.17.0"
 six = ">=1.10.0"
 
 [package.extras]
-test = ["mock", "nose", "nose-cov", "requests-mock"]
+test = ["nose", "nose-cov", "mock", "requests-mock"]
 
 [[package]]
 name = "inspire-crawler"
@@ -1383,11 +1383,11 @@ WTForms = "2.2.1"
 
 [package.extras]
 all = ["Sphinx (>=1.5,<1.6)", "check-manifest (>=0.25)", "coverage (>=4.0)", "mock (>=2.0.0,<3.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "requests-mock (>=1.4.0,<2.0)"]
-docs = ["Sphinx (>=1.5,<1.6)"]
-mysql = ["invenio-db[versioning,mysql] (==1.0.4)"]
 postgresql = ["invenio-db[postgresql,versioning] (==1.0.4)", "psycopg2-binary (==2.8.4)"]
+docs = ["Sphinx (>=1.5,<1.6)"]
 sqlite = ["invenio-db[versioning] (==1.0.4)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "mock (>=2.0.0,<3.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "requests-mock (>=1.4.0,<2.0)"]
+mysql = ["invenio-db[versioning,mysql] (==1.0.4)"]
 
 [package.source]
 type = "git"
@@ -1418,6 +1418,21 @@ all = ["flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest (>=
 tests = ["flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest (>=4.6,<5.0)", "pytest-cov (>=2.6.1,<3.0)", "unicode-string-literal (>=1.1,<2.0)"]
 
 [[package]]
+name = "inspire-idutils"
+version = "1.2.4"
+description = "\"Small library for persistent identifiers used in scholarly communication.\""
+category = "main"
+optional = false
+python-versions = ">=2.7"
+
+[package.dependencies]
+isbnlib = ">=3.10.8"
+six = ">=1.10"
+
+[package.extras]
+tests = ["pytest-black-ng (>=0.4.0)", "pytest-cache (>=1.0)", "pytest-runner (>=2.6.2)", "pytest-invenio (>=1.4.0)", "sphinx (>=4.5)"]
+
+[[package]]
 name = "inspire-json-merger"
 version = "11.0.34"
 description = "INSPIRE-specific configuration of the JSON Merger."
@@ -1433,8 +1448,8 @@ munkres = "1.0.12"
 pyrsistent = ">=0.14.0,<1.0"
 
 [package.extras]
-all = ["decorator (>=4.1.2,<5.0)", "flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest (>=3.6.0,<4.0)", "pytest-cov (>=2.6.1,<3.0)"]
-tests = ["decorator (>=4.1.2,<5.0)", "flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest (>=3.6.0,<4.0)", "pytest-cov (>=2.6.1,<3.0)"]
+all = ["decorator (>=4.1.2,<5.0)", "flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest-cov (>=2.6.1,<3.0)", "pytest (>=3.6.0,<4.0)"]
+tests = ["decorator (>=4.1.2,<5.0)", "flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest-cov (>=2.6.1,<3.0)", "pytest (>=3.6.0,<4.0)"]
 
 [[package]]
 name = "inspire-matcher"
@@ -1456,11 +1471,11 @@ six = ">=1.11.0,<2.0"
 Werkzeug = ">=0.12.2,<1.0"
 
 [package.extras]
-all = ["flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest (>=3.6.0,<4.0)", "pytest-cov (>=2.0,<2.6.0)", "unicode-string-literal (>=1.1,<2.0)"]
-elasticsearch2 = ["elasticsearch (>=2.4.1,<3.0)", "elasticsearch-dsl (>=2.2.0,<3.0)"]
-elasticsearch5 = ["elasticsearch (>=5.0,<6.0)", "elasticsearch-dsl (>=5.0,<6.0)"]
-elasticsearch7 = ["elasticsearch (>=7.0,<8.0)", "elasticsearch-dsl (>=7.0,<8.0)"]
-tests = ["flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest (>=3.6.0,<4.0)", "pytest-cov (>=2.0,<2.6.0)", "unicode-string-literal (>=1.1,<2.0)"]
+elasticsearch5 = ["elasticsearch-dsl (>=5.0,<6.0)", "elasticsearch (>=5.0,<6.0)"]
+all = ["flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest-cov (>=2.0,<2.6.0)", "pytest (>=3.6.0,<4.0)", "unicode-string-literal (>=1.1,<2.0)"]
+elasticsearch7 = ["elasticsearch-dsl (>=7.0,<8.0)", "elasticsearch (>=7.0,<8.0)"]
+tests = ["flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest-cov (>=2.0,<2.6.0)", "pytest (>=3.6.0,<4.0)", "unicode-string-literal (>=1.1,<2.0)"]
+elasticsearch2 = ["elasticsearch-dsl (>=2.2.0,<3.0)", "elasticsearch (>=2.4.1,<3.0)"]
 
 [[package]]
 name = "inspire-query-parser"
@@ -1478,12 +1493,12 @@ python-dateutil = ">=2.6.1,<3.0"
 six = ">=1.11.0,<2.0"
 
 [package.extras]
-all = ["flake8 (>=3.5.0,<4.0)", "mock (>=2.0.0,<3.0)", "pytest (>=3.2.2,<4.0)", "pytest-cov (>=2.0,<=2.6.0)"]
-tests = ["flake8 (>=3.5.0,<4.0)", "mock (>=2.0.0,<3.0)", "pytest (>=3.2.2,<4.0)", "pytest-cov (>=2.0,<=2.6.0)"]
+all = ["flake8 (>=3.5.0,<4.0)", "mock (>=2.0.0,<3.0)", "pytest-cov (>=2.0,<=2.6.0)", "pytest (>=3.2.2,<4.0)"]
+tests = ["flake8 (>=3.5.0,<4.0)", "mock (>=2.0.0,<3.0)", "pytest-cov (>=2.0,<=2.6.0)", "pytest (>=3.2.2,<4.0)"]
 
 [[package]]
 name = "inspire-schemas"
-version = "61.5.17"
+version = "61.5.29"
 description = "Inspire JSON schemas and utilities to use them."
 category = "main"
 optional = false
@@ -1492,12 +1507,13 @@ python-versions = "*"
 [package.dependencies]
 bleach = ">=3.2.1,<4.0"
 bump2version = {version = ">=0.0,<1", markers = "python_version == \"2.7\""}
-idutils = "1.1.11"
+inspire-idutils = {version = "1.2.4", markers = "python_version == \"2.7\""}
 inspire-utils = ">=3.0.0,<4.0"
+isbnid = "*"
 isodate = "*"
 jsonschema = ">=2.6.0,<3.0"
 pytz = "*"
-pyyaml = "5.4.1"
+pyyaml = "5.3.0"
 rfc3987 = "*"
 six = "*"
 Unidecode = ">=1.0.22,<2.0"
@@ -1505,7 +1521,7 @@ urllib3 = ">=1.21.1,<1.25.0 || >1.25.0,<1.25.1 || >1.25.1,<1.26"
 
 [package.extras]
 docs = ["jsonschema2rst (>=0.1)", "sphinx"]
-tests = ["check-manifest", "coverage", "idutils", "isort (>=4.3.0,<5.0)", "mock", "pytest (>=3.6.0,<4.0)", "pytest-cache", "pytest-cov (==2.6.1)", "pytest-pep8", "unicode-string-literal (>=1.1,<2.0)"]
+tests = ["check-manifest", "coverage", "isort (>=4.3.0,<5.0)", "pytest-cache", "pytest-cov (==2.6.1)", "pytest (>=3.6.0,<4.0)", "pytest-pep8", "mock", "isbnid", "inspire-idutils (==1.2.4)", "idutils (>=1.2.1,<2.0)", "unicode-string-literal (>=1.1,<2.0)"]
 
 [[package]]
 name = "inspire-service-orcid"
@@ -1540,8 +1556,8 @@ Unidecode = ">=1.0.22,<2.0"
 urllib3 = ">=1.0,<=1.26.12"
 
 [package.extras]
-all = ["flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest (>=4.6.0,<5.0)", "pytest-cov (>=2.5.1,<3.0)", "unicode-string-literal (>=1.1,<2.0)"]
-tests = ["flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest (>=4.6.0,<5.0)", "pytest-cov (>=2.5.1,<3.0)", "unicode-string-literal (>=1.1,<2.0)"]
+all = ["flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest-cov (>=2.5.1,<3.0)", "pytest (>=4.6.0,<5.0)", "unicode-string-literal (>=1.1,<2.0)"]
+tests = ["flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest-cov (>=2.5.1,<3.0)", "pytest (>=4.6.0,<5.0)", "unicode-string-literal (>=1.1,<2.0)"]
 
 [[package]]
 name = "intervals"
@@ -1555,7 +1571,7 @@ python-versions = "*"
 infinity = ">=0.1.3"
 
 [package.extras]
-test = ["Pygments (>=1.2)", "flake8 (>=2.4.0)", "isort (>=4.2.2)", "pytest (>=2.2.3)"]
+test = ["pytest (>=2.2.3)", "Pygments (>=1.2)", "flake8 (>=2.4.0)", "isort (>=4.2.2)"]
 
 [[package]]
 name = "invenio-access"
@@ -1572,12 +1588,12 @@ invenio-accounts = ">=1.0.2"
 six = ">=1.10"
 
 [package.extras]
-all = ["SQLAlchemy-Continuum (>=1.2.1)", "Sphinx (>=1.8.4)", "Werkzeug (>=0.11.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.0)", "mock (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=3.6.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "redis (>=2.10.3)"]
-docs = ["Sphinx (>=1.8.4)"]
-mysql = ["invenio-db[mysql] (>=1.0.0)"]
+all = ["Sphinx (>=1.8.4)", "SQLAlchemy-Continuum (>=1.2.1)", "Werkzeug (>=0.11.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.0)", "mock (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.6.0)", "redis (>=2.10.3)"]
 postgresql = ["invenio-db[postgresql] (>=1.0.0)"]
+docs = ["Sphinx (>=1.8.4)"]
 sqlite = ["invenio-db (>=1.0.0)"]
-tests = ["SQLAlchemy-Continuum (>=1.2.1)", "Werkzeug (>=0.11.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.0)", "mock (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=3.6.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "redis (>=2.10.3)"]
+tests = ["SQLAlchemy-Continuum (>=1.2.1)", "Werkzeug (>=0.11.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.0)", "mock (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.6.0)", "redis (>=2.10.3)"]
+mysql = ["invenio-db[mysql] (>=1.0.0)"]
 
 [[package]]
 name = "invenio-accounts"
@@ -1612,13 +1628,13 @@ SQLAlchemy-Utils = ">=0.31.0"
 ua-parser = ">=0.7.3"
 
 [package.extras]
-all = ["Sphinx (>=1.4.2,<1.6)", "celery (>=3.1.0,<4.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.0)", "mock (>=2.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cov (>=1.8.0)", "pytest-flask (>=0.10.0)", "pytest-pep8 (>=1.0.6)", "selenium (>=3.0.1)"]
-celery = ["celery (>=3.1.0,<4.0)"]
-docs = ["Sphinx (>=1.4.2,<1.6)"]
-mysql = ["invenio-db[versioning,mysql] (>=1.0.0)"]
+all = ["Sphinx (>=1.4.2,<1.6)", "celery (>=3.1.0,<4.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.0)", "mock (>=2.0.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-flask (>=0.10.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "selenium (>=3.0.1)"]
 postgresql = ["invenio-db[postgresql,versioning] (>=1.0.0)"]
+docs = ["Sphinx (>=1.4.2,<1.6)"]
 sqlite = ["invenio-db[versioning] (>=1.0.0)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.0)", "mock (>=2.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cov (>=1.8.0)", "pytest-flask (>=0.10.0)", "pytest-pep8 (>=1.0.6)", "selenium (>=3.0.1)"]
+celery = ["celery (>=3.1.0,<4.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.0)", "mock (>=2.0.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-flask (>=0.10.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "selenium (>=3.0.1)"]
+mysql = ["invenio-db[versioning,mysql] (>=1.0.0)"]
 
 [[package]]
 name = "invenio-admin"
@@ -1638,9 +1654,9 @@ invenio-db = ">=1.0.0"
 
 [package.extras]
 access = ["invenio-access (>=1.0.0)"]
-all = ["Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-theme (>=1.1.1)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
 docs = ["Sphinx (>=1.4.2)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-accounts (>=1.0.0)", "invenio-theme (>=1.1.1)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
+all = ["invenio-access (>=1.0.0)", "Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-accounts (>=1.0.0)", "invenio-theme (>=1.1.1)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-accounts (>=1.0.0)", "invenio-theme (>=1.1.1)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
 name = "invenio-assets"
@@ -1661,9 +1677,9 @@ speaklater = ">=1.3"
 webassets = ">=0.12"
 
 [package.extras]
-all = ["Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest (>=4.0.0,<5.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
 docs = ["Sphinx (>=1.5.1)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest (>=4.0.0,<5.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
+all = ["Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=4.0.0,<5.0.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=4.0.0,<5.0.0)"]
 
 [[package]]
 name = "invenio-base"
@@ -1679,9 +1695,9 @@ cookiecutter = ">=1.2.1"
 Flask = ">=0.11.1"
 
 [package.extras]
-all = ["Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-config (>=1.0.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=2.0.0)", "pytest (>=3.8.0,<5.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
 docs = ["Sphinx (>=1.4.2)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-config (>=1.0.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=2.0.0)", "pytest (>=3.8.0,<5.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
+all = ["Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=2.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.8.0,<5.0.0)", "invenio-config (>=1.0.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=2.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.8.0,<5.0.0)", "invenio-config (>=1.0.0)"]
 
 [[package]]
 name = "invenio-cache"
@@ -1696,10 +1712,10 @@ Flask = ">=0.11.1"
 Flask-Caching = ">=1.3.2"
 
 [package.extras]
-all = ["Flask-Login (>=0.3.0)", "Flask-Login (>=0.3.0)", "Sphinx (>=1.5.1)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "check-manifest (>=0.25)", "coverage (>=4.0)", "coverage (>=4.0)", "isort (>=4.2.2)", "isort (>=4.2.2)", "mock (>=2.0.0)", "mock (>=2.0.0)", "pydocstyle (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=3.2.0)", "pytest (>=3.2.0)", "pytest-cov (>=1.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest-pep8 (>=1.0.6)", "python-memcached (>=1.58)", "python-memcached (>=1.58)", "redis (>=2.10.5)", "redis (>=2.10.5)"]
 docs = ["Sphinx (>=1.5.1)"]
+all = ["Sphinx (>=1.5.1)", "Flask-Login (>=0.3.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=2.0.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.2.0)", "python-memcached (>=1.58)", "redis (>=2.10.5)", "Sphinx (>=1.5.1)", "Flask-Login (>=0.3.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=2.0.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.2.0)", "python-memcached (>=1.58)", "redis (>=2.10.5)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=2.0.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.2.0)", "python-memcached (>=1.58)", "redis (>=2.10.5)"]
 login = ["Flask-Login (>=0.3.0)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=2.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=3.2.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "python-memcached (>=1.58)", "redis (>=2.10.5)"]
 
 [[package]]
 name = "invenio-celery"
@@ -1716,9 +1732,9 @@ msgpack = ">=0.5.2"
 redis = ">=2.10.0"
 
 [package.extras]
-all = ["Sphinx (>=1.4.2)", "Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "check-manifest (>=0.25)", "coverage (>=4.0)", "coverage (>=4.0)", "isort (>=4.2.2)", "isort (>=4.2.2)", "mock (>=1.3.0)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest (>=2.8.0)", "pytest-cov (>=1.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest-pep8 (>=1.0.6)"]
 docs = ["Sphinx (>=1.4.2)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
+all = ["Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
 name = "invenio-classifier"
@@ -1735,9 +1751,9 @@ requests = ">=2.9.1"
 six = ">=1.10.0"
 
 [package.extras]
-all = ["Sphinx (>=1.4.2)", "Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "check-manifest (>=0.25)", "coverage (>=4.0)", "coverage (>=4.0)", "isort (>=4.2.2)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest-pep8 (>=1.0.6)"]
 docs = ["Sphinx (>=1.4.2)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
+all = ["Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
 name = "invenio-config"
@@ -1751,9 +1767,9 @@ python-versions = "*"
 Flask = ">=0.11.1"
 
 [package.extras]
-all = ["Sphinx (>=1.8.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=2.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=4.0.0,<5.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
 docs = ["Sphinx (>=1.8.0)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=2.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=4.0.0,<5.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
+all = ["Sphinx (>=1.8.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=2.0.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=4.0.0,<5.0.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=2.0.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=4.0.0,<5.0.0)"]
 
 [[package]]
 name = "invenio-db"
@@ -1773,11 +1789,11 @@ SQLAlchemy-Continuum = {version = ">=1.3.6", optional = true, markers = "extra =
 SQLAlchemy-Utils = ">=0.33.1"
 
 [package.extras]
-all = ["SQLAlchemy-Continuum (>=1.3.6)", "Sphinx (>=1.8.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "cryptography (>=2.1.4)", "isort (>=4.2.2)", "mock (>=1.3.0)", "psycopg2-binary (>=2.7.4)", "pydocstyle (>=1.0.0)", "pymysql (>=0.6.7)", "pytest (>=3.8.0,<5.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
-docs = ["Sphinx (>=1.8.0)"]
-mysql = ["pymysql (>=0.6.7)"]
+all = ["check-manifest (>=0.25)", "coverage (>=4.0)", "cryptography (>=2.1.4)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.8.0,<5.0.0)", "psycopg2-binary (>=2.7.4)", "Sphinx (>=1.8.0)", "pymysql (>=0.6.7)", "SQLAlchemy-Continuum (>=1.3.6)"]
 postgresql = ["psycopg2-binary (>=2.7.4)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "cryptography (>=2.1.4)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest (>=3.8.0,<5.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
+docs = ["Sphinx (>=1.8.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "cryptography (>=2.1.4)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.8.0,<5.0.0)"]
+mysql = ["pymysql (>=0.6.7)"]
 versioning = ["SQLAlchemy-Continuum (>=1.3.6)"]
 
 [[package]]
@@ -1800,12 +1816,12 @@ SQLAlchemy-Utils = ">=0.31.0"
 WTForms = ">=2.0"
 
 [package.extras]
-all = ["Flask-BabelEx (>=0.9.3)", "Flask-Menu (>=0.5.0)", "SQLAlchemy-Continuum (>=1.2.1)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-admin (>=1.0.0)", "invenio-celery (>=1.0.0)", "isort (>=4.3.4)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest (>=4.0.0,<5.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "sphinxcontrib-httpdomain (>=1.4.0)"]
-docs = ["Sphinx (>=1.5.1)", "sphinxcontrib-httpdomain (>=1.4.0)"]
-mysql = ["invenio-db[mysql] (>=1.0.0)"]
+all = ["Sphinx (>=1.5.1)", "sphinxcontrib-httpdomain (>=1.4.0)", "Flask-BabelEx (>=0.9.3)", "Flask-Menu (>=0.5.0)", "SQLAlchemy-Continuum (>=1.2.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-admin (>=1.0.0)", "invenio-celery (>=1.0.0)", "isort (>=4.3.4)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=4.0.0,<5.0.0)"]
 postgresql = ["invenio-db[postgresql] (>=1.0.0)"]
+docs = ["Sphinx (>=1.5.1)", "sphinxcontrib-httpdomain (>=1.4.0)"]
 sqlite = ["invenio-db (>=1.0.0)"]
-tests = ["Flask-BabelEx (>=0.9.3)", "Flask-Menu (>=0.5.0)", "SQLAlchemy-Continuum (>=1.2.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-admin (>=1.0.0)", "invenio-celery (>=1.0.0)", "isort (>=4.3.4)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest (>=4.0.0,<5.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
+tests = ["Flask-BabelEx (>=0.9.3)", "Flask-Menu (>=0.5.0)", "SQLAlchemy-Continuum (>=1.2.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-admin (>=1.0.0)", "invenio-celery (>=1.0.0)", "isort (>=4.3.4)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=4.0.0,<5.0.0)"]
+mysql = ["invenio-db[mysql] (>=1.0.0)"]
 
 [[package]]
 name = "invenio-i18n"
@@ -1821,9 +1837,9 @@ Flask-BabelEx = ">=0.9.2"
 flask-webpackext = ">=1.0.0"
 
 [package.extras]
-all = ["Flask-Login (>=0.3.0)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-assets (>=1.0.0)", "isort (>=4.3.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
 docs = ["Sphinx (>=1.5.1)"]
-tests = ["Flask-Login (>=0.3.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-assets (>=1.0.0)", "isort (>=4.3.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
+all = ["Sphinx (>=1.5.1)", "Flask-Login (>=0.3.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-assets (>=1.0.0)", "isort (>=4.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+tests = ["Flask-Login (>=0.3.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-assets (>=1.0.0)", "isort (>=4.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
 name = "invenio-indexer"
@@ -1841,13 +1857,13 @@ invenio-records = ">=1.0.0"
 pytz = ">=2016.4"
 
 [package.extras]
-all = ["Sphinx (>=1.5.1,<1.6)", "attrs (>=17.4.0)", "attrs (>=17.4.0)", "celery (>=3.1.16)", "check-manifest (>=0.25)", "check-manifest (>=0.25)", "coverage (>=4.0)", "coverage (>=4.0)", "invenio-db[versioning] (>=1.0.0)", "invenio-db[versioning] (>=1.0.0)", "isort (>=4.3.21)", "isort (>=4.3.21)", "mock (>=1.3.0)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest (>=2.8.0)", "pytest-cov (>=1.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest-pep8 (>=1.0.6)", "redis (>=2.10.0)", "redis (>=2.10.0)"]
+all = ["attrs (>=17.4.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-db[versioning] (>=1.0.0)", "isort (>=4.3.21)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "redis (>=2.10.0)", "attrs (>=17.4.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-db[versioning] (>=1.0.0)", "isort (>=4.3.21)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "redis (>=2.10.0)", "celery (>=3.1.16)", "Sphinx (>=1.5.1,<1.6)"]
 docs = ["Sphinx (>=1.5.1,<1.6)", "celery (>=3.1.16)"]
-elasticsearch2 = ["invenio-search[elasticsearch2] (>=1.2.0)"]
+tests = ["attrs (>=17.4.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-db[versioning] (>=1.0.0)", "isort (>=4.3.21)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "redis (>=2.10.0)"]
 elasticsearch5 = ["invenio-search[elasticsearch5] (>=1.2.0)"]
-elasticsearch6 = ["invenio-search[elasticsearch6] (>=1.2.0)"]
 elasticsearch7 = ["invenio-search[elasticsearch7] (>=1.2.0)"]
-tests = ["attrs (>=17.4.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-db[versioning] (>=1.0.0)", "isort (>=4.3.21)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "redis (>=2.10.0)"]
+elasticsearch6 = ["invenio-search[elasticsearch6] (>=1.2.0)"]
+elasticsearch2 = ["invenio-search[elasticsearch2] (>=1.2.0)"]
 
 [[package]]
 name = "invenio-jsonschemas"
@@ -1863,9 +1879,9 @@ functools32 = {version = ">=3.2.3.post2", markers = "python_version == \"2.7\""}
 jsonref = ">=0.1"
 
 [package.extras]
-all = ["Sphinx (>=1.6.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "jsonresolver[jsonschema] (>=0.2.1)", "mock (>=1.3.0)", "pydocstyle (>=2.0.0)", "pytest (>=4.0.0,<5.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
 docs = ["Sphinx (>=1.6.2)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "jsonresolver[jsonschema] (>=0.2.1)", "mock (>=1.3.0)", "pydocstyle (>=2.0.0)", "pytest (>=4.0.0,<5.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
+all = ["Sphinx (>=1.6.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "jsonresolver[jsonschema] (>=0.2.1)", "pydocstyle (>=2.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=4.0.0,<5.0.0)", "mock (>=1.3.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "jsonresolver[jsonschema] (>=0.2.1)", "pydocstyle (>=2.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=4.0.0,<5.0.0)", "mock (>=1.3.0)"]
 
 [[package]]
 name = "invenio-mail"
@@ -1880,10 +1896,10 @@ Flask = ">=0.11.1"
 Flask-Mail = ">=0.9.1"
 
 [package.extras]
-all = ["Flask-CeleryExt (>=0.2.2)", "Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
 celery = ["Flask-CeleryExt (>=0.2.2)"]
 docs = ["Flask-CeleryExt (>=0.2.2)", "Sphinx (>=1.4.2)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
+all = ["Flask-CeleryExt (>=0.2.2)", "Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
 name = "invenio-oaiharvester"
@@ -1901,11 +1917,11 @@ sickle = ">=0.5"
 
 [package.extras]
 all = ["Sphinx (>=1.5.3,<1.6)", "celery (>=3.1.25,<4.0)", "check-manifest (>=0.35)", "coverage (>=4.3.4)", "isort (==4.2.2)", "mock (>=2.0.0)", "pydocstyle (>=1.1.1)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=2.4.0)", "pytest-pep8 (>=1.0.6)", "responses (>=0.5.1)"]
-docs = ["Sphinx (>=1.5.3,<1.6)"]
-mysql = ["invenio-db[mysql] (>=1.0.0a9)"]
 postgresql = ["invenio-db[postgresql] (>=1.0.0a9)"]
+docs = ["Sphinx (>=1.5.3,<1.6)"]
 sqlite = ["invenio-db (>=1.0.0a9)"]
 tests = ["celery (>=3.1.25,<4.0)", "check-manifest (>=0.35)", "coverage (>=4.3.4)", "isort (==4.2.2)", "mock (>=2.0.0)", "pydocstyle (>=1.1.1)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=2.4.0)", "pytest-pep8 (>=1.0.6)", "responses (>=0.5.1)"]
+mysql = ["invenio-db[mysql] (>=1.0.0a9)"]
 
 [[package]]
 name = "invenio-oauth2server"
@@ -1933,14 +1949,14 @@ werkzeug = ">=0.14.1"
 WTForms-Alchemy = ">=0.15.0"
 
 [package.extras]
-admin = ["invenio-admin (>=1.0.0)"]
-all = ["SQLAlchemy-Continuum (>=1.2.1)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-admin (>=1.0.0)", "invenio-assets (>=1.0.0)", "invenio-i18n (>=1.0.0)", "invenio-theme (>=1.0.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest (>=3.8.0,<5.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "redis (>=2.10.5)"]
-docs = ["Sphinx (>=1.5.1)"]
-mysql = ["invenio-db[mysql] (>=1.0.0)"]
+all = ["invenio-admin (>=1.0.0)", "Sphinx (>=1.5.1)", "redis (>=2.10.5)", "SQLAlchemy-Continuum (>=1.2.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-assets (>=1.0.0)", "invenio-i18n (>=1.0.0)", "invenio-theme (>=1.0.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.8.0,<5.0.0)"]
 postgresql = ["invenio-db[postgresql] (>=1.0.0)"]
+admin = ["invenio-admin (>=1.0.0)"]
+docs = ["Sphinx (>=1.5.1)"]
 redis = ["redis (>=2.10.5)"]
 sqlite = ["invenio-db (>=1.0.0)"]
-tests = ["SQLAlchemy-Continuum (>=1.2.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-assets (>=1.0.0)", "invenio-i18n (>=1.0.0)", "invenio-theme (>=1.0.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest (>=3.8.0,<5.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
+tests = ["SQLAlchemy-Continuum (>=1.2.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-assets (>=1.0.0)", "invenio-i18n (>=1.0.0)", "invenio-theme (>=1.0.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.8.0,<5.0.0)"]
+mysql = ["invenio-db[mysql] (>=1.0.0)"]
 
 [[package]]
 name = "invenio-oauthclient"
@@ -1965,14 +1981,14 @@ sqlalchemy-utils = ">=0.32.0"
 uritools = ">=1.0.1"
 
 [package.extras]
-admin = ["invenio-admin (>=1.0.0)"]
-all = ["SQLAlchemy-Continuum (>=1.2.1)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "github3.py (>=1.0.0a4)", "httpretty (>=0.8.14)", "invenio-accounts (>=1.0.0)", "invenio-admin (>=1.0.0)", "invenio-userprofiles (>=1.0.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.3)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "simplejson (>=3.8)", "uritemplate.py (>=0.2.0,<2.0)"]
-docs = ["Sphinx (>=1.5.1)"]
+all = ["github3.py (>=1.0.0a4)", "uritemplate.py (>=0.2.0,<2.0)", "invenio-admin (>=1.0.0)", "Sphinx (>=1.5.1)", "SQLAlchemy-Continuum (>=1.2.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "httpretty (>=0.8.14)", "invenio-accounts (>=1.0.0)", "invenio-userprofiles (>=1.0.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.3)", "simplejson (>=3.8)"]
 github = ["github3.py (>=1.0.0a4)", "uritemplate.py (>=0.2.0,<2.0)"]
-mysql = ["invenio-db[mysql] (>=1.0.0)"]
 postgresql = ["invenio-db[postgresql] (>=1.0.0)"]
+admin = ["invenio-admin (>=1.0.0)"]
+docs = ["Sphinx (>=1.5.1)"]
 sqlite = ["invenio-db (>=1.0.0)"]
-tests = ["SQLAlchemy-Continuum (>=1.2.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "httpretty (>=0.8.14)", "invenio-accounts (>=1.0.0)", "invenio-userprofiles (>=1.0.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.3)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "simplejson (>=3.8)"]
+tests = ["SQLAlchemy-Continuum (>=1.2.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "httpretty (>=0.8.14)", "invenio-accounts (>=1.0.0)", "invenio-userprofiles (>=1.0.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.3)", "simplejson (>=3.8)"]
+mysql = ["invenio-db[mysql] (>=1.0.0)"]
 
 [[package]]
 name = "invenio-pidstore"
@@ -1990,14 +2006,14 @@ Flask-BabelEx = ">=0.9.3"
 six = ">=1.12.0"
 
 [package.extras]
+all = ["Sphinx (>=1.8.5)", "Flask-Admin (>=1.3.0)", "datacite (>=0.1.0)", "attrs (>=17.4.0)", "SQLAlchemy-Continuum (>=1.2.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.0)", "invenio-admin (>=1.0.0)", "Flask-Menu (>=0.5.1)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "mock (>=3.0.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.8.0,<5.0.0)"]
+postgresql = ["invenio-db[postgresql] (>=1.0.0)"]
 admin = ["Flask-Admin (>=1.3.0)"]
-all = ["Flask-Admin (>=1.3.0)", "Flask-Menu (>=0.5.1)", "SQLAlchemy-Continuum (>=1.2.1)", "Sphinx (>=1.8.5)", "attrs (>=17.4.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "datacite (>=0.1.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-admin (>=1.0.0)", "isort (>=4.3.0)", "mock (>=3.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=3.8.0,<5.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
-datacite = ["datacite (>=0.1.0)"]
 docs = ["Sphinx (>=1.8.5)"]
 mysql = ["invenio-db[mysql] (>=1.0.0)"]
-postgresql = ["invenio-db[postgresql] (>=1.0.0)"]
 sqlite = ["invenio-db (>=1.0.0)"]
-tests = ["Flask-Menu (>=0.5.1)", "SQLAlchemy-Continuum (>=1.2.1)", "attrs (>=17.4.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-admin (>=1.0.0)", "isort (>=4.3.0)", "mock (>=3.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=3.8.0,<5.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
+tests = ["attrs (>=17.4.0)", "SQLAlchemy-Continuum (>=1.2.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.0)", "invenio-admin (>=1.0.0)", "Flask-Menu (>=0.5.1)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "mock (>=3.0.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.8.0,<5.0.0)"]
+datacite = ["datacite (>=0.1.0)"]
 
 [[package]]
 name = "invenio-records"
@@ -2017,14 +2033,14 @@ jsonresolver = ">=0.1.0"
 jsonschema = ">=2.5.1"
 
 [package.extras]
+all = ["Flask-Admin (>=1.3.0)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.5.3)", "Flask-Menu (>=0.4.0)", "invenio-admin (>=1.0.0)", "isort (>=4.3.0)", "mock (>=1.0.0)", "pydocstyle (>=3.0.0)", "pytest-cov (>=2.7.1)", "pytest-pep8 (>=1.0.6)", "pytest (>=4.6.4,<5.0.0)", "invenio-pidstore (>=1.0.0)"]
+postgresql = ["invenio-db[postgresql,versioning] (>=1.0.0)"]
 admin = ["Flask-Admin (>=1.3.0)"]
-all = ["Flask-Admin (>=1.3.0)", "Flask-Menu (>=0.4.0)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.5.3)", "invenio-admin (>=1.0.0)", "invenio-pidstore (>=1.0.0)", "isort (>=4.3.0)", "mock (>=1.0.0)", "pydocstyle (>=3.0.0)", "pytest (>=4.6.4,<5.0.0)", "pytest-cov (>=2.7.1)", "pytest-pep8 (>=1.0.6)"]
 docs = ["Sphinx (>=1.5.1)"]
+sqlite = ["invenio-db[versioning] (>=1.0.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.5.3)", "Flask-Menu (>=0.4.0)", "invenio-admin (>=1.0.0)", "isort (>=4.3.0)", "mock (>=1.0.0)", "pydocstyle (>=3.0.0)", "pytest-cov (>=2.7.1)", "pytest-pep8 (>=1.0.6)", "pytest (>=4.6.4,<5.0.0)"]
 mysql = ["invenio-db[versioning,mysql] (>=1.0.0)"]
 pidstore = ["invenio-pidstore (>=1.0.0)"]
-postgresql = ["invenio-db[postgresql,versioning] (>=1.0.0)"]
-sqlite = ["invenio-db[versioning] (>=1.0.0)"]
-tests = ["Flask-Menu (>=0.4.0)", "check-manifest (>=0.25)", "coverage (>=4.5.3)", "invenio-admin (>=1.0.0)", "isort (>=4.3.0)", "mock (>=1.0.0)", "pydocstyle (>=3.0.0)", "pytest (>=4.6.4,<5.0.0)", "pytest-cov (>=2.7.1)", "pytest-pep8 (>=1.0.6)"]
 
 [[package]]
 name = "invenio-records-files"
@@ -2041,12 +2057,12 @@ invenio-records = ">=1.0.0"
 invenio-records-rest = ">=1.6.3"
 
 [package.extras]
-all = ["Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-indexer (>=1.1.0)", "invenio-search[elasticsearch6] (>=1.2.0)", "isort (>=4.3.4)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest (>=3.7.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
-docs = ["Sphinx (>=1.5.1)"]
-mysql = ["invenio-db[versioning,mysql] (>=1.0.0)"]
+all = ["Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-indexer (>=1.1.0)", "invenio-search[elasticsearch6] (>=1.2.0)", "isort (>=4.3.4)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.7.0)"]
 postgresql = ["invenio-db[postgresql,versioning] (>=1.0.0)"]
+docs = ["Sphinx (>=1.5.1)"]
 sqlite = ["invenio-db[versioning] (>=1.0.0)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-indexer (>=1.1.0)", "invenio-search[elasticsearch6] (>=1.2.0)", "isort (>=4.3.4)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest (>=3.7.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-indexer (>=1.1.0)", "invenio-search[elasticsearch6] (>=1.2.0)", "isort (>=4.3.4)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.7.0)"]
+mysql = ["invenio-db[versioning,mysql] (>=1.0.0)"]
 
 [[package]]
 name = "invenio-records-rest"
@@ -2071,17 +2087,17 @@ python-dateutil = ">=2.4.2"
 six = ">=1.12"
 
 [package.extras]
-all = ["Flask-Login (>=0.3.2)", "Sphinx (>=1.6.7)", "check-manifest (>=0.25)", "citeproc-py (>=0.3.0)", "citeproc-py-styles (>=0.1.0)", "coverage (>=4.0)", "datacite (>=1.0.1)", "dcxml (>=0.1.0)", "invenio-config (>=1.0.2)", "invenio-db[all] (>=1.0.2)", "invenio-indexer (>=1.0.0)", "isort (>=4.3.1)", "pydocstyle (>=1.0.0)", "pyld (>=0.7.1)", "pytest (>=4.0.0,<5.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
+dublincore = ["dcxml (>=0.1.0)"]
+all = ["datacite (>=1.0.1)", "Sphinx (>=1.6.7)", "dcxml (>=0.1.0)", "citeproc-py (>=0.3.0)", "citeproc-py-styles (>=0.1.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "Flask-Login (>=0.3.2)", "invenio-db[all] (>=1.0.2)", "invenio-indexer (>=1.0.0)", "isort (>=4.3.1)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=4.0.0,<5.0.0)", "invenio-config (>=1.0.2)", "pyld (>=0.7.1)"]
+jsonld = ["pyld (>=0.7.1)"]
+docs = ["Sphinx (>=1.6.7)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "Flask-Login (>=0.3.2)", "invenio-db[all] (>=1.0.2)", "invenio-indexer (>=1.0.0)", "isort (>=4.3.1)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=4.0.0,<5.0.0)", "invenio-config (>=1.0.2)"]
+elasticsearch5 = ["invenio-search[elasticsearch5] (>=1.2.0)"]
+elasticsearch7 = ["invenio-search[elasticsearch7] (>=1.2.0)"]
+elasticsearch6 = ["invenio-search[elasticsearch6] (>=1.2.0)"]
+elasticsearch2 = ["invenio-search[elasticsearch2] (>=1.2.0)"]
 citeproc = ["citeproc-py (>=0.3.0)", "citeproc-py-styles (>=0.1.0)"]
 datacite = ["datacite (>=1.0.1)"]
-docs = ["Sphinx (>=1.6.7)"]
-dublincore = ["dcxml (>=0.1.0)"]
-elasticsearch2 = ["invenio-search[elasticsearch2] (>=1.2.0)"]
-elasticsearch5 = ["invenio-search[elasticsearch5] (>=1.2.0)"]
-elasticsearch6 = ["invenio-search[elasticsearch6] (>=1.2.0)"]
-elasticsearch7 = ["invenio-search[elasticsearch7] (>=1.2.0)"]
-jsonld = ["pyld (>=0.7.1)"]
-tests = ["Flask-Login (>=0.3.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-config (>=1.0.2)", "invenio-db[all] (>=1.0.2)", "invenio-indexer (>=1.0.0)", "isort (>=4.3.1)", "pydocstyle (>=1.0.0)", "pytest (>=4.0.0,<5.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
 
 [[package]]
 name = "invenio-records-ui"
@@ -2098,9 +2114,9 @@ invenio-pidstore = ">=1.0.0"
 invenio-records = ">=1.0.0"
 
 [package.extras]
-all = ["Sphinx (>=1.5.1)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "check-manifest (>=0.25)", "coverage (>=4.0)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[postgresql,versioning,mysql] (>=1.0.0)", "invenio-db[postgresql,versioning,mysql] (>=1.0.0)", "isort (>=4.2.2)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest (>=2.8.0)", "pytest-cov (>=1.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest-pep8 (>=1.0.6)"]
 docs = ["Sphinx (>=1.5.1)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[postgresql,versioning,mysql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
+all = ["Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[postgresql,versioning,mysql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[postgresql,versioning,mysql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-access (>=1.0.0)", "invenio-accounts (>=1.0.0)", "invenio-db[postgresql,versioning,mysql] (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
 name = "invenio-rest"
@@ -2117,9 +2133,9 @@ marshmallow = {version = ">=2.15.2,<3.0.0", markers = "python_version < \"3.0.0\
 webargs = ">=5.5.0,<6.0.0"
 
 [package.extras]
-all = ["Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.15)", "marshmallow (>=2.15.2)", "marshmallow (>=2.15.2,<3.0.0)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "xmltodict (>=0.11.0)"]
 docs = ["Sphinx (>=1.4.2)"]
-tests = ["Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.15)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "xmltodict (>=0.11.0)"]
+all = ["check-manifest (>=0.25)", "coverage (>=4.0)", "xmltodict (>=0.11.0)", "isort (>=4.2.15)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.4.2)", "marshmallow (>=2.15.2)", "marshmallow (>=2.15.2,<3.0.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "xmltodict (>=0.11.0)", "isort (>=4.2.15)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.4.2)"]
 
 [[package]]
 name = "invenio-search"
@@ -2135,13 +2151,13 @@ elasticsearch-dsl = {version = ">=7.0.0,<8.0.0", optional = true, markers = "ext
 Flask = ">=0.11.1"
 
 [package.extras]
-all = ["Sphinx (>=1.5.6,<1.6)", "check-manifest (>=0.35)", "coverage (>=4.0)", "invenio-accounts (>=1.0.0)", "invenio-db[versioning] (>=1.0.0)", "isort (>=4.2.15)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest (>=3.8.1,<4)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest-random-order (>=0.5.4)"]
+all = ["Sphinx (>=1.5.6,<1.6)", "invenio-accounts (>=1.0.0)", "check-manifest (>=0.35)", "coverage (>=4.0)", "invenio-db[versioning] (>=1.0.0)", "isort (>=4.2.15)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-random-order (>=0.5.4)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.8.1,<4)"]
 docs = ["Sphinx (>=1.5.6,<1.6)", "invenio-accounts (>=1.0.0)"]
-elasticsearch2 = ["elasticsearch (>=2.0.0,<3.0.0)", "elasticsearch-dsl (>=2.0.0,<3.0.0)"]
+tests = ["check-manifest (>=0.35)", "coverage (>=4.0)", "invenio-db[versioning] (>=1.0.0)", "isort (>=4.2.15)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-random-order (>=0.5.4)", "pytest-pep8 (>=1.0.6)", "pytest (>=3.8.1,<4)"]
 elasticsearch5 = ["elasticsearch (>=5.0.0,<6.0.0)", "elasticsearch-dsl (>=5.1.0,<6.0.0)"]
-elasticsearch6 = ["elasticsearch (>=6.0.0,<7.0.0)", "elasticsearch-dsl (>=6.0.0,<6.2.0)"]
 elasticsearch7 = ["elasticsearch (>=7.0.0,<8.0.0)", "elasticsearch-dsl (>=7.0.0,<8.0.0)"]
-tests = ["check-manifest (>=0.35)", "coverage (>=4.0)", "invenio-db[versioning] (>=1.0.0)", "isort (>=4.2.15)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest (>=3.8.1,<4)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest-random-order (>=0.5.4)"]
+elasticsearch6 = ["elasticsearch (>=6.0.0,<7.0.0)", "elasticsearch-dsl (>=6.0.0,<6.2.0)"]
+elasticsearch2 = ["elasticsearch (>=2.0.0,<3.0.0)", "elasticsearch-dsl (>=2.0.0,<3.0.0)"]
 
 [[package]]
 name = "invenio-userprofiles"
@@ -2162,13 +2178,13 @@ invenio-accounts = ">=1.0.0"
 WTForms = ">=2.0.1"
 
 [package.extras]
-admin = ["invenio-admin (>=1.0.0)"]
-all = ["SQLAlchemy-Continuum (>=1.2.1)", "Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-admin (>=1.0.0)", "invenio-i18n (>=1.0.0)", "invenio-mail (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
-docs = ["Sphinx (>=1.4.2)", "invenio-mail (>=1.0.0)"]
-mysql = ["invenio-db[mysql] (>=1.0.0)"]
+all = ["invenio-admin (>=1.0.0)", "Sphinx (>=1.4.2)", "invenio-mail (>=1.0.0)", "SQLAlchemy-Continuum (>=1.2.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-i18n (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 postgresql = ["invenio-db[postgresql] (>=1.0.0)"]
+admin = ["invenio-admin (>=1.0.0)"]
+docs = ["Sphinx (>=1.4.2)", "invenio-mail (>=1.0.0)"]
 sqlite = ["invenio-db (>=1.0.0)"]
-tests = ["SQLAlchemy-Continuum (>=1.2.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-i18n (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
+tests = ["SQLAlchemy-Continuum (>=1.2.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-i18n (>=1.0.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+mysql = ["invenio-db[mysql] (>=1.0.0)"]
 
 [[package]]
 name = "invenio-workflows"
@@ -2188,12 +2204,12 @@ invenio-records-files = ">=1.0.0a5"
 workflow = ">=2.0.1,<3.0"
 
 [package.extras]
-all = ["Sphinx (>=1.5.1,<1.6)", "Sphinx (>=1.5.1,<1.6)", "celery (>=4.3.0)", "celery (>=4.3.0)", "check-manifest (>=0.25)", "check-manifest (>=0.25)", "coverage (>=4.0)", "coverage (>=4.0)", "invenio-db", "invenio-db", "invenio-db", "invenio-db", "invenio-db", "invenio-db", "isort (>=4.2.2)", "isort (>=4.2.2)", "mock (>=1.0.0)", "mock (>=1.0.0)", "pydocstyle (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest-pep8 (>=1.0.6)"]
-docs = ["Sphinx (>=1.5.1,<1.6)"]
-mysql = ["invenio-db"]
+all = ["Sphinx (>=1.5.1,<1.6)", "celery (>=4.3.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "invenio-db", "invenio-db", "invenio-db", "Sphinx (>=1.5.1,<1.6)", "celery (>=4.3.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "invenio-db", "invenio-db", "invenio-db"]
 postgresql = ["invenio-db"]
+docs = ["Sphinx (>=1.5.1,<1.6)"]
 sqlite = ["invenio-db"]
-tests = ["celery (>=4.3.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
+tests = ["celery (>=4.3.0)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+mysql = ["invenio-db"]
 
 [[package]]
 name = "invenio-workflows-files"
@@ -2212,9 +2228,9 @@ invenio-workflows = ">=7.0,<8.0"
 pytest-runner = ">=2.6.2"
 
 [package.extras]
-all = ["Sphinx (>=1.4.2)", "Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "check-manifest (>=0.25)", "coverage (>=4.0)", "coverage (>=4.0)", "isort (>=4.2.2)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest-pep8 (>=1.0.6)"]
 docs = ["Sphinx (>=1.4.2)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
+all = ["Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
 name = "invenio-workflows-ui"
@@ -2237,12 +2253,12 @@ invenio-search = ">=1.0.0a5"
 invenio-workflows = ">=7.0,<8.0"
 
 [package.extras]
-all = ["Sphinx (>=1.3)", "check-manifest (>=0.25)", "coverage (>=4.0)", "invenio-db[mysql] (>=1.0.0a9)", "invenio-search-ui (>=1.0.0a4)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
-docs = ["Sphinx (>=1.3)"]
-mysql = ["invenio-db[mysql] (>=1.0.0a9)"]
+all = ["Sphinx (>=1.3)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "invenio-search-ui (>=1.0.0a4)", "invenio-db[mysql] (>=1.0.0a9)"]
 postgresql = ["invenio-db[postgresql] (>=1.0.0a9)"]
+docs = ["Sphinx (>=1.3)"]
 sqlite = ["invenio-db (>=1.0.0a9)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+mysql = ["invenio-db[mysql] (>=1.0.0a9)"]
 ui = ["invenio-search-ui (>=1.0.0a4)"]
 
 [[package]]
@@ -2258,9 +2274,9 @@ invenio-files-rest = ">=1.0.0a8"
 xrootdpyfs = ">=0.1.2"
 
 [package.extras]
-all = ["Sphinx (>=1.4.2)", "Sphinx (>=1.4.2)", "blinker (>=1.4)", "blinker (>=1.4)", "coverage (>=4.0)", "coverage (>=4.0)", "isort (>=4.2.2)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest-pep8 (>=1.0.6)"]
 docs = ["Sphinx (>=1.4.2)"]
-tests = ["blinker (>=1.4)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
+all = ["Sphinx (>=1.4.2)", "blinker (>=1.4)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.4.2)", "blinker (>=1.4)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+tests = ["blinker (>=1.4)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
 name = "ipaddr"
@@ -2312,20 +2328,28 @@ traitlets = ">=4.2"
 win-unicode-console = {version = ">=0.5", markers = "sys_platform == \"win32\" and python_version < \"3.6\""}
 
 [package.extras]
-all = ["Sphinx (>=1.3)", "ipykernel", "ipyparallel", "ipywidgets", "nbconvert", "nbformat", "nose (>=0.10.1)", "notebook", "pygments", "qtconsole", "requests", "testpath"]
-doc = ["Sphinx (>=1.3)"]
-kernel = ["ipykernel"]
-nbconvert = ["nbconvert"]
 nbformat = ["nbformat"]
-notebook = ["ipywidgets", "notebook"]
-parallel = ["ipyparallel"]
+all = ["nbformat", "ipykernel", "pygments", "testpath", "notebook", "nbconvert", "ipyparallel", "qtconsole", "Sphinx (>=1.3)", "requests", "nose (>=0.10.1)", "ipywidgets"]
+kernel = ["ipykernel"]
+doc = ["Sphinx (>=1.3)"]
+notebook = ["notebook", "ipywidgets"]
+nbconvert = ["nbconvert"]
 qtconsole = ["qtconsole"]
-test = ["ipykernel", "mock", "nbformat", "nose (>=0.10.1)", "numpy", "pygments", "requests", "testpath"]
+test = ["nose (>=0.10.1)", "requests", "testpath", "pygments", "nbformat", "ipykernel", "mock", "numpy"]
+parallel = ["ipyparallel"]
 
 [[package]]
 name = "ipython-genutils"
 version = "0.2.0"
 description = "Vestigial utilities from IPython"
+category = "main"
+optional = false
+python-versions = "*"
+
+[[package]]
+name = "isbnid"
+version = "0.4.6"
+description = "Python ISBN ids"
 category = "main"
 optional = false
 python-versions = "*"
@@ -2342,7 +2366,15 @@ python-versions = "*"
 autosemver = ">=0.2,<1.0"
 
 [package.extras]
-tests = ["pytest (>=3.0.4)", "pytest-pep8 (>=1.0.6)"]
+tests = ["pytest-pep8 (>=1.0.6)", "pytest (>=3.0.4)"]
+
+[[package]]
+name = "isbnlib"
+version = "3.10.14"
+description = "Extract, clean, transform, hyphenate and metadata for ISBNs (International Standard Book Number)."
+category = "main"
+optional = false
+python-versions = "*"
 
 [[package]]
 name = "isodate"
@@ -2415,10 +2447,10 @@ six = ">=1.10.0"
 Unidecode = {version = ">=0.4.19", optional = true, markers = "extra == \"contrib\""}
 
 [package.extras]
-all = ["Sphinx (>=1.4.2)", "Unidecode (>=0.4.19)", "check-manifest (>=0.25)", "coverage (>=4.0)", "editdistance (>=0.3.1)", "flake8 (>=3.9.0)", "isort (>=4.2.2)", "munkres (<=1.0.12)", "pydocstyle (>=1.0.0)", "pytest (>=4.6.11)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)"]
-contrib = ["Unidecode (>=0.4.19)", "editdistance (>=0.3.1)", "munkres (<=1.0.12)"]
+contrib = ["editdistance (>=0.3.1)", "munkres (<=1.0.12)", "Unidecode (>=0.4.19)"]
 docs = ["Sphinx (>=1.4.2)"]
-tests = ["Unidecode (>=0.4.19)", "check-manifest (>=0.25)", "coverage (>=4.0)", "editdistance (>=0.3.1)", "flake8 (>=3.9.0)", "isort (>=4.2.2)", "munkres (<=1.0.12)", "pydocstyle (>=1.0.0)", "pytest (>=4.6.11)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)"]
+all = ["editdistance (>=0.3.1)", "munkres (<=1.0.12)", "Unidecode (>=0.4.19)", "Sphinx (>=1.4.2)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest (>=4.6.11)", "flake8 (>=3.9.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest (>=4.6.11)", "flake8 (>=3.9.0)", "editdistance (>=0.3.1)", "munkres (<=1.0.12)", "Unidecode (>=0.4.19)"]
 
 [[package]]
 name = "jsonpatch"
@@ -2461,11 +2493,11 @@ six = ">=1.8.0"
 werkzeug = ">=0.10.4"
 
 [package.extras]
-all = ["Sphinx (>=1.3)", "Sphinx (>=1.3)", "check-manifest (>=0.25)", "check-manifest (>=0.25)", "coverage (>=4.0)", "coverage (>=4.0)", "isort (>=4.2.2)", "isort (>=4.2.2)", "jsonref (>=0.1)", "jsonref (>=0.1)", "jsonschema (>=2.5.1)", "jsonschema (>=2.5.1)", "mock (>=1.3.0)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest-pep8 (>=1.0.6)", "requests (>=2.7.0)", "requests (>=2.7.0)"]
 docs = ["Sphinx (>=1.3)"]
+all = ["Sphinx (>=1.3)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "requests (>=2.7.0)", "jsonschema (>=2.5.1)", "jsonref (>=0.1)", "Sphinx (>=1.3)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "requests (>=2.7.0)", "jsonschema (>=2.5.1)", "jsonref (>=0.1)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "requests (>=2.7.0)"]
 jsonref = ["jsonref (>=0.1)"]
 jsonschema = ["jsonschema (>=2.5.1)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "requests (>=2.7.0)"]
 
 [[package]]
 name = "jsonschema"
@@ -2494,20 +2526,20 @@ amqp = ">=2.6.0,<2.7"
 importlib-metadata = {version = ">=0.18", markers = "python_version < \"3.8\""}
 
 [package.extras]
-azureservicebus = ["azure-servicebus (>=0.21.1)"]
+qpid = ["qpid-python (>=0.26)", "qpid-tools (>=0.26)"]
 azurestoragequeues = ["azure-storage-queue"]
-consul = ["python-consul (>=0.6.0)"]
+msgpack = ["msgpack"]
 librabbitmq = ["librabbitmq (>=1.5.2)"]
 mongodb = ["pymongo (>=3.3.0)"]
-msgpack = ["msgpack"]
-pyro = ["pyro4"]
-qpid = ["qpid-python (>=0.26)", "qpid-tools (>=0.26)"]
+consul = ["python-consul (>=0.6.0)"]
+azureservicebus = ["azure-servicebus (>=0.21.1)"]
 redis = ["redis (>=3.3.11)"]
-slmq = ["softlayer-messaging (>=1.0.3)"]
-sqlalchemy = ["sqlalchemy"]
-sqs = ["boto3 (>=1.4.4)", "pycurl (==7.43.0.2)"]
-yaml = ["PyYAML (>=3.10)"]
 zookeeper = ["kazoo (>=1.3.1)"]
+pyro = ["pyro4"]
+yaml = ["PyYAML (>=3.10)"]
+slmq = ["softlayer-messaging (>=1.0.3)"]
+sqs = ["boto3 (>=1.4.4)", "pycurl (==7.43.0.2)"]
+sqlalchemy = ["sqlalchemy"]
 
 [[package]]
 name = "langdetect"
@@ -2548,10 +2580,10 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, != 3.4.*"
 
 [package.extras]
+source = ["Cython (>=0.29.7)"]
 cssselect = ["cssselect (>=0.7)"]
 html5 = ["html5lib"]
 htmlsoup = ["beautifulsoup4"]
-source = ["Cython (>=0.29.7)"]
 
 [[package]]
 name = "mako"
@@ -2585,11 +2617,11 @@ optional = false
 python-versions = "*"
 
 [package.extras]
-dev = ["flake8 (==3.7.4)", "pytest", "python-dateutil", "pytz", "simplejson", "tox"]
-docs = ["alabaster (==0.7.12)", "sphinx (==2.1.2)", "sphinx-issues (==1.2.0)", "sphinx-version-warning (==1.1.2)"]
+docs = ["sphinx (==2.1.2)", "sphinx-issues (==1.2.0)", "alabaster (==0.7.12)", "sphinx-version-warning (==1.1.2)"]
+tests = ["pytest", "pytz"]
 lint = ["flake8 (==3.7.4)"]
 reco = ["python-dateutil", "simplejson"]
-tests = ["pytest", "pytz"]
+dev = ["python-dateutil", "simplejson", "pytest", "pytz", "flake8 (==3.7.4)", "tox"]
 
 [[package]]
 name = "maxminddb"
@@ -2635,8 +2667,8 @@ pbr = ">=0.11"
 six = ">=1.9"
 
 [package.extras]
-docs = ["Pygments (<2)", "jinja2 (<2.7)", "sphinx", "sphinx (<1.3)"]
 test = ["unittest2 (>=1.1.0)"]
+docs = ["sphinx", "Pygments (<2)", "jinja2 (<2.7)", "sphinx (<1.3)"]
 
 [[package]]
 name = "more-itertools"
@@ -2701,10 +2733,10 @@ optional = false
 python-versions = "*"
 
 [package.extras]
-rsa = ["cryptography"]
 signals = ["blinker"]
+test = ["nose", "unittest2", "cryptography", "mock", "pyjwt (>=1.0.0)", "blinker"]
 signedtoken = ["cryptography", "pyjwt (>=1.0.0)"]
-test = ["blinker", "cryptography", "mock", "nose", "pyjwt (>=1.0.0)", "unittest2"]
+rsa = ["cryptography"]
 
 [[package]]
 name = "orcid"
@@ -2770,8 +2802,8 @@ python-versions = "*"
 [package.extras]
 argon2 = ["argon2-cffi (>=18.2.0)"]
 bcrypt = ["bcrypt (>=3.1.0)"]
-build_docs = ["cloud-sptheme (>=1.10.0)", "sphinx (>=1.6)", "sphinxcontrib-fulltoc (>=1.2.0)"]
 totp = ["cryptography"]
+build_docs = ["sphinx (>=1.6)", "sphinxcontrib-fulltoc (>=1.2.0)", "cloud-sptheme (>=1.10.0)"]
 
 [[package]]
 name = "pathlib2"
@@ -2842,7 +2874,7 @@ Wand = ">=0.4.1,<=0.5.9"
 
 [package.extras]
 docs = ["Sphinx (>=1.3)", "sphinx-rtd-theme (>=0.1.7)"]
-tests = ["coverage (>=4.0.0)", "pycodestyle (>=2.8.0)", "pytest (>=2.8.0)", "pytest-cov (>=2.1.0)"]
+tests = ["coverage (>=4.0.0)", "pytest (>=2.8.0)", "pytest-cov (>=2.1.0)", "pycodestyle (>=2.8.0)"]
 
 [[package]]
 name = "pluggy"
@@ -3002,9 +3034,9 @@ optional = false
 python-versions = "*"
 
 [package.extras]
+test = ["pytest (>=4.0.1,<5.0.0)", "pytest-cov (>=2.6.0,<3.0.0)", "pytest-runner (>=4.2,<5.0.0)"]
 crypto = ["cryptography (>=1.4)"]
 flake8 = ["flake8", "flake8-import-order", "pep8-naming"]
-test = ["pytest (>=4.0.1,<5.0.0)", "pytest-cov (>=2.6.0,<3.0.0)", "pytest-runner (>=4.2,<5.0.0)"]
 
 [[package]]
 name = "pylatexenc"
@@ -3023,9 +3055,9 @@ optional = false
 python-versions = "*"
 
 [package.extras]
-all = ["Sphinx (>=1.5.1)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "check-manifest (>=0.25)", "coverage (>=4.0)", "coverage (>=4.0)", "isort (>=4.2.2)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest-pep8 (>=1.0.6)"]
 docs = ["Sphinx (>=1.5.1)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
+all = ["Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
 name = "pyopenssl"
@@ -3040,8 +3072,8 @@ cryptography = ">=2.1.4"
 six = ">=1.5.2"
 
 [package.extras]
-docs = ["sphinx", "sphinx-rtd-theme"]
 test = ["flaky", "pretend", "pytest (>=3.0.1,<3.3.0)"]
+docs = ["sphinx", "sphinx-rtd-theme"]
 
 [[package]]
 name = "pyparsing"
@@ -3129,8 +3161,8 @@ optional = false
 python-versions = ">=2.7"
 
 [package.extras]
-docs = ["jaraco.packaging (>=3.2)", "rst.linker (>=1.9)", "sphinx"]
-testing = ["pytest (>=3.5,!=3.7.3)", "pytest-black-multipy", "pytest-checkdocs", "pytest-cov", "pytest-flake8", "pytest-virtualenv"]
+docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
+testing = ["pytest (>=3.5,!=3.7.3)", "pytest-checkdocs", "pytest-flake8", "pytest-black-multipy", "pytest-cov", "pytest-virtualenv"]
 
 [[package]]
 name = "pytest-vcr"
@@ -3225,17 +3257,17 @@ node-semver = ">=0.1.1"
 pynpm = ">=0.1.0"
 
 [package.extras]
-all = ["Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.21)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
 docs = ["Sphinx (>=1.5.1)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.21)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
+all = ["Sphinx (>=1.5.1)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.21)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.21)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
 name = "pyyaml"
-version = "5.4.1"
+version = "5.3"
 description = "YAML parser and emitter for Python"
 category = "main"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*"
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [[package]]
 name = "queuelib"
@@ -3260,7 +3292,7 @@ Flask = {version = ">=0.8", optional = true, markers = "extra == \"flask\""}
 
 [package.extras]
 flask = ["Flask (>=0.8)", "blinker (>=1.1)"]
-tests = ["Flask (>=0.8)", "Flask-Login (>=0.2.0)", "aiohttp", "anyjson", "blinker (>=1.1)", "blinker (>=1.1)", "bottle", "celery (>=2.5)", "coverage (<4)", "exam (>=0.5.2)", "flake8 (==3.5.0)", "logbook", "mock", "nose", "pytest (>=3.2.0,<3.3.0)", "pytest-cov (==2.5.1)", "pytest-flake8 (==1.0.0)", "pytest-pythonpath (==0.7.2)", "pytest-timeout (==1.2.1)", "pytest-xdist (==1.18.2)", "pytz", "requests", "sanic (>=0.7.0)", "tornado (>=4.1,<5.0)", "tox", "webob", "webtest", "wheel", "zconfig"]
+tests = ["bottle", "celery (>=2.5)", "coverage (<4)", "exam (>=0.5.2)", "flake8 (==3.5.0)", "logbook", "mock", "nose", "pytz", "pytest (>=3.2.0,<3.3.0)", "pytest-timeout (==1.2.1)", "pytest-xdist (==1.18.2)", "pytest-pythonpath (==0.7.2)", "pytest-cov (==2.5.1)", "pytest-flake8 (==1.0.0)", "requests", "tornado (>=4.1,<5.0)", "tox", "webob", "webtest", "wheel", "anyjson", "zconfig", "Flask (>=0.8)", "blinker (>=1.1)", "Flask-Login (>=0.2.0)", "blinker (>=1.1)", "sanic (>=0.7.0)", "aiohttp"]
 
 [[package]]
 name = "rdflib"
@@ -3307,9 +3339,9 @@ six = ">=1.10.0,<2.0"
 unidecode = ">=1.0.22,<2.0"
 
 [package.extras]
-all = ["Sphinx (>=1.7.1,<2.0)", "flake8 (>=3.5.0,<4.0)", "flake8-future-import (>=0.4.4,<1.0)", "pytest (>=4.6,<5.0)", "pytest-cov (>=2.10,<3.0)", "responses (>=0.8.1,<1.0)"]
 docs = ["Sphinx (>=1.7.1,<2.0)"]
-tests = ["flake8 (>=3.5.0,<4.0)", "flake8-future-import (>=0.4.4,<1.0)", "pytest (>=4.6,<5.0)", "pytest-cov (>=2.10,<3.0)", "responses (>=0.8.1,<1.0)", "unicode-string-literal (>=1.1,<2.0)"]
+all = ["Sphinx (>=1.7.1,<2.0)", "flake8-future-import (>=0.4.4,<1.0)", "flake8 (>=3.5.0,<4.0)", "pytest-cov (>=2.10,<3.0)", "pytest (>=4.6,<5.0)", "responses (>=0.8.1,<1.0)"]
+tests = ["flake8-future-import (>=0.4.4,<1.0)", "flake8 (>=3.5.0,<4.0)", "pytest-cov (>=2.10,<3.0)", "pytest (>=4.6,<5.0)", "responses (>=0.8.1,<1.0)", "unicode-string-literal (>=1.1,<2.0)"]
 
 [[package]]
 name = "requests"
@@ -3326,7 +3358,7 @@ idna = ">=2.5,<2.9"
 urllib3 = ">=1.21.1,<1.25.0 || >1.25.0,<1.25.1 || >1.25.1,<1.26"
 
 [package.extras]
-security = ["cryptography (>=1.3.4)", "idna (>=2.0.0)", "pyOpenSSL (>=0.14)"]
+security = ["pyOpenSSL (>=0.14)", "cryptography (>=1.3.4)", "idna (>=2.0.0)"]
 socks = ["PySocks (>=1.5.6,!=1.5.7)", "win-inet-pton"]
 
 [[package]]
@@ -3342,8 +3374,8 @@ requests = ">=2.3,<3"
 six = "*"
 
 [package.extras]
-fixture = ["fixtures"]
 test = ["fixtures", "mock", "purl", "pytest", "sphinx", "testrepository (>=0.0.18)", "testtools"]
+fixture = ["fixtures"]
 
 [[package]]
 name = "requests-oauthlib"
@@ -3483,21 +3515,21 @@ certifi = "*"
 urllib3 = ">=1.10.0"
 
 [package.extras]
-aiohttp = ["aiohttp (>=3.5)"]
-beam = ["apache-beam (>=2.12)"]
-bottle = ["bottle (>=0.12.13)"]
 celery = ["celery (>=3)"]
-chalice = ["chalice (>=1.16.0)"]
-django = ["django (>=1.8)"]
-falcon = ["falcon (>=1.4)"]
-flask = ["blinker (>=1.1)", "flask (>=0.11)"]
-httpx = ["httpx (>=0.16.0)"]
-pure_eval = ["asttokens", "executing", "pure-eval"]
-pyspark = ["pyspark (>=2.4.4)"]
-rq = ["rq (>=0.6)"]
-sanic = ["sanic (>=0.8)"]
 sqlalchemy = ["sqlalchemy (>=1.2)"]
+rq = ["rq (>=0.6)"]
+aiohttp = ["aiohttp (>=3.5)"]
+pyspark = ["pyspark (>=2.4.4)"]
+flask = ["flask (>=0.11)", "blinker (>=1.1)"]
+pure_eval = ["pure-eval", "executing", "asttokens"]
+django = ["django (>=1.8)"]
+chalice = ["chalice (>=1.16.0)"]
+beam = ["apache-beam (>=2.12)"]
 tornado = ["tornado (>=5)"]
+bottle = ["bottle (>=0.12.13)"]
+sanic = ["sanic (>=0.8)"]
+falcon = ["falcon (>=1.4)"]
+httpx = ["httpx (>=0.16.0)"]
 
 [[package]]
 name = "service-identity"
@@ -3515,10 +3547,10 @@ pyasn1 = "*"
 pyasn1-modules = "*"
 
 [package.extras]
-dev = ["coverage (>=4.2.0)", "idna", "pyopenssl", "pytest", "sphinx"]
 docs = ["sphinx"]
-idna = ["idna"]
 tests = ["coverage (>=4.2.0)", "pytest"]
+idna = ["idna"]
+dev = ["coverage (>=4.2.0)", "pytest", "sphinx", "idna", "pyopenssl"]
 
 [[package]]
 name = "setproctitle"
@@ -3576,8 +3608,8 @@ python-versions = ">=2.6"
 six = "*"
 
 [package.extras]
-docs = ["jaraco.packaging (>=8.2)", "rst.linker (>=1.9)", "sphinx"]
-testing = ["pytest (>=4.6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-flake8", "unittest2"]
+docs = ["sphinx", "jaraco.packaging (>=8.2)", "rst.linker (>=1.9)"]
+testing = ["pytest (>=4.6)", "pytest-flake8", "pytest-cov", "pytest-black (>=0.3.7)", "unittest2", "pytest-checkdocs (>=2.4)"]
 
 [[package]]
 name = "six"
@@ -3647,16 +3679,16 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [package.extras]
-mssql = ["pyodbc"]
-mssql_pymssql = ["pymssql"]
-mssql_pyodbc = ["pyodbc"]
-mysql = ["mysqlclient"]
-oracle = ["cx-oracle"]
-postgresql = ["psycopg2"]
 postgresql_pg8000 = ["pg8000"]
-postgresql_psycopg2binary = ["psycopg2-binary"]
+postgresql = ["psycopg2"]
 postgresql_psycopg2cffi = ["psycopg2cffi"]
 pymysql = ["pymysql"]
+mssql_pymssql = ["pymssql"]
+postgresql_psycopg2binary = ["psycopg2-binary"]
+mysql = ["mysqlclient"]
+oracle = ["cx-oracle"]
+mssql = ["pyodbc"]
+mssql_pyodbc = ["pyodbc"]
 
 [[package]]
 name = "sqlalchemy-continuum"
@@ -3671,13 +3703,13 @@ SQLAlchemy = ">=1.0.8"
 SQLAlchemy-Utils = ">=0.30.12"
 
 [package.extras]
-anyjson = ["anyjson (>=0.3.3)"]
-flask = ["Flask (>=0.9)"]
 flask-login = ["Flask-Login (>=0.2.9)"]
-flask-sqlalchemy = ["Flask-SQLAlchemy (>=1.0)"]
 flexmock = ["flexmock (>=0.9.7)"]
+flask = ["Flask (>=0.9)"]
+flask-sqlalchemy = ["Flask-SQLAlchemy (>=1.0)"]
+test = ["pytest (>=2.3.5)", "flexmock (>=0.9.7)", "psycopg2 (>=2.4.6)", "PyMySQL (==0.6.1)", "six (>=1.4.0)", "Flask-Login (>=0.2.9)", "Flask-SQLAlchemy (>=1.0)", "Flask (>=0.9)", "flexmock (>=0.9.7)", "SQLAlchemy-i18n (>=0.8.4)", "anyjson (>=0.3.3)"]
 i18n = ["SQLAlchemy-i18n (>=0.8.4)"]
-test = ["Flask (>=0.9)", "Flask-Login (>=0.2.9)", "Flask-SQLAlchemy (>=1.0)", "PyMySQL (==0.6.1)", "SQLAlchemy-i18n (>=0.8.4)", "anyjson (>=0.3.3)", "flexmock (>=0.9.7)", "flexmock (>=0.9.7)", "psycopg2 (>=2.4.6)", "pytest (>=2.3.5)", "six (>=1.4.0)"]
+anyjson = ["anyjson (>=0.3.3)"]
 
 [[package]]
 name = "sqlalchemy-utils"
@@ -3693,20 +3725,20 @@ six = "*"
 SQLAlchemy = ">=1.0"
 
 [package.extras]
+test_all = ["anyjson (>=0.3.3)", "arrow (>=0.3.4)", "Babel (>=1.3)", "colour (>=0.0.4)", "cryptography (>=0.6)", "enum34", "intervals (>=0.7.1)", "ipaddr", "passlib (>=1.6,<2.0)", "phonenumbers (>=5.9.2)", "pytest (>=2.7.1)", "Pygments (>=1.2)", "Jinja2 (>=2.3)", "docutils (>=0.10)", "flexmock (>=0.9.7)", "mock (==2.0.0)", "psycopg2 (>=2.5.1)", "pg8000 (>=1.12.4)", "pytz (>=2014.2)", "python-dateutil (>=2.6)", "pymysql", "flake8 (>=2.4.0)", "isort (>=4.2.2)", "pyodbc", "python-dateutil", "furl (>=0.4.1)"]
 anyjson = ["anyjson (>=0.3.3)"]
-arrow = ["arrow (>=0.3.4)"]
-babel = ["Babel (>=1.3)"]
 color = ["colour (>=0.0.4)"]
-encrypted = ["cryptography (>=0.6)"]
+babel = ["Babel (>=1.3)"]
 enum = ["enum34"]
-intervals = ["intervals (>=0.7.1)"]
-ipaddress = ["ipaddr"]
-password = ["passlib (>=1.6,<2.0)"]
 phone = ["phonenumbers (>=5.9.2)"]
-test = ["Jinja2 (>=2.3)", "Pygments (>=1.2)", "docutils (>=0.10)", "flake8 (>=2.4.0)", "flexmock (>=0.9.7)", "isort (>=4.2.2)", "mock (==2.0.0)", "pg8000 (>=1.12.4)", "psycopg2 (>=2.5.1)", "pymysql", "pyodbc", "pytest (>=2.7.1)", "python-dateutil (>=2.6)", "pytz (>=2014.2)"]
-test_all = ["Babel (>=1.3)", "Jinja2 (>=2.3)", "Pygments (>=1.2)", "anyjson (>=0.3.3)", "arrow (>=0.3.4)", "colour (>=0.0.4)", "cryptography (>=0.6)", "docutils (>=0.10)", "enum34", "flake8 (>=2.4.0)", "flexmock (>=0.9.7)", "furl (>=0.4.1)", "intervals (>=0.7.1)", "ipaddr", "isort (>=4.2.2)", "mock (==2.0.0)", "passlib (>=1.6,<2.0)", "pg8000 (>=1.12.4)", "phonenumbers (>=5.9.2)", "psycopg2 (>=2.5.1)", "pymysql", "pyodbc", "pytest (>=2.7.1)", "python-dateutil", "python-dateutil (>=2.6)", "pytz (>=2014.2)"]
-timezone = ["python-dateutil"]
+intervals = ["intervals (>=0.7.1)"]
 url = ["furl (>=0.4.1)"]
+arrow = ["arrow (>=0.3.4)"]
+encrypted = ["cryptography (>=0.6)"]
+test = ["pytest (>=2.7.1)", "Pygments (>=1.2)", "Jinja2 (>=2.3)", "docutils (>=0.10)", "flexmock (>=0.9.7)", "mock (==2.0.0)", "psycopg2 (>=2.5.1)", "pg8000 (>=1.12.4)", "pytz (>=2014.2)", "python-dateutil (>=2.6)", "pymysql", "flake8 (>=2.4.0)", "isort (>=4.2.2)", "pyodbc"]
+timezone = ["python-dateutil"]
+password = ["passlib (>=1.6,<2.0)"]
+ipaddress = ["ipaddr"]
 
 [[package]]
 name = "sqlitedict"
@@ -3728,10 +3760,10 @@ python-versions = "*"
 six = "*"
 
 [package.extras]
-azure-pipelines = ["coverage", "freezegun (>=0.2.8)", "pretend", "pytest (>=3.3.0)", "pytest-asyncio", "pytest-azurepipelines", "python-rapidjson", "simplejson"]
-dev = ["coverage", "freezegun (>=0.2.8)", "pre-commit", "pretend", "pytest (>=3.3.0)", "pytest-asyncio", "python-rapidjson", "simplejson", "sphinx", "twisted"]
 docs = ["sphinx", "twisted"]
-tests = ["coverage", "freezegun (>=0.2.8)", "pretend", "pytest (>=3.3.0)", "pytest-asyncio", "python-rapidjson", "simplejson"]
+tests = ["coverage", "freezegun (>=0.2.8)", "pretend", "pytest (>=3.3.0)", "simplejson", "python-rapidjson", "pytest-asyncio"]
+azure-pipelines = ["coverage", "freezegun (>=0.2.8)", "pretend", "pytest (>=3.3.0)", "simplejson", "pytest-azurepipelines", "python-rapidjson", "pytest-asyncio"]
+dev = ["coverage", "freezegun (>=0.2.8)", "pretend", "pytest (>=3.3.0)", "simplejson", "sphinx", "twisted", "pre-commit", "python-rapidjson", "pytest-asyncio"]
 
 [[package]]
 name = "subprocess32"
@@ -3837,7 +3869,7 @@ ipython-genutils = "*"
 six = "*"
 
 [package.extras]
-test = ["mock", "pytest"]
+test = ["pytest", "mock"]
 
 [[package]]
 name = "twisted"
@@ -3857,16 +3889,16 @@ PyHamcrest = ">=1.9.0"
 "zope.interface" = ">=4.4.2"
 
 [package.extras]
-all_non_platform = ["appdirs (>=1.4.0)", "cryptography (>=1.5)", "h2 (>=3.0,<4.0)", "idna (>=0.6,!=2.3)", "priority (>=1.1.0,<2.0)", "pyasn1", "pyopenssl (>=16.0.0)", "pyserial (>=3.0)", "service-identity", "soappy"]
-conch = ["appdirs (>=1.4.0)", "cryptography (>=1.5)", "pyasn1"]
-dev = ["pydoctor (>=16.2.0)", "pyflakes (>=1.0.0)", "python-subunit", "sphinx (>=1.3.1)", "towncrier (>=17.4.0)", "twisted-dev-tools (>=0.0.2)", "twistedchecker (>=0.4.0)"]
+tls = ["pyopenssl (>=16.0.0)", "service-identity", "idna (>=0.6,!=2.3)"]
+macos_platform = ["pyobjc-core", "pyobjc-framework-cfnetwork", "pyobjc-framework-cocoa", "pyopenssl (>=16.0.0)", "service-identity", "idna (>=0.6,!=2.3)", "pyasn1", "cryptography (>=1.5)", "appdirs (>=1.4.0)", "soappy", "pyserial (>=3.0)", "h2 (>=3.0,<4.0)", "priority (>=1.1.0,<2.0)"]
+conch = ["pyasn1", "cryptography (>=1.5)", "appdirs (>=1.4.0)"]
 http2 = ["h2 (>=3.0,<4.0)", "priority (>=1.1.0,<2.0)"]
-macos_platform = ["appdirs (>=1.4.0)", "cryptography (>=1.5)", "h2 (>=3.0,<4.0)", "idna (>=0.6,!=2.3)", "priority (>=1.1.0,<2.0)", "pyasn1", "pyobjc-core", "pyobjc-framework-cfnetwork", "pyobjc-framework-cocoa", "pyopenssl (>=16.0.0)", "pyserial (>=3.0)", "service-identity", "soappy"]
-osx_platform = ["appdirs (>=1.4.0)", "cryptography (>=1.5)", "h2 (>=3.0,<4.0)", "idna (>=0.6,!=2.3)", "priority (>=1.1.0,<2.0)", "pyasn1", "pyobjc-core", "pyobjc-framework-cfnetwork", "pyobjc-framework-cocoa", "pyopenssl (>=16.0.0)", "pyserial (>=3.0)", "service-identity", "soappy"]
+dev = ["pyflakes (>=1.0.0)", "twisted-dev-tools (>=0.0.2)", "python-subunit", "sphinx (>=1.3.1)", "towncrier (>=17.4.0)", "twistedchecker (>=0.4.0)", "pydoctor (>=16.2.0)"]
+osx_platform = ["pyobjc-core", "pyobjc-framework-cfnetwork", "pyobjc-framework-cocoa", "pyopenssl (>=16.0.0)", "service-identity", "idna (>=0.6,!=2.3)", "pyasn1", "cryptography (>=1.5)", "appdirs (>=1.4.0)", "soappy", "pyserial (>=3.0)", "h2 (>=3.0,<4.0)", "priority (>=1.1.0,<2.0)"]
+all_non_platform = ["pyopenssl (>=16.0.0)", "service-identity", "idna (>=0.6,!=2.3)", "pyasn1", "cryptography (>=1.5)", "appdirs (>=1.4.0)", "soappy", "pyserial (>=3.0)", "h2 (>=3.0,<4.0)", "priority (>=1.1.0,<2.0)"]
+windows_platform = ["pywin32", "pyopenssl (>=16.0.0)", "service-identity", "idna (>=0.6,!=2.3)", "pyasn1", "cryptography (>=1.5)", "appdirs (>=1.4.0)", "soappy", "pyserial (>=3.0)", "h2 (>=3.0,<4.0)", "priority (>=1.1.0,<2.0)"]
 serial = ["pyserial (>=3.0)"]
 soap = ["soappy"]
-tls = ["idna (>=0.6,!=2.3)", "pyopenssl (>=16.0.0)", "service-identity"]
-windows_platform = ["appdirs (>=1.4.0)", "cryptography (>=1.5)", "h2 (>=3.0,<4.0)", "idna (>=0.6,!=2.3)", "priority (>=1.1.0,<2.0)", "pyasn1", "pyopenssl (>=16.0.0)", "pyserial (>=3.0)", "pywin32", "service-identity", "soappy"]
 
 [[package]]
 name = "typing"
@@ -3912,7 +3944,7 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, <4"
 
 [package.extras]
-secure = ["certifi", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "ipaddress", "pyOpenSSL (>=0.14)"]
+secure = ["pyOpenSSL (>=0.14)", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "certifi", "ipaddress"]
 socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 
 [[package]]
@@ -3928,7 +3960,7 @@ decorator = ">=3.4.0"
 six = ">=1.4.0"
 
 [package.extras]
-test = ["flake8 (>=2.4.0)", "isort (>=4.2.2)", "pytest (>=2.2.3)"]
+test = ["pytest (>=2.2.3)", "flake8 (>=2.4.0)", "isort (>=4.2.2)"]
 
 [[package]]
 name = "vcrpy"
@@ -3973,8 +4005,8 @@ optional = false
 python-versions = "*"
 
 [package.extras]
+test = ["pytest (>=2.3.0)", "pytest-xdist (>=1.8)", "psutil (>=1.0.1)"]
 doc = ["Sphinx (>=1.0)"]
-test = ["psutil (>=1.0.1)", "pytest (>=2.3.0)", "pytest-xdist (>=1.8)"]
 
 [[package]]
 name = "wcwidth"
@@ -3997,11 +4029,11 @@ marshmallow = ">=2.15.2"
 simplejson = ">=2.1.0"
 
 [package.extras]
-dev = ["Django (>=1.11.16)", "Flask (>=0.12.2)", "aiohttp (>=3.0.0)", "bottle (>=0.12.13)", "falcon (>=1.4.0,<2.0)", "flake8 (==3.7.8)", "flake8-bugbear (==19.8.0)", "mock", "mypy (==0.730)", "pre-commit (>=1.17,<2.0)", "pyramid (>=1.9.1)", "pytest", "pytest-aiohttp (>=0.3.0)", "tornado (>=4.5.2)", "tox", "webapp2 (>=3.0.0b1)", "webtest (==2.0.33)", "webtest-aiohttp (==2.0.0)"]
-docs = ["Django (>=1.11.16)", "Flask (>=0.12.2)", "Sphinx (==2.2.0)", "aiohttp (>=3.0.0)", "bottle (>=0.12.13)", "falcon (>=1.4.0,<2.0)", "pyramid (>=1.9.1)", "sphinx-issues (==1.2.0)", "sphinx-typlog-theme (==0.7.3)", "tornado (>=4.5.2)", "webapp2 (>=3.0.0b1)"]
-frameworks = ["Django (>=1.11.16)", "Flask (>=0.12.2)", "aiohttp (>=3.0.0)", "bottle (>=0.12.13)", "falcon (>=1.4.0,<2.0)", "pyramid (>=1.9.1)", "tornado (>=4.5.2)", "webapp2 (>=3.0.0b1)"]
-lint = ["flake8 (==3.7.8)", "flake8-bugbear (==19.8.0)", "mypy (==0.730)", "pre-commit (>=1.17,<2.0)"]
-tests = ["Django (>=1.11.16)", "Flask (>=0.12.2)", "aiohttp (>=3.0.0)", "bottle (>=0.12.13)", "falcon (>=1.4.0,<2.0)", "mock", "pyramid (>=1.9.1)", "pytest", "pytest-aiohttp (>=0.3.0)", "tornado (>=4.5.2)", "webapp2 (>=3.0.0b1)", "webtest (==2.0.33)", "webtest-aiohttp (==2.0.0)"]
+docs = ["Sphinx (==2.2.0)", "sphinx-issues (==1.2.0)", "sphinx-typlog-theme (==0.7.3)", "Flask (>=0.12.2)", "Django (>=1.11.16)", "bottle (>=0.12.13)", "tornado (>=4.5.2)", "pyramid (>=1.9.1)", "webapp2 (>=3.0.0b1)", "falcon (>=1.4.0,<2.0)", "aiohttp (>=3.0.0)"]
+tests = ["pytest", "mock", "webtest (==2.0.33)", "Flask (>=0.12.2)", "Django (>=1.11.16)", "bottle (>=0.12.13)", "tornado (>=4.5.2)", "pyramid (>=1.9.1)", "webapp2 (>=3.0.0b1)", "falcon (>=1.4.0,<2.0)", "webtest-aiohttp (==2.0.0)", "pytest-aiohttp (>=0.3.0)", "aiohttp (>=3.0.0)"]
+lint = ["flake8 (==3.7.8)", "pre-commit (>=1.17,<2.0)", "mypy (==0.730)", "flake8-bugbear (==19.8.0)"]
+dev = ["pytest", "mock", "webtest (==2.0.33)", "Flask (>=0.12.2)", "Django (>=1.11.16)", "bottle (>=0.12.13)", "tornado (>=4.5.2)", "pyramid (>=1.9.1)", "webapp2 (>=3.0.0b1)", "falcon (>=1.4.0,<2.0)", "flake8 (==3.7.8)", "pre-commit (>=1.17,<2.0)", "tox", "webtest-aiohttp (==2.0.0)", "pytest-aiohttp (>=0.3.0)", "aiohttp (>=3.0.0)", "mypy (==0.730)", "flake8-bugbear (==19.8.0)"]
+frameworks = ["Flask (>=0.12.2)", "Django (>=1.11.16)", "bottle (>=0.12.13)", "tornado (>=4.5.2)", "pyramid (>=1.9.1)", "webapp2 (>=3.0.0b1)", "falcon (>=1.4.0,<2.0)", "aiohttp (>=3.0.0)"]
 
 [[package]]
 name = "webassets"
@@ -4028,9 +4060,9 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [package.extras]
-dev = ["coverage", "pallets-sphinx-themes", "pytest", "sphinx", "sphinx-issues", "tox"]
-termcolor = ["termcolor"]
 watchdog = ["watchdog"]
+dev = ["pytest", "coverage", "tox", "sphinx", "pallets-sphinx-themes", "sphinx-issues"]
+termcolor = ["termcolor"]
 
 [[package]]
 name = "whichcraft"
@@ -4064,9 +4096,9 @@ enum34 = ">=1.0.4"
 six = "*"
 
 [package.extras]
-all = ["Sphinx (>=1.4.2)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
 docs = ["Sphinx (>=1.4.2)"]
-tests = ["coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
+all = ["Sphinx (>=1.4.2)", "coverage (>=4.0)", "mock (>=1.0.0)", "isort (>=4.2.2)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
+tests = ["coverage (>=4.0)", "mock (>=1.0.0)", "isort (>=4.2.2)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 
 [[package]]
 name = "wrapt"
@@ -4103,15 +4135,15 @@ WTForms = ">=1.0.4"
 WTForms-Components = ">=0.9.2"
 
 [package.extras]
-arrow = ["arrow (>=0.3.4)"]
-babel = ["Babel (>=1.3)"]
-color = ["colour (>=0.0.4)"]
 i18n = ["SQLAlchemy-i18n (>=0.8.2)"]
-intervals = ["intervals (>=0.2.0)"]
-password = ["passlib (>=1.6,<2.0)"]
+color = ["colour (>=0.0.4)"]
+babel = ["Babel (>=1.3)"]
 phone = ["phonenumbers (>=5.9.2)"]
-test = ["Babel (>=1.3)", "Jinja2 (>=2.3)", "Pygments (>=1.2)", "SQLAlchemy-i18n (>=0.8.2)", "WTForms-Test (>=0.1.1)", "arrow (>=0.3.4)", "colour (>=0.0.4)", "docutils (>=0.10)", "enum34", "flake8 (>=2.4.0)", "flexmock (>=0.9.7)", "intervals (>=0.2.0)", "isort (>=3.9.6)", "natsort (==3.5.6)", "passlib (>=1.6,<2.0)", "phonenumbers (>=5.9.2)", "pytest (>=2.3)", "python-dateutil"]
+intervals = ["intervals (>=0.2.0)"]
+arrow = ["arrow (>=0.3.4)"]
+test = ["enum34", "pytest (>=2.3)", "Pygments (>=1.2)", "Jinja2 (>=2.3)", "docutils (>=0.10)", "flake8 (>=2.4.0)", "flexmock (>=0.9.7)", "isort (>=3.9.6)", "natsort (==3.5.6)", "WTForms-Test (>=0.1.1)", "Babel (>=1.3)", "arrow (>=0.3.4)", "phonenumbers (>=5.9.2)", "intervals (>=0.2.0)", "passlib (>=1.6,<2.0)", "colour (>=0.0.4)", "SQLAlchemy-i18n (>=0.8.2)", "python-dateutil"]
 timezone = ["python-dateutil"]
+password = ["passlib (>=1.6,<2.0)"]
 
 [[package]]
 name = "wtforms-components"
@@ -4129,8 +4161,8 @@ WTForms = ">=1.0.4"
 
 [package.extras]
 color = ["colour (>=0.0.4)"]
+test = ["pytest (>=2.2.3)", "flexmock (>=0.9.7)", "WTForms-Test (>=0.1.1)", "flake8 (>=2.4.0)", "isort (>=4.2.2)", "colour (>=0.0.4)", "ipaddr", "python-dateutil"]
 ipaddress = ["ipaddr"]
-test = ["WTForms-Test (>=0.1.1)", "colour (>=0.0.4)", "flake8 (>=2.4.0)", "flexmock (>=0.9.7)", "ipaddr", "isort (>=4.2.2)", "pytest (>=2.2.3)", "python-dateutil"]
 timezone = ["python-dateutil"]
 
 [[package]]
@@ -4162,8 +4194,8 @@ python-versions = ">=2.7"
 contextlib2 = {version = "*", markers = "python_version < \"3.4\""}
 
 [package.extras]
-docs = ["jaraco.packaging (>=3.2)", "rst.linker (>=1.9)", "sphinx"]
-testing = ["func-timeout", "jaraco.itertools", "pathlib2", "unittest2"]
+docs = ["sphinx", "jaraco.packaging (>=3.2)", "rst.linker (>=1.9)"]
+testing = ["pathlib2", "unittest2", "jaraco.itertools", "func-timeout"]
 
 [[package]]
 name = "zope.interface"
@@ -4174,8 +4206,8 @@ optional = false
 python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
 
 [package.extras]
-docs = ["repoze.sphinx.autointerface", "sphinx"]
 test = ["zope.event"]
+docs = ["sphinx", "repoze.sphinx.autointerface"]
 testing = ["coverage", "nose", "zope.event"]
 
 [extras]
@@ -4191,7 +4223,7 @@ build-node = ["ipdb"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=2.7,<3.0"
-content-hash = "6543bbda329d38041afe9a8a5c925eb42cc504ae3dd9b1be37380d42aa41682f"
+content-hash = "e8785f77125cac63289e7fa72d6cdb4bb4973c80aee0e486ce4bfdcdb82a2f42"
 
 [metadata.files]
 alabaster = [
@@ -4706,8 +4738,8 @@ idna = [
     {file = "idna-2.8.tar.gz", hash = "sha256:c357b3f628cf53ae2c4c05627ecc484553142ca23264e593d327bcde5e9c3407"},
 ]
 idutils = [
-    {file = "IDUtils-1.1.11-py2.py3-none-any.whl", hash = "sha256:23ac47a026b0c709ffc79efd9fb54e4102913fb1f29a5bae56cd8f8f6cae124a"},
-    {file = "IDUtils-1.1.11.tar.gz", hash = "sha256:e9fb8eb0ce933d09fa347e01dc47ff28006b77bea434f4beb8d78bc693b2d01d"},
+    {file = "IDUtils-1.1.14-py2.py3-none-any.whl", hash = "sha256:363a7d69a313a24ef6534a9557ad1761b4f255e460630bd0d138fb24206fa024"},
+    {file = "IDUtils-1.1.14.tar.gz", hash = "sha256:92d152a78542216655092481224fbe65a2ad4509aafd5080987a903ff76f1bf8"},
 ]
 imagesize = [
     {file = "imagesize-1.2.0-py2.py3-none-any.whl", hash = "sha256:6965f19a6a2039c7d48bca7dba2473069ff854c36ae6f19d2cde309d998228a1"},
@@ -4733,6 +4765,10 @@ inspire-dojson = [
     {file = "inspire-dojson-63.1.5.tar.gz", hash = "sha256:48b72b8852d8d3b78359b36b5cdce5d8e6987632497e86a5d88f98d839cc687a"},
     {file = "inspire_dojson-63.1.5-py2-none-any.whl", hash = "sha256:21c25249e233e9b4d0461f6b5a55ef9f1a2504de6809e97ad5fac0f1980c3ec8"},
 ]
+inspire-idutils = [
+    {file = "inspire_idutils-1.2.4-py2.py3-none-any.whl", hash = "sha256:44bf2a67bdc7a3662e1406a35cbc537c8f3888abf686d3642e199a21f47915f8"},
+    {file = "inspire_idutils-1.2.4.tar.gz", hash = "sha256:26a247cfab92e3e1eadac84f8a6da67cf83f8c5836acb16e7b9ee2cc06e18d10"},
+]
 inspire-json-merger = [
     {file = "inspire_json_merger-11.0.34-py2.py3-none-any.whl", hash = "sha256:3d22ad0b450746bbf5bf81d7e6743f23e6020b013806658faaec41b46e207be8"},
 ]
@@ -4745,7 +4781,7 @@ inspire-query-parser = [
     {file = "inspire_query_parser-6.0.37-py2-none-any.whl", hash = "sha256:94124b8e2c1b5a837e73aa35f4311350090eadb357f9faf279342fa822c2725b"},
 ]
 inspire-schemas = [
-    {file = "inspire_schemas-61.5.17-py2.py3-none-any.whl", hash = "sha256:f5073455ae5d811650e086a683eb514ba900948dbd5328e984c783db97577a4f"},
+    {file = "inspire_schemas-61.5.29-py2.py3-none-any.whl", hash = "sha256:3c21c6890400fc7f3c48b43996127ca7eaffebb99859d7c90dcb4e4bcb6ec4b4"},
 ]
 inspire-service-orcid = [
     {file = "inspire-service-orcid-9.0.0.tar.gz", hash = "sha256:cacee4fb19224ea2eb8a0e7e943479ef628c47f4b8b51f271263c2816a6814a1"},
@@ -4891,8 +4927,15 @@ ipython-genutils = [
     {file = "ipython_genutils-0.2.0-py2.py3-none-any.whl", hash = "sha256:72dd37233799e619666c9f639a9da83c34013a73e8bbc79a7a6348d93c61fab8"},
     {file = "ipython_genutils-0.2.0.tar.gz", hash = "sha256:eb2e116e75ecef9d4d228fdc66af54269afa26ab4463042e33785b887c628ba8"},
 ]
+isbnid = [
+    {file = "isbnid-0.4.6.tar.gz", hash = "sha256:2b2f9868b4a9ccb701b198a7839765bde852a5b790407fed5da2a518ea6608ce"},
+]
 isbnid-fork = [
     {file = "isbnid_fork-0.5.2.tar.gz", hash = "sha256:8d878866aa0e7f06e700a37fce586c7398ce4837da8bca39683db7028a9c3837"},
+]
+isbnlib = [
+    {file = "isbnlib-3.10.14-py2.py3-none-any.whl", hash = "sha256:f885b350fc8e600a919ed46e3b07253062cd604af69885455a25a299217b3fe2"},
+    {file = "isbnlib-3.10.14.tar.gz", hash = "sha256:96f90864c77b01f55fa11e5bfca9fd909501d9842f3bc710d4eab85195d90539"},
 ]
 isodate = [
     {file = "isodate-0.6.0-py2.py3-none-any.whl", hash = "sha256:aa4d33c06640f5352aca96e4b81afd8ab3b47337cc12089822d6f322ac772c81"},
@@ -5362,35 +5405,17 @@ pywebpack = [
     {file = "pywebpack-1.0.1.tar.gz", hash = "sha256:b41d27d5e7741008ca4154f240d1fa4ca4007fa23a7b184660892b81244d5b26"},
 ]
 pyyaml = [
-    {file = "PyYAML-5.4.1-cp27-cp27m-macosx_10_9_x86_64.whl", hash = "sha256:3b2b1824fe7112845700f815ff6a489360226a5609b96ec2190a45e62a9fc922"},
-    {file = "PyYAML-5.4.1-cp27-cp27m-win32.whl", hash = "sha256:129def1b7c1bf22faffd67b8f3724645203b79d8f4cc81f674654d9902cb4393"},
-    {file = "PyYAML-5.4.1-cp27-cp27m-win_amd64.whl", hash = "sha256:4465124ef1b18d9ace298060f4eccc64b0850899ac4ac53294547536533800c8"},
-    {file = "PyYAML-5.4.1-cp27-cp27mu-manylinux1_x86_64.whl", hash = "sha256:bb4191dfc9306777bc594117aee052446b3fa88737cd13b7188d0e7aa8162185"},
-    {file = "PyYAML-5.4.1-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:6c78645d400265a062508ae399b60b8c167bf003db364ecb26dcab2bda048253"},
-    {file = "PyYAML-5.4.1-cp36-cp36m-manylinux1_x86_64.whl", hash = "sha256:4e0583d24c881e14342eaf4ec5fbc97f934b999a6828693a99157fde912540cc"},
-    {file = "PyYAML-5.4.1-cp36-cp36m-manylinux2014_aarch64.whl", hash = "sha256:72a01f726a9c7851ca9bfad6fd09ca4e090a023c00945ea05ba1638c09dc3347"},
-    {file = "PyYAML-5.4.1-cp36-cp36m-manylinux2014_s390x.whl", hash = "sha256:895f61ef02e8fed38159bb70f7e100e00f471eae2bc838cd0f4ebb21e28f8541"},
-    {file = "PyYAML-5.4.1-cp36-cp36m-win32.whl", hash = "sha256:3bd0e463264cf257d1ffd2e40223b197271046d09dadf73a0fe82b9c1fc385a5"},
-    {file = "PyYAML-5.4.1-cp36-cp36m-win_amd64.whl", hash = "sha256:e4fac90784481d221a8e4b1162afa7c47ed953be40d31ab4629ae917510051df"},
-    {file = "PyYAML-5.4.1-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:5accb17103e43963b80e6f837831f38d314a0495500067cb25afab2e8d7a4018"},
-    {file = "PyYAML-5.4.1-cp37-cp37m-manylinux1_x86_64.whl", hash = "sha256:e1d4970ea66be07ae37a3c2e48b5ec63f7ba6804bdddfdbd3cfd954d25a82e63"},
-    {file = "PyYAML-5.4.1-cp37-cp37m-manylinux2014_aarch64.whl", hash = "sha256:cb333c16912324fd5f769fff6bc5de372e9e7a202247b48870bc251ed40239aa"},
-    {file = "PyYAML-5.4.1-cp37-cp37m-manylinux2014_s390x.whl", hash = "sha256:fe69978f3f768926cfa37b867e3843918e012cf83f680806599ddce33c2c68b0"},
-    {file = "PyYAML-5.4.1-cp37-cp37m-win32.whl", hash = "sha256:dd5de0646207f053eb0d6c74ae45ba98c3395a571a2891858e87df7c9b9bd51b"},
-    {file = "PyYAML-5.4.1-cp37-cp37m-win_amd64.whl", hash = "sha256:08682f6b72c722394747bddaf0aa62277e02557c0fd1c42cb853016a38f8dedf"},
-    {file = "PyYAML-5.4.1-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:d2d9808ea7b4af864f35ea216be506ecec180628aced0704e34aca0b040ffe46"},
-    {file = "PyYAML-5.4.1-cp38-cp38-manylinux1_x86_64.whl", hash = "sha256:8c1be557ee92a20f184922c7b6424e8ab6691788e6d86137c5d93c1a6ec1b8fb"},
-    {file = "PyYAML-5.4.1-cp38-cp38-manylinux2014_aarch64.whl", hash = "sha256:fd7f6999a8070df521b6384004ef42833b9bd62cfee11a09bda1079b4b704247"},
-    {file = "PyYAML-5.4.1-cp38-cp38-manylinux2014_s390x.whl", hash = "sha256:bfb51918d4ff3d77c1c856a9699f8492c612cde32fd3bcd344af9be34999bfdc"},
-    {file = "PyYAML-5.4.1-cp38-cp38-win32.whl", hash = "sha256:fa5ae20527d8e831e8230cbffd9f8fe952815b2b7dae6ffec25318803a7528fc"},
-    {file = "PyYAML-5.4.1-cp38-cp38-win_amd64.whl", hash = "sha256:0f5f5786c0e09baddcd8b4b45f20a7b5d61a7e7e99846e3c799b05c7c53fa696"},
-    {file = "PyYAML-5.4.1-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:294db365efa064d00b8d1ef65d8ea2c3426ac366c0c4368d930bf1c5fb497f77"},
-    {file = "PyYAML-5.4.1-cp39-cp39-manylinux1_x86_64.whl", hash = "sha256:74c1485f7707cf707a7aef42ef6322b8f97921bd89be2ab6317fd782c2d53183"},
-    {file = "PyYAML-5.4.1-cp39-cp39-manylinux2014_aarch64.whl", hash = "sha256:d483ad4e639292c90170eb6f7783ad19490e7a8defb3e46f97dfe4bacae89122"},
-    {file = "PyYAML-5.4.1-cp39-cp39-manylinux2014_s390x.whl", hash = "sha256:fdc842473cd33f45ff6bce46aea678a54e3d21f1b61a7750ce3c498eedfe25d6"},
-    {file = "PyYAML-5.4.1-cp39-cp39-win32.whl", hash = "sha256:49d4cdd9065b9b6e206d0595fee27a96b5dd22618e7520c33204a4a3239d5b10"},
-    {file = "PyYAML-5.4.1-cp39-cp39-win_amd64.whl", hash = "sha256:c20cfa2d49991c8b4147af39859b167664f2ad4561704ee74c1de03318e898db"},
-    {file = "PyYAML-5.4.1.tar.gz", hash = "sha256:607774cbba28732bfa802b54baa7484215f530991055bb562efbed5b2f20a45e"},
+    {file = "PyYAML-5.3-cp27-cp27m-win32.whl", hash = "sha256:940532b111b1952befd7db542c370887a8611660d2b9becff75d39355303d82d"},
+    {file = "PyYAML-5.3-cp27-cp27m-win_amd64.whl", hash = "sha256:059b2ee3194d718896c0ad077dd8c043e5e909d9180f387ce42012662a4946d6"},
+    {file = "PyYAML-5.3-cp35-cp35m-win32.whl", hash = "sha256:4fee71aa5bc6ed9d5f116327c04273e25ae31a3020386916905767ec4fc5317e"},
+    {file = "PyYAML-5.3-cp35-cp35m-win_amd64.whl", hash = "sha256:dbbb2379c19ed6042e8f11f2a2c66d39cceb8aeace421bfc29d085d93eda3689"},
+    {file = "PyYAML-5.3-cp36-cp36m-win32.whl", hash = "sha256:e3a057b7a64f1222b56e47bcff5e4b94c4f61faac04c7c4ecb1985e18caa3994"},
+    {file = "PyYAML-5.3-cp36-cp36m-win_amd64.whl", hash = "sha256:74782fbd4d4f87ff04159e986886931456a1894c61229be9eaf4de6f6e44b99e"},
+    {file = "PyYAML-5.3-cp37-cp37m-win32.whl", hash = "sha256:24521fa2890642614558b492b473bee0ac1f8057a7263156b02e8b14c88ce6f5"},
+    {file = "PyYAML-5.3-cp37-cp37m-win_amd64.whl", hash = "sha256:1cf708e2ac57f3aabc87405f04b86354f66799c8e62c28c5fc5f88b5521b2dbf"},
+    {file = "PyYAML-5.3-cp38-cp38-win32.whl", hash = "sha256:70024e02197337533eef7b85b068212420f950319cc8c580261963aefc75f811"},
+    {file = "PyYAML-5.3-cp38-cp38-win_amd64.whl", hash = "sha256:cb1f2f5e426dc9f07a7681419fe39cee823bb74f723f36f70399123f439e9b20"},
+    {file = "PyYAML-5.3.tar.gz", hash = "sha256:e9f45bd5b92c7974e59bcd2dcc8631a6b6cc380a904725fce7bc08872e691615"},
 ]
 queuelib = [
     {file = "queuelib-1.5.0-py2.py3-none-any.whl", hash = "sha256:ff43b5b74b9266f8df4232a8f768dc4d67281a271905e2ed4a3689d4d304cd02"},
