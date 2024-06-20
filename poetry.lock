@@ -1339,7 +1339,7 @@ test = ["nose", "nose-cov", "mock", "requests-mock"]
 
 [[package]]
 name = "inspire-crawler"
-version = "3.0.44"
+version = "3.0.46"
 description = "Crawler integration with INSPIRE-HEP."
 category = "main"
 optional = false
@@ -1369,7 +1369,7 @@ invenio-records-rest = "1.6.4"
 invenio-rest = "1.1.3"
 invenio-search = "1.2.3"
 invenio-workflows = "7.0.6"
-invenio-workflows-ui = "2.0.19"
+invenio-workflows-ui = {git = "https://github.com/inveniosoftware-contrib/invenio-workflows-ui.git", rev = "v2.1.0"}
 itsdangerous = "<=2.0.1"
 jsonref = "0.2"
 jsonresolver = "0.2.1"
@@ -1382,18 +1382,18 @@ Werkzeug = "0.16.1"
 WTForms = "2.2.1"
 
 [package.extras]
-all = ["Sphinx (>=1.5,<1.6)", "check-manifest (>=0.25)", "coverage (>=4.0)", "mock (>=2.0.0,<3.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "requests-mock (>=1.4.0,<2.0)"]
+all = ["Sphinx (>=1.5,<1.6)", "check-manifest (>=0.25)", "coverage (>=4.0)", "mock (>=2.0.0,<3.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "requests-mock (>=1.4.0,<2.0)"]
 postgresql = ["invenio-db[postgresql,versioning] (==1.0.4)", "psycopg2-binary (==2.8.4)"]
 docs = ["Sphinx (>=1.5,<1.6)"]
 sqlite = ["invenio-db[versioning] (==1.0.4)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "mock (>=2.0.0,<3.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "requests-mock (>=1.4.0,<2.0)"]
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "mock (>=2.0.0,<3.0)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)", "requests-mock (>=1.4.0,<2.0)"]
 mysql = ["invenio-db[versioning,mysql] (==1.0.4)"]
 
 [package.source]
 type = "git"
 url = "https://github.com/inspirehep/inspire-crawler.git"
-reference = "11d56ea6ed70defe0800952b64c57f0b6e44b961"
-resolved_reference = "11d56ea6ed70defe0800952b64c57f0b6e44b961"
+reference = "3.0.10"
+resolved_reference = "d60b18befd96ad7e78b3f8ade5b06e8b20f822e9"
 
 [[package]]
 name = "inspire-dojson"
@@ -2234,11 +2234,12 @@ tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydo
 
 [[package]]
 name = "invenio-workflows-ui"
-version = "2.0.19"
+version = "2.1.0"
 description = "Invenio module which acts as a UI layer for invenio-workflows."
 category = "main"
 optional = false
 python-versions = "*"
+develop = false
 
 [package.dependencies]
 autosemver = ">=0.2,<1.0"
@@ -2260,6 +2261,12 @@ sqlite = ["invenio-db (>=1.0.0a9)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "pydocstyle (>=1.0.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "pytest (>=2.8.0)"]
 mysql = ["invenio-db[mysql] (>=1.0.0a9)"]
 ui = ["invenio-search-ui (>=1.0.0a4)"]
+
+[package.source]
+type = "git"
+url = "https://github.com/inveniosoftware-contrib/invenio-workflows-ui.git"
+reference = "v2.1.0"
+resolved_reference = "16d037e1cb689f130e5f9f51eace0393332e3afe"
 
 [[package]]
 name = "invenio-xrootd"
@@ -4223,7 +4230,7 @@ build-node = ["ipdb"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=2.7,<3.0"
-content-hash = "e8785f77125cac63289e7fa72d6cdb4bb4973c80aee0e486ce4bfdcdb82a2f42"
+content-hash = "95944ac379697e3650f31073931d130d050f6c9c015c1fcf5c601e5245c5347c"
 
 [metadata.files]
 alabaster = [
@@ -4902,9 +4909,7 @@ invenio-workflows = [
 invenio-workflows-files = [
     {file = "invenio-workflows-files-1.0.3.tar.gz", hash = "sha256:d132cfc7177fbf8e8547d53eafc511d03af617bd13ad1dfb094d5e04b57db55a"},
 ]
-invenio-workflows-ui = [
-    {file = "invenio-workflows-ui-2.0.19.tar.gz", hash = "sha256:6511f43adc6f91c97fa9ded1db7c136a96ada4b045a5bc1f02627cec0115e303"},
-]
+invenio-workflows-ui = []
 invenio-xrootd = [
     {file = "invenio-xrootd-1.0.0a6.tar.gz", hash = "sha256:db7ee893be9b0eb7a4ae2f46f0b97be02bf92d0228500f498897ac6bdd792c82"},
 ]
