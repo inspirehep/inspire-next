@@ -70,7 +70,6 @@ invenio-search = {version = "==1.2.3", extras = ["elasticsearch7"]}
 invenio-userprofiles = "==1.0.1"
 invenio-workflows = "==7.*,>=7.0.0,>=7.0.1"
 invenio-workflows-files = "==1.*,>=1.0.0"
-invenio-workflows-ui = ">=2.0.19"
 ipdb = {version = "==0.*,>=0.0.0,>=0.10.3", optional = true}
 jinja2 = "==2.*,>=2.0.0,>=2.10"
 jsonschema = "==2.*,>=2.0.0,>=2.6.0"
@@ -120,9 +119,10 @@ parsel = "^1.6.0"
 hepcrawl = "^13.0.58"
 PyYAML = "<6.0"
 cryptography = "^3.3.2"
-inspire-crawler = {git = "https://github.com/inspirehep/inspire-crawler.git", rev = "11d56ea6ed70defe0800952b64c57f0b6e44b961"}
+inspire-crawler = {git = "https://github.com/inspirehep/inspire-crawler.git", rev = "3.0.10"}
 cffi = "1.15.1"
 inspire-idutils = "^1.2.4"
+invenio-workflows-ui = {git = "https://github.com/inveniosoftware-contrib/invenio-workflows-ui.git", rev = "v2.1.0"}
 
 [tool.poetry.extras]
 all = ["coverage", "docutils", "flake8-future-import", "flower", "freezegun", "gunicorn", "hepcrawl", "honcho", "ipdb", "mock", "pytest", "pytest-cov", "pytest-vcr", "requests-mock", "sphinx", "superlance", "tornado"]
