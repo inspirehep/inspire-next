@@ -25,10 +25,14 @@
 # to build an imagine to run in https://github.com/inspirehep/inspirehep
 
 FROM centos:7
+# https://www.redhat.com/en/blog/centos-linux-has-reached-its-end-life-eol
+# https://serverfault.com/a/1161904
+COPY CentOS-Base.repo ./etc/yum.repos.d/CentOS-Base.repo
+RUN yum clean all && yum makecache
 
 RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
-    yum update -y && \
-    yum install -y \
+    yum update -y --nogpgcheck && \
+    yum install -y --nogpgcheck \
     ImageMagick \
     transfig \
     file \
