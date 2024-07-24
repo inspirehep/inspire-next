@@ -555,6 +555,7 @@ def get_validation_errors(data, schema):
 def _get_headers_for_hep():
     return {
         "accept": "application/vnd+inspire.record.raw+json",
+        "content-type": "application/json",
         "Authorization": "Bearer {token}".format(
             token=current_app.config["AUTHENTICATION_TOKEN"]
         ),
@@ -564,6 +565,7 @@ def _get_headers_for_hep():
 def _get_headers_for_hep_root_table_request():
     return {
         "accept": "application/json",
+        "content-type": "application/json",
         "Authorization": "Bearer {token}".format(
             token=current_app.config["AUTHENTICATION_TOKEN"]
         ),
