@@ -24,18 +24,10 @@
 # Modified and simplified version of https://github.com/inspirehep/inspire-docker
 # to build an imagine to run in https://github.com/inspirehep/inspirehep
 
-FROM centos:7
-# https://www.redhat.com/en/blog/centos-linux-has-reached-its-end-life-eol
-# https://serverfault.com/a/1161904
-COPY CentOS-Base.repo ./etc/yum.repos.d/CentOS-Base.repo
-RUN yum clean all && yum makecache
+FROM fedora:40
 
-RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm && \
-    yum update -y --nogpgcheck && \
-    yum install -y --nogpgcheck \
-    yum update -y && \
-    yum install -y \
-    ImageMagick \
+RUN dnf update -y && \
+    dnf install -y ImageMagick \
     transfig \
     file \
     firefox \
@@ -47,19 +39,18 @@ RUN yum install -y https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.n
     libxml2-devel \
     libxslt-devel \
     mailcap \
-    make \
+    xrootd-client-devel \
     openssl-devel \
     poppler-utils \
     postgresql \
     postgresql-libs \
     postgresql-devel \
-    python-pip \
-    python-devel \
-    python2-xrootd \
+    python2.7 \
     wget \
     Xvfb \
-    && \
-    yum clean all
+    xrootd \
+    && dnf clean all
+
 
 ENV NODE_VERSION 6.17.1
 RUN mkdir /usr/local/nvm
@@ -82,30 +73,31 @@ RUN npm install -g \
     requirejs \
     uglify-js
 
-ENV PATH="/root/.poetry/bin:${PATH}" \
-    POETRY_VIRTUALENVS_CREATE=false \
-    POETRY_VERSION=1.1.14
-
 WORKDIR /code
 
-RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/4ec09d4e6b8ca007e67bb873c96277b54986fbdb/get-poetry.py \
-    | sed -E 's/(self\._get\(self\.METADATA_URL\).decode)\(\)/\1("utf-8")/' \
-    | python && \
-    poetry --version && \
-    pip install --trusted-host pypi.org --trusted-host pypi.python.org  --trusted-host files.pythonhosted.org --ignore-installed --no-cache-dir --upgrade pip==20.3.4 && \
-    pip install --no-cache-dir --upgrade setuptools && \
-    pip install --no-cache-dir --upgrade wheel && \
-    pip install --no-cache-dir typing==3.7.4.1
+RUN wget https://bootstrap.pypa.io/pip/2.7/get-pip.py && \
+    python2 get-pip.py && \
+    rm get-pip.py
+
+RUN python2.7 -m pip install poetry==1.1.15 && \
+    python2.7 -m pip install --no-cache-dir --trusted-host pypi.org --trusted-host pypi.python.org  --trusted-host files.pythonhosted.org --ignore-installed --no-cache-dir --upgrade pip==20.3.4 && \
+    python2.7 -m pip install --no-cache-dir --upgrade setuptools && \
+    python2.7 -m pip install --no-cache-dir --upgrade wheel
 
 COPY . .
 
-RUN poetry export --without-hashes -E all -f requirements.txt > requirements.poetry.txt && \
-    pip install --ignore-installed  --src /opt/python-git-modules/ --requirement requirements.poetry.txt && \
-    pip install -e .
+RUN poetry config virtualenvs.create false && \
+    poetry export --without-hashes -E all -f requirements.txt > requirements.poetry.txt
+
+RUN python2.7 -m pip install --ignore-installed  --src /opt/python-git-modules/ --requirement requirements.poetry.txt && \
+    python2.7 -m pip install -e . && \
+    python2.7 -m pip install git+https://github.com/inspirehep/xrootd-python.git && \
+    python2.7 -m pip install --requirement requirements_docker.txt
+
 
 WORKDIR /usr/var/inspirehep-instance/static
 
-RUN inspirehep npm && \
+RUN inspirehep npm && \ 
     npm install && \
     inspirehep collect -v && \
     inspirehep assets build
