@@ -22,11 +22,11 @@ check_ready() {
         fi
     done
 }
-_db_check(){ docker-compose -f docker-compose.test.yml exec --user postgres test-database bash -c "pg_isready" &>/dev/null; }
+_db_check(){ docker compose -f docker-compose.test.yml exec --user postgres test-database bash -c "pg_isready" &>/dev/null; }
 check_ready "postgres" _db_check
 
 _es_check(){ curl -sL -w "%{http_code}\\n" "http://localhost:9200/" -o /dev/null | grep '200' &> /dev/null; }
 check_ready "Elasticsearch" _es_check
 
-_redis_check(){ docker-compose -f docker-compose.test.yml exec test-redis bash -c 'redis-cli ping' | grep 'PONG' &> /dev/null; }
+_redis_check(){ docker compose -f docker-compose.test.yml exec test-redis bash -c 'redis-cli ping' | grep 'PONG' &> /dev/null; }
 check_ready "redis" _redis_check

@@ -28,7 +28,7 @@ jobs:
           key: docker-images-cache-${{ hashFiles('.github/workflows/backend-tests-on-docker', 'services.yml', 'docker-compose.test.yml', 'Dockerfile.dev', 'poetry.lock', 'setup.py', 'setup.cfg') }}
       - name: Build images
         if: steps.cache.outputs.cache-hit != 'true'
-        run: docker-compose -f services.yml build --force-rm base
+        run: docker compose -f services.yml build --force-rm base
       - name: Install lrzip
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
@@ -59,13 +59,13 @@ jobs:
         uses: ./.github/actions/load-image-from-cache
       - name: Prepare docker
         run: |
-          docker-compose -f docker-compose.test.yml pull --parallel test-database test-indexer test-rabbitmq test-redis
-          docker-compose -f docker-compose.test.yml build --parallel workflows test-web
-          docker-compose -f docker-compose.test.yml up -d test-database test-indexer test-rabbitmq test-redis test-web
+          docker compose -f docker-compose.test.yml pull --parallel test-database test-indexer test-rabbitmq test-redis
+          docker compose -f docker-compose.test.yml build --parallel workflows test-web
+          docker compose -f docker-compose.test.yml up -d test-database test-indexer test-rabbitmq test-redis test-web
           sh docker/wait-for-services.sh
       - name: Run tests
         run: |
-          docker-compose -f docker-compose.test.yml run --rm workflows py.test tests/integration/workflows \
+          docker compose -f docker-compose.test.yml run --rm workflows py.test tests/integration/workflows \
           --ignore tests/integration/workflows/test_audit.py \
             --ignore tests/integration/workflows/test_hep_approval.py \
             --ignore tests/integration/workflows/test_submissions_views.py \
@@ -95,13 +95,13 @@ jobs:
         uses: ./.github/actions/load-image-from-cache
       - name: Prepare docker
         run: |
-          docker-compose -f docker-compose.test.yml pull --parallel test-database test-indexer test-rabbitmq test-redis
-          docker-compose -f docker-compose.test.yml build --parallel workflows test-web
-          docker-compose -f docker-compose.test.yml up -d test-database test-indexer test-rabbitmq test-redis test-web
+          docker compose -f docker-compose.test.yml pull --parallel test-database test-indexer test-rabbitmq test-redis
+          docker compose -f docker-compose.test.yml build --parallel workflows test-web
+          docker compose -f docker-compose.test.yml up -d test-database test-indexer test-rabbitmq test-redis test-web
           sh docker/wait-for-services.sh
       - name: Run tests
         run: |
-          docker-compose -f docker-compose.test.yml run --rm workflows py.test \
+          docker compose -f docker-compose.test.yml run --rm workflows py.test \
           tests/integration/workflows/test_views.py \
           tests/integration/workflows \
           --ignore tests/integration/workflows/test_arxiv_merge.py \
@@ -133,11 +133,11 @@ jobs:
         uses: ./.github/actions/load-image-from-cache
       - name: Prepare docker
         run: |
-          docker-compose -f docker-compose.test.yml pull --parallel test-database test-indexer test-redis
-          docker-compose -f docker-compose.test.yml up -d test-database test-indexer test-redis
+          docker compose -f docker-compose.test.yml pull --parallel test-database test-indexer test-redis
+          docker compose -f docker-compose.test.yml up -d test-database test-indexer test-redis
           sh docker/wait-for-services.sh
       - name: Run tests
-        run: docker-compose -f docker-compose.test.yml run --rm integration
+        run: docker compose -f docker-compose.test.yml run --rm integration
 
   Integration-async:
     runs-on: ubuntu-latest
@@ -158,11 +158,11 @@ jobs:
         uses: ./.github/actions/load-image-from-cache
       - name: Prepare docker
         run: |
-          docker-compose -f docker-compose.test.yml pull --parallel test-database test-indexer test-redis test-rabbitmq
-          docker-compose -f docker-compose.test.yml up -d test-database test-indexer test-redis test-rabbitmq
+          docker compose -f docker-compose.test.yml pull --parallel test-database test-indexer test-redis test-rabbitmq
+          docker compose -f docker-compose.test.yml up -d test-database test-indexer test-redis test-rabbitmq
           sh docker/wait-for-services.sh
       - name: Run tests
-        run: docker-compose -f docker-compose.test.yml run --rm integration_async
+        run: docker compose -f docker-compose.test.yml run --rm integration_async
 
   Unit:
     needs: Build
@@ -183,7 +183,7 @@ jobs:
         uses: ./.github/actions/load-image-from-cache
       - name: Run tests
         run: |
-          docker-compose -f docker-compose.test.yml run --rm unit
+          docker compose -f docker-compose.test.yml run --rm unit
 
   Release:
     if: ${{ github.event_name == 'push' || github.event_name == 'release'}}

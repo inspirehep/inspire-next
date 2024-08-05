@@ -76,7 +76,7 @@ using docker:
 
 .. code-block:: console
 
-    docker-compose -f docker-compose.deps.yml run --rm scrapyd-deploy
+    docker compose -f docker-compose.deps.yml run --rm scrapyd-deploy
 
 The simplest way to get records into your system is to harvest from arXiv.org using OAI-PMH.
 
@@ -86,7 +86,7 @@ See `the diagram in hepcrawl documentation <https://pythonhosted.org/hepcrawl/in
 to see what happens behind the scenes.
 
 Single records like this (if you are running docker, you first will need to open bash and get into
-the virtual environment in one of the workers, e.g. ``docker-compose run --rm web bash``, read the
+the virtual environment in one of the workers, e.g. ``docker compose run --rm web bash``, read the
 :ref:`other_sources` section if you aren't using docker):
 
 .. code-block:: bash
@@ -162,7 +162,7 @@ If you have not previously deployed your spiders, you will have to do it like so
 
 .. code-block:: console
 
-    docker-compose -f docker-compose.deps.yml run --rm scrapyd-deploy
+    docker compose -f docker-compose.deps.yml run --rm scrapyd-deploy
 
 Afterwards you can schedule a harvest from the CLI or shell:
 
