@@ -38,7 +38,7 @@ The first step is run the web container, in order to start our database.
 
 .. code-block:: bash
 
-    $ docker-compose run --rm web
+    $ docker compose run --rm web
 
 
 3. Connect to the PostgresSQL Database
@@ -48,7 +48,7 @@ When all the containers are up you have to open a new console and run the follow
 
 .. code-block:: bash
 
-    $ docker-compose exec database psql -U inspirehep
+    $ docker compose exec database psql -U inspirehep
 
 .. code-block:: sql
 

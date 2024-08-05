@@ -326,8 +326,8 @@ services:
       - APP_LEGACY_PID_PROVIDER="http://inspirehep.net//batchuploader/allocaterecord"
       - APP_CRAWLER_HOST_URL=http://test-scrapyd:6800
 
-  # This is needed as docker-compose does not wait for the entry services to
-  # be actually healthy when doing `docker-compose run e2e`, but only for
+  # This is needed as docker compose does not wait for the entry services to
+  # be actually healthy when doing `docker compose run e2e`, but only for
   # derived dependent services.
   e2e-deps-placeholder:
     extends:

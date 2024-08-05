@@ -215,7 +215,7 @@ Then create the database and database tables if you haven't already done so:
 
 .. code-block:: console
 
-    (inspirehep)$ docker-compose up database indexer redis rabbitmq
+    (inspirehep)$ docker compose up database indexer redis rabbitmq
 
 
 Everything else: Honcho

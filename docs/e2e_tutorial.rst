@@ -81,7 +81,7 @@ Let us now run this "test" and see what happens:
 
 .. code-block:: bash
 
-    docker-compose -f docker-compose.test.yml run --rm e2e pytest tests/e2e/test_arxiv_in_hp.py
+    docker compose -f docker-compose.test.yml run --rm e2e pytest tests/e2e/test_arxiv_in_hp.py
 
 Proxy Web UI
 ++++++++++++
@@ -254,7 +254,7 @@ In order to start the web container (don't forget the ``.local`` at the end!):
 
 .. code-block:: bash
 
-    docker-compose -f docker-compose.test.yml up test-web-e2e.local
+    docker compose -f docker-compose.test.yml up test-web-e2e.local
 
 For any other container, change the ``test-web-e2e.local`` to the suitable name; other containers
 don't end in ``.local``, this is needed only for inspire-next node as it has to be a domain name.
@@ -266,15 +266,15 @@ To view the logs of a container:
 
 .. code-block:: bash
 
-    docker-compose -f docker-compose.test.yml logs test-worker-e2e
+    docker compose -f docker-compose.test.yml logs test-worker-e2e
 
 In order to run a shell in an already running container (e.g. to investigate errors):
 
 .. code-block:: bash
 
     # E.g. for INSPIRE
-    docker-compose -f docker-compose.test.yml exec test-web-e2e.local bash
+    docker compose -f docker-compose.test.yml exec test-web-e2e.local bash
 
     # For MITM-Proxy we use `ash`, as it runs on Alpine Linux base, which doesn't ship with `bash`
-    docker-compose -f docker-compose.test.yml exec mitm-proxy ash
+    docker compose -f docker-compose.test.yml exec mitm-proxy ash
 
