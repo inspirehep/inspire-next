@@ -13,8 +13,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     add_core, halt_record, is_core, link_institutions_with_affiliations,
     load_record_from_hep, normalize_author_affiliations,
     remove_inspire_categories_derived_from_core_arxiv_categories)
-from inspirehep.modules.workflows.tasks.submission import (create_ticket,
-                                                           prepare_keywords)
+from inspirehep.modules.workflows.tasks.submission import create_ticket
 from inspirehep.modules.workflows.tasks.upload import store_record
 from inspirehep.modules.workflows.utils import do_not_repeat
 
@@ -35,7 +34,6 @@ class CoreSelection(object):
         IF_ELSE(
             is_core,
             [
-                prepare_keywords,
                 normalize_author_affiliations,
                 link_institutions_with_affiliations,
                 do_not_repeat("create_ticket_curator_core_publisher")(

@@ -121,7 +121,6 @@ from inspirehep.modules.workflows.tasks.submission import (
     close_ticket,
     create_ticket,
     filter_keywords,
-    prepare_keywords,
     reply_ticket,
     send_to_legacy
 )
@@ -341,7 +340,6 @@ POSTENHANCE_RECORD = [
         add_core,
     ),
     filter_keywords,
-    prepare_keywords,
     set_refereed_and_fix_document_type,
     fix_submission_number,
     IF(is_core, normalize_author_affiliations),
