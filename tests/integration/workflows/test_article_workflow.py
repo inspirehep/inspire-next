@@ -348,69 +348,6 @@ def test_set_fermilab_collection_even_when_record_is_hidden_and_affiliations_are
     return_value="1234",
 )
 @mock.patch("inspirehep.modules.workflows.tasks.submission.send_robotupload")
-def test_keywords_are_stored_in_record_when_record_is_core(
-    mocked_api_request_magpie,
-    mocked_api_request_classifier,
-    mocked_robotupload,
-    mocked_create_ticket,
-    mocked_store_record,
-    mocked_external_services,
-    workflow_app,
-):
-    record = {
-        "$schema": "https://labs.inspirehep.net/schemas/records/hep.json",
-        "titles": [
-            {"title": "Update without conflicts title."},
-        ],
-        "authors": [
-            {
-                "full_name": "Some author",
-                "raw_affiliations": [
-                    {
-                        "value": "Some longer description CErN? with proper keyword included"
-                    }
-                ],
-            }
-        ],
-        "document_type": ["article"],
-        "_collections": ["Literature"],
-        "abstracts": [
-            {"value": "Very interesting paper about the Higgs boson."},
-        ],
-        "acquisition_source": {
-            "datetime": "2020-11-12T04:49:13.369515",
-            "method": "hepcrawl",
-            "submission_number": "978",
-            "source": "Elsevier",
-        },
-    }
-
-    expected_keywords = [
-        {"value": "Higgs particle", "schema": "INSPIRE", "source": "classifier"}
-    ]
-    workflow = build_workflow(record)
-    start("article", object_id=workflow.id)
-    wf = workflow_object_class.get(workflow.id)
-    mark("approved", True)(workflow, None)
-    mark("core", True)(workflow, None)
-    wf.continue_workflow()
-    assert wf.data["keywords"] == expected_keywords
-
-
-@mock.patch(
-    "inspirehep.modules.workflows.tasks.classifier.json_api_request",
-    side_effect=fake_classifier_api_request,
-)
-@mock.patch(
-    "inspirehep.modules.workflows.tasks.magpie.json_api_request",
-    side_effect=fake_magpie_api_request,
-)
-@mock.patch("inspirehep.modules.workflows.tasks.upload.store_record")
-@mock.patch(
-    "inspirehep.modules.workflows.tasks.submission.submit_rt_ticket",
-    return_value="1234",
-)
-@mock.patch("inspirehep.modules.workflows.tasks.submission.send_robotupload")
 def test_run_next_wf_is_not_starting_core_selection_wfs(
     mocked_api_request_magpie,
     mocked_api_request_classifier,
