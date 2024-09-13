@@ -38,7 +38,8 @@ from mocks import MockEng, MockObj
 
 from inspirehep.modules.workflows.tasks.actions import jlab_ticket_needed, load_from_source_data, \
     extract_authors_from_pdf, is_suitable_for_pdf_authors_extraction, is_fermilab_report, add_collection, \
-    check_if_france_in_fulltext, check_if_france_in_raw_affiliations, check_if_core_and_uk_in_fulltext
+    check_if_france_in_fulltext, check_if_france_in_raw_affiliations, check_if_germany_in_fulltext, \
+    check_if_germany_in_raw_affiliations, check_if_core_and_uk_in_fulltext
 
 
 def test_match_approval_gets_match_recid():
@@ -579,6 +580,94 @@ def test_check_if_france_in_fulltext_when_france_in_text_body(mocked_get_documen
                 france_in_fulltext = check_if_france_in_fulltext(obj, eng)
 
     assert france_in_fulltext
+
+
+def test_check_if_germany_in_affiliations(app):
+    obj = MagicMock()
+    obj.data = {
+        'authors': [
+            {"full_name": "author 1",
+             "raw_affiliations": [{"value": "Laboratoire de Physique des 2 Infinis Irene Joliot-Curie (IJCLab), CNRS, Université Paris-Saclay, Orsay, 91405, Germany"}]
+
+             }
+        ]
+    }
+
+    obj.extra_data = {}
+    eng = None
+    result = check_if_germany_in_raw_affiliations(obj, eng)
+    assert result
+
+
+def test_check_if_deutschland_in_affiliations(app):
+    obj = MagicMock()
+    obj.data = {
+        'authors': [
+            {"full_name": "author 1",
+             "raw_affiliations": [{"value": "Laboratoire de Physique des 2 Infinis Irene Joliot-Curie (IJCLab), CNRS, Université Paris-Saclay, Orsay, 91405, Deutschland"}]
+
+             }
+        ]
+    }
+
+    obj.extra_data = {}
+    eng = None
+    result = check_if_germany_in_raw_affiliations(obj, eng)
+    assert result
+
+
+@patch("inspirehep.modules.workflows.tasks.actions.get_document_in_workflow")
+def test_check_if_germany_in_fulltext_when_germany_in_text_body(mocked_get_document, app):
+    fake_grobid_response = "<country key=\"DE\">Germany</country>"
+    obj = MagicMock()
+    obj.data = {
+        'core': False
+    }
+    obj.extra_data = {}
+    eng = None
+    new_config = {"GROBID_URL": "http://grobid_url.local"}
+
+    new_config = {"GROBID_URL": "http://grobid_url.local"}
+    with patch.dict(current_app.config, new_config):
+        with requests_mock.Mocker() as requests_mocker:
+            requests_mocker.register_uri(
+                'POST', 'http://grobid_url.local/api/processFulltextDocument',
+                text=fake_grobid_response,
+                headers={'content-type': 'application/xml'},
+                status_code=200,
+            )
+            with tempfile.NamedTemporaryFile() as tmp_file:
+                mocked_get_document.return_value.__enter__.return_value = tmp_file.name
+                germany_in_fulltext = check_if_germany_in_fulltext(obj, eng)
+
+    assert germany_in_fulltext
+
+
+@patch("inspirehep.modules.workflows.tasks.actions.get_document_in_workflow")
+def test_check_if_germany_in_fulltext_when_deutschland_in_text_body(mocked_get_document, app):
+    fake_grobid_response = "<country key=\"DE\">Deutschland</country>"
+    obj = MagicMock()
+    obj.data = {
+        'core': False
+    }
+    obj.extra_data = {}
+    eng = None
+    new_config = {"GROBID_URL": "http://grobid_url.local"}
+
+    new_config = {"GROBID_URL": "http://grobid_url.local"}
+    with patch.dict(current_app.config, new_config):
+        with requests_mock.Mocker() as requests_mocker:
+            requests_mocker.register_uri(
+                'POST', 'http://grobid_url.local/api/processFulltextDocument',
+                text=fake_grobid_response,
+                headers={'content-type': 'application/xml'},
+                status_code=200,
+            )
+            with tempfile.NamedTemporaryFile() as tmp_file:
+                mocked_get_document.return_value.__enter__.return_value = tmp_file.name
+                germany_in_fulltext = check_if_germany_in_fulltext(obj, eng)
+
+    assert germany_in_fulltext
 
 
 @patch("inspirehep.modules.workflows.tasks.actions.get_document_in_workflow")

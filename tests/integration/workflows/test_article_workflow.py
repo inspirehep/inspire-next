@@ -153,6 +153,10 @@ def test_create_ticket_when_source_is_not_publishing(
     return_value=False,
 )
 @mock.patch(
+    "inspirehep.modules.workflows.tasks.actions.check_if_germany_in_fulltext",
+    return_value=False,
+)
+@mock.patch(
     "inspirehep.modules.workflows.tasks.actions.check_if_core_and_uk_in_fulltext",
     return_value=False,
 )
@@ -161,6 +165,7 @@ def test_set_fermilab_collection_from_report_number(
     mocked_api_request_magpie,
     mocked_api_request_classifier,
     mocked_robotupload,
+    mocked_check_if_germany_in_fulltext,
     mocked_check_if_core_and_uk_in_fulltext,
     mocked_external_services,
     workflow_app,
