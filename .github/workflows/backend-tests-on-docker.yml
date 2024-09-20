@@ -203,7 +203,7 @@ jobs:
         run: |
           echo "RELEASE=$(git tag --points-at HEAD)" >> $GITHUB_ENV
           echo "TAG=${RELEASE:-$(git describe --always --tags)}" >> $GITHUB_ENV
-          echo "::set-output name=tag::${RELEASE:-$(git describe --always --tags)}"
+          echo "tag=${RELEASE:-$(git describe --always --tags)}" >> $GITHUB_OUTPUT
       - name: deploy docker images
         id: deploy-docker-images
         shell: bash
