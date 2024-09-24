@@ -1155,6 +1155,15 @@ def check_if_core_and_uk_in_fulltext(obj, eng):
     return regex.search(fulltext)
 
 
+def check_if_uk_in_raw_affiliations(obj, eng):
+    raw_affs = get_value(obj.data, 'authors.raw_affiliations.value', [])
+    regex = re.compile(
+        r"\b(UK|United\s+Kingdom|England|Scotland|Northern\s+Ireland)\b", re.UNICODE | re.IGNORECASE)
+    for aff in chain.from_iterable(raw_affs):
+        if regex.search(aff):
+            return True
+
+
 def load_record_from_hep(obj, wf):
     control_number = obj.data['control_number']
     pid_type = get_pid_type_from_schema(obj.data['$schema'])
