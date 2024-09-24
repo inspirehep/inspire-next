@@ -1131,6 +1131,21 @@ def check_if_france_in_raw_affiliations(obj, eng):
             return True
 
 
+def check_if_germany_in_fulltext(obj, eng):
+    fulltext = get_fulltext(obj)
+    if not fulltext:
+        return
+    regex = re.compile(r"\b(Germany|Deutschland)\b", re.UNICODE | re.IGNORECASE)
+    return regex.search(fulltext)
+
+
+def check_if_germany_in_raw_affiliations(obj, eng):
+    raw_affs = get_value(obj.data, 'authors.raw_affiliations.value', [])
+    for aff in chain.from_iterable(raw_affs):
+        if "germany" in aff.lower() or "deutschland" in aff.lower():
+            return True
+
+
 def check_if_core_and_uk_in_fulltext(obj, eng):
     fulltext = get_fulltext(obj)
     if not fulltext or not is_core(obj, eng):
