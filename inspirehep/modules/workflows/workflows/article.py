@@ -79,7 +79,8 @@ from inspirehep.modules.workflows.tasks.actions import (
     check_if_germany_in_fulltext,
     check_if_germany_in_raw_affiliations,
     link_institutions_with_affiliations,
-    check_if_core_and_uk_in_fulltext
+    check_if_core_and_uk_in_fulltext,
+    check_if_uk_in_raw_affiliations,
 )
 
 from inspirehep.modules.workflows.tasks.classifier import (
@@ -307,6 +308,15 @@ NOTIFY_CURATOR_IF_NEEDED = [
                     create_ticket(
                         template='literaturesuggest/tickets/curation_core.html',
                         queue='GER_curation',
+                        context_factory=curation_ticket_context,
+                        ticket_id_key='curation_ticket_id',
+                    ),
+                ),
+                IF(
+                    check_if_uk_in_raw_affiliations,
+                    create_ticket(
+                        template='literaturesuggest/tickets/curation_core.html',
+                        queue='UK_curation',
                         context_factory=curation_ticket_context,
                         ticket_id_key='curation_ticket_id',
                     ),

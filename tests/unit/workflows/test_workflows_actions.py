@@ -36,7 +36,7 @@ from mock import patch, MagicMock
 from inspirehep.modules.workflows.actions import MatchApproval, MergeApproval
 from mocks import MockEng, MockObj
 
-from inspirehep.modules.workflows.tasks.actions import jlab_ticket_needed, load_from_source_data, \
+from inspirehep.modules.workflows.tasks.actions import check_if_uk_in_raw_affiliations, jlab_ticket_needed, load_from_source_data, \
     extract_authors_from_pdf, is_suitable_for_pdf_authors_extraction, is_fermilab_report, add_collection, \
     check_if_france_in_fulltext, check_if_france_in_raw_affiliations, check_if_germany_in_fulltext, \
     check_if_germany_in_raw_affiliations, check_if_core_and_uk_in_fulltext
@@ -746,3 +746,58 @@ def test_check_if_uk_in_fulltext_core_case_insensitive(mocked_get_document, app)
                     obj, eng)
 
     assert uk_in_fulltext_and_core
+
+
+def test_check_if_uk_in_affiliations(app):
+    obj = MagicMock()
+    obj.extra_data = {}
+    obj.data = {
+        'authors': [
+            {"full_name": "author 1",
+             "raw_affiliations": [{"value": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam, 91405, UK"}]
+
+             }
+        ]
+    }
+    result = check_if_uk_in_raw_affiliations(obj, None)
+    assert result
+    obj.data = {
+        'authors': [
+            {"full_name": "author 1",
+             "raw_affiliations": [{"value": "Lorem ipsum dolor united kingdom amet, consetetur sadipscing elitr, sed diam, 91405"}]
+
+             }
+        ]
+    }
+    result = check_if_uk_in_raw_affiliations(obj, None)
+    assert result
+    obj.data = {
+        'authors': [
+            {"full_name": "author 1",
+             "raw_affiliations": [{"value": "Lorem ipsum dolor sit amet, Scotland sadipscing elitr, sed diam, 91405"}]
+
+             }
+        ]
+    }
+    result = check_if_uk_in_raw_affiliations(obj, None)
+    assert result
+    obj.data = {
+        'authors': [
+            {"full_name": "author 1",
+             "raw_affiliations": [{"value": "Lorem engLand dolor sit amet, sadipscing elitr, sed diam, 91405"}]
+
+             }
+        ]
+    }
+    result = check_if_uk_in_raw_affiliations(obj, None)
+    assert result
+    obj.data = {
+        'authors': [
+            {"full_name": "author 1",
+             "raw_affiliations": [{"value": "Lorem ipsum dolor sit amet, Northern ireland, sed diam, 91405"}]
+
+             }
+        ]
+    }
+    result = check_if_uk_in_raw_affiliations(obj, None)
+    assert result
