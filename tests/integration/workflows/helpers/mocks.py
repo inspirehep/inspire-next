@@ -30,7 +30,7 @@ import pkg_resources
 
 def fake_download_file(workflow, name, url):
     """Mock download_file_to_workflow func."""
-    if url == 'http://export.arxiv.org/e-print/1407.7587':
+    if url == 'https://arxiv.org/e-print/1407.7587':
         workflow.files[name] = pkg_resources.resource_stream(
             __name__,
             os.path.join(
@@ -39,7 +39,7 @@ def fake_download_file(workflow, name, url):
             )
         )
         return workflow.files[name]
-    elif url == 'http://export.arxiv.org/pdf/1407.7587':
+    elif url == 'https://arxiv.org/pdf/1407.7587':
         workflow.files[name] = pkg_resources.resource_stream(
             __name__,
             os.path.join(

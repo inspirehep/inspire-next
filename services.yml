@@ -24,6 +24,7 @@ version: '2.1'
 
 services:
   base:
+    platform: linux/amd64
     image: inspire-build/inspire-next-base
     tty: true
     build:

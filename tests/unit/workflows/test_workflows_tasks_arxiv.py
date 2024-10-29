@@ -48,7 +48,7 @@ from mocks import AttrDict, MockEng, MockFiles, MockObj
 def test_populate_arxiv_document():
     with requests_mock.Mocker() as requests_mocker:
         requests_mocker.register_uri(
-            'GET', 'http://export.arxiv.org/pdf/1605.03844',
+            'GET', 'https://arxiv.org/pdf/1605.03844',
             content=pkg_resources.resource_string(
                 __name__, os.path.join('fixtures', '1605.03844.pdf')),
         )
@@ -81,8 +81,8 @@ def test_populate_arxiv_document():
                 'fulltext': True,
                 'hidden': True,
                 'material': 'preprint',
-                'original_url': 'http://export.arxiv.org/pdf/1605.03844',
-                'url': 'http://export.arxiv.org/pdf/1605.03844',
+                'original_url': 'https://arxiv.org/pdf/1605.03844',
+                'url': 'https://arxiv.org/pdf/1605.03844',
                 'source': 'arxiv',
             },
         ]
@@ -94,7 +94,7 @@ def test_populate_arxiv_document():
 def test_populate_arxiv_document_does_not_duplicate_files_if_called_multiple_times():
     with requests_mock.Mocker() as requests_mocker:
         requests_mocker.register_uri(
-            'GET', 'http://export.arxiv.org/pdf/1605.03844',
+            'GET', 'https://arxiv.org/pdf/1605.03844',
             content=pkg_resources.resource_string(
                 __name__, os.path.join('fixtures', '1605.03844.pdf')),
         )
@@ -128,8 +128,8 @@ def test_populate_arxiv_document_does_not_duplicate_files_if_called_multiple_tim
                 'fulltext': True,
                 'hidden': True,
                 'material': 'preprint',
-                'original_url': 'http://export.arxiv.org/pdf/1605.03844',
-                'url': 'http://export.arxiv.org/pdf/1605.03844',
+                'original_url': 'https://arxiv.org/pdf/1605.03844',
+                'url': 'https://arxiv.org/pdf/1605.03844',
                 'source': 'arxiv',
             },
         ]
@@ -147,7 +147,7 @@ def test_populate_arxiv_document_logs_on_pdf_not_existing():
     }
     with requests_mock.Mocker() as requests_mocker:
         requests_mocker.get(
-            'http://export.arxiv.org/pdf/1707.02785',
+            'https://arxiv.org/pdf/1707.02785',
             (response200,),
         )
         requests_mocker.get(
@@ -191,11 +191,11 @@ def test_populate_arxiv_document_alternative_url():
     }
     with requests_mock.Mocker() as requests_mocker:
         requests_mocker.get(
-            'http://export.arxiv.org/pdf/1605.03814',
+            'https://arxiv.org/pdf/1605.03814',
             (response500,),
         )
         requests_mocker.get(
-            'http://arxiv.org/pdf/1605.03814',
+            'https://export.arxiv.org/pdf/1605.03814',
             (response200,)
         )
         schema = load_schema('hep')
@@ -220,7 +220,7 @@ def test_populate_arxiv_document_alternative_url():
 
         assert populate_arxiv_document(obj, eng) is None
 
-        expected_url = 'http://arxiv.org/pdf/1605.03814'
+        expected_url = 'https://export.arxiv.org/pdf/1605.03814'
         expected_documents = [
             {
                 'key': '1605.03814.pdf',
@@ -245,11 +245,11 @@ def test_populate_arxiv_document_retries_on_error():
     }
     with requests_mock.Mocker() as requests_mocker:
         requests_mocker.get(
-            'http://export.arxiv.org/pdf/1605.03814',
+            'https://arxiv.org/pdf/1605.03814',
             (response500, response200),
         )
         requests_mocker.get(
-            'http://arxiv.org/pdf/1605.03814',
+            'https://export.arxiv.org/pdf/1605.03814',
             (response500,)
         )
         schema = load_schema('hep')
@@ -274,7 +274,7 @@ def test_populate_arxiv_document_retries_on_error():
 
         assert populate_arxiv_document(obj, eng) is None
 
-        expected_url = 'http://export.arxiv.org/pdf/1605.03814'
+        expected_url = 'https://arxiv.org/pdf/1605.03814'
         expected_documents = [
             {
                 'key': '1605.03814.pdf',
@@ -327,7 +327,7 @@ def test_populate_arxiv_document_retries_on_connection_error(mock_requests_get):
 def test_arxiv_package_download_logs_on_success():
     with requests_mock.Mocker() as requests_mocker:
         requests_mocker.register_uri(
-            'GET', 'http://export.arxiv.org/e-print/1605.03959',
+            'GET', 'https://arxiv.org/e-print/1605.03959',
             content=pkg_resources.resource_string(
                 __name__, os.path.join('fixtures', '1605.03959.tar.gz')),
         )
@@ -365,7 +365,7 @@ def test_arxiv_package_download_logs_on_success():
 def test_arxiv_package_download_logs_on_error():
     with requests_mock.Mocker() as requests_mocker:
         requests_mocker.register_uri(
-            'GET', 'http://export.arxiv.org/e-print/1605.03951',
+            'GET', 'https://arxiv.org/e-print/1605.03951',
             status_code=500,
         )
 

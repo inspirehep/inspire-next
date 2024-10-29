@@ -388,7 +388,7 @@ def test_run_next_wf_is_not_starting_core_selection_wfs(
     workflow = build_workflow(record, extra_data={"delay": 10})
     mocked_external_services.register_uri(
         "GET",
-        "http://export.arxiv.org/pdf/1802.08709.pdf",
+        "https://arxiv.org/pdf/1802.08709.pdf",
         content=pkg_resources.resource_string(
             __name__, os.path.join("fixtures", "1802.08709.pdf")
         ),
@@ -398,7 +398,7 @@ def test_run_next_wf_is_not_starting_core_selection_wfs(
     )
     mocked_external_services.register_uri(
         "GET",
-        "http://export.arxiv.org/e-print/1802.08709.pdf",
+        "https://arxiv.org/e-print/1802.08709.pdf",
         content=pkg_resources.resource_string(
             __name__, os.path.join("fixtures", "1802.08709.pdf")
         ),
@@ -436,7 +436,7 @@ def test_run_next_wf_is_not_starting_core_selection_wfs(
 
     mocked_external_services.register_uri(
         "GET",
-        "http://export.arxiv.org/pdf/1802.08709.pdf",
+        "https://arxiv.org/pdf/1802.08709.pdf",
         content=pkg_resources.resource_string(
             __name__, os.path.join("fixtures", "1802.08709.pdf")
         ),
@@ -446,7 +446,7 @@ def test_run_next_wf_is_not_starting_core_selection_wfs(
     )
     mocked_external_services.register_uri(
         "GET",
-        "http://export.arxiv.org/e-print/1802.08709.pdf",
+        "https://arxiv.org/e-print/1802.08709.pdf",
         content=pkg_resources.resource_string(
             __name__, os.path.join("fixtures", "1802.08709.pdf")
         ),
