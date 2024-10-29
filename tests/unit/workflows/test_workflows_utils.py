@@ -56,7 +56,7 @@ def test_download_file_to_workflow_retries_on_protocol_error():
             __name__, os.path.join('fixtures', '1605.03844.pdf'))
 
         requests_mocker.register_uri(
-            'GET', 'http://export.arxiv.org/pdf/1605.03844', [
+            'GET', 'https://arxiv.org/pdf/1605.03844', [
                 {'exc': requests.packages.urllib3.exceptions.ProtocolError},
                 {'body': filename, 'status_code': 200},
             ])
@@ -69,7 +69,7 @@ def test_download_file_to_workflow_retries_on_protocol_error():
 
         expected = MockFileObject(key='1605.03844.pdf')
         result = download_file_to_workflow(
-            obj, '1605.03844.pdf', 'http://export.arxiv.org/pdf/1605.03844')
+            obj, '1605.03844.pdf', 'https://arxiv.org/pdf/1605.03844')
 
         assert expected == result
 

@@ -6,7 +6,7 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
     method: GET
-    uri: http://export.arxiv.org/pdf/1407.7587
+    uri: https://arxiv.org/pdf/1407.7587
   response:
     body:
       string: !!binary |
@@ -5419,7 +5419,7 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
     method: GET
-    uri: http://export.arxiv.org/e-print/1407.7587
+    uri: https://arxiv.org/e-print/1407.7587
   response:
     body:
       string: !!binary |
@@ -8590,7 +8590,7 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
     method: GET
-    uri: http://export.arxiv.org/pdf/1407.7587
+    uri: https://arxiv.org/pdf/1407.7587
   response:
     body:
       string: !!binary |
@@ -19481,7 +19481,7 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
     method: GET
-    uri: http://export.arxiv.org/pdf/1407.7587
+    uri: https://arxiv.org/pdf/1407.7587
   response:
     body:
       string: !!binary |
@@ -24894,7 +24894,7 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
     method: GET
-    uri: http://export.arxiv.org/e-print/1407.7587
+    uri: https://arxiv.org/e-print/1407.7587
   response:
     body:
       string: !!binary |
@@ -28065,7 +28065,7 @@ interactions:
       Accept-Encoding: ['gzip, deflate']
       Connection: [keep-alive]
     method: GET
-    uri: http://export.arxiv.org/pdf/1407.7587
+    uri: https://arxiv.org/pdf/1407.7587
   response:
     body:
       string: !!binary |

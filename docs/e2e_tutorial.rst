@@ -99,8 +99,8 @@ current test session. Many of them (``test-indexer``, ``test-web-e2e.local``) ar
 not recorded. You might notice a few requests to ArXiv like so:
 
 * ``GET http://export.arxiv.org/oai2?verb=GetRecord&metadataPrefix=arXiv&identifier=oai...``
-* ``GET http://export.arxiv.org/pdf/1806.04664``
-* ``GET http://export.arxiv.org/e-print/1806.04664``
+* ``GET https://arxiv.org/pdf/1806.04664``
+* ``GET https://arxiv.org/e-print/1806.04664``
 
 These are live interactions that are recorded, you can find them in
 ``tests/e2e/scenarios/arxiv_in_hp/ArxivService/``. If you need to re-record an interaction, simply

@@ -6,7 +6,7 @@ request:
     Connection: [keep-alive]
     User-Agent: [python-requests/2.18.4]
   method: GET
-  url: http://export.arxiv.org/pdf/1412.0200
+  url: https://arxiv.org/pdf/1412.0200
 response:
   body: !!binary |
     

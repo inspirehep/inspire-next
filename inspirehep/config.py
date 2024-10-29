@@ -1232,9 +1232,9 @@ AFFILIATIONS_TO_HIDDEN_COLLECTIONS_MAPPING = {
     "CERN": "CDS Hidden",
     "FERMILAB": "Fermilab"
 }
-ARXIV_PDF_URL = "http://export.arxiv.org/pdf/{arxiv_id}"
-ARXIV_PDF_URL_ALTERNATIVE = "http://arxiv.org/pdf/{arxiv_id}"
-ARXIV_TARBALL_URL = "http://export.arxiv.org/e-print/{arxiv_id}"
+ARXIV_PDF_URL = "https://arxiv.org/pdf/{arxiv_id}"
+ARXIV_PDF_URL_ALTERNATIVE = "https://export.arxiv.org/pdf/{arxiv_id}"
+ARXIV_TARBALL_URL = "https://arxiv.org/e-print/{arxiv_id}"
 
 ARXIV_CATEGORIES = {
     'core': [

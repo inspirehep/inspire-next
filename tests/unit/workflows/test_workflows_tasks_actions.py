@@ -78,7 +78,7 @@ def _get_auto_reject_obj(decision, has_core_keywords, fulltext_used):
 def test_download_documents():
     with requests_mock.Mocker() as requests_mocker:
         requests_mocker.register_uri(
-            'GET', 'http://export.arxiv.org/pdf/1605.03844',
+            'GET', 'https://arxiv.org/pdf/1605.03844',
             content=pkg_resources.resource_string(
                 __name__, os.path.join('fixtures', '1605.03844.pdf')),
         )
@@ -90,7 +90,7 @@ def test_download_documents():
             'documents': [
                 {
                     'key': '1605.03844.pdf',
-                    'url': 'http://export.arxiv.org/pdf/1605.03844'
+                    'url': 'https://arxiv.org/pdf/1605.03844'
                 },
             ],
         }  # literature/1458302
@@ -113,12 +113,12 @@ def test_download_documents():
 def test_download_documents_with_multiple_documents():
     with requests_mock.Mocker() as requests_mocker:
         requests_mocker.register_uri(
-            'GET', 'http://export.arxiv.org/pdf/1605.03844',
+            'GET', 'https://arxiv.org/pdf/1605.03844',
             content=pkg_resources.resource_string(
                 __name__, os.path.join('fixtures', '1605.03844.pdf')),
         )
         requests_mocker.register_uri(
-            'GET', 'http://export.arxiv.org/pdf/1605.03845',
+            'GET', 'https://arxiv.org/pdf/1605.03845',
             content=pkg_resources.resource_string(
                 __name__, os.path.join('fixtures', '1605.03844.pdf')),
         )
@@ -130,11 +130,11 @@ def test_download_documents_with_multiple_documents():
             'documents': [
                 {
                     'key': '1605.03844.pdf',
-                    'url': 'http://export.arxiv.org/pdf/1605.03844'
+                    'url': 'https://arxiv.org/pdf/1605.03844'
                 },
                 {
                     'key': '1605.03845.pdf',
-                    'url': 'http://export.arxiv.org/pdf/1605.03845'
+                    'url': 'https://arxiv.org/pdf/1605.03845'
                 },
             ],
         }  # literature/1458302
@@ -869,7 +869,7 @@ def test_populate_journal_coverage_does_nothing_if_no_journal_is_found(mock_repl
 def test_populate_submission_document():
     with requests_mock.Mocker() as requests_mocker:
         requests_mocker.register_uri(
-            'GET', 'http://export.arxiv.org/pdf/1605.03844',
+            'GET', 'https://arxiv.org/pdf/1605.03844',
             content=pkg_resources.resource_string(
                 __name__, os.path.join('fixtures', '1605.03844.pdf')),
         )
@@ -889,7 +889,7 @@ def test_populate_submission_document():
             },
         }
         extra_data = {
-            'submission_pdf': 'http://export.arxiv.org/pdf/1605.03844',
+            'submission_pdf': 'https://arxiv.org/pdf/1605.03844',
         }
         files = MockFiles({})
         assert validate(data['acquisition_source'], subschema) is None
@@ -903,9 +903,9 @@ def test_populate_submission_document():
             {
                 'fulltext': True,
                 'key': 'fulltext.pdf',
-                'original_url': 'http://export.arxiv.org/pdf/1605.03844',
+                'original_url': 'https://arxiv.org/pdf/1605.03844',
                 'source': 'submitter',
-                'url': 'http://export.arxiv.org/pdf/1605.03844',
+                'url': 'https://arxiv.org/pdf/1605.03844',
             },
         ]
         result = obj.data['documents']
@@ -916,7 +916,7 @@ def test_populate_submission_document():
 def test_populate_submission_document_does_not_duplicate_documents():
     with requests_mock.Mocker() as requests_mocker:
         requests_mocker.register_uri(
-            'GET', 'http://export.arxiv.org/pdf/1605.03844',
+            'GET', 'https://arxiv.org/pdf/1605.03844',
             content=pkg_resources.resource_string(
                 __name__, os.path.join('fixtures', '1605.03844.pdf')),
         )
@@ -936,7 +936,7 @@ def test_populate_submission_document_does_not_duplicate_documents():
             },
         }
         extra_data = {
-            'submission_pdf': 'http://export.arxiv.org/pdf/1605.03844',
+            'submission_pdf': 'https://arxiv.org/pdf/1605.03844',
         }
         files = MockFiles({})
         assert validate(data['acquisition_source'], subschema) is None
@@ -951,9 +951,9 @@ def test_populate_submission_document_does_not_duplicate_documents():
             {
                 'fulltext': True,
                 'key': 'fulltext.pdf',
-                'original_url': 'http://export.arxiv.org/pdf/1605.03844',
+                'original_url': 'https://arxiv.org/pdf/1605.03844',
                 'source': 'submitter',
-                'url': 'http://export.arxiv.org/pdf/1605.03844',
+                'url': 'https://arxiv.org/pdf/1605.03844',
             },
         ]
         result = obj.data['documents']
@@ -964,7 +964,7 @@ def test_populate_submission_document_does_not_duplicate_documents():
 def test_populate_submission_document_without_pdf():
     with requests_mock.Mocker() as requests_mocker:
         requests_mocker.register_uri(
-            'GET', 'http://export.arxiv.org/pdf/1707.02785',
+            'GET', 'https://arxiv.org/pdf/1707.02785',
             content=pkg_resources.resource_string(
                 __name__, os.path.join('fixtures', '1707.02785.html')),
         )
@@ -985,7 +985,7 @@ def test_populate_submission_document_without_pdf():
         assert validate(data['acquisition_source'], subschema) is None
 
         extra_data = {
-            'submission_pdf': 'http://export.arxiv.org/pdf/1707.02785',
+            'submission_pdf': 'https://arxiv.org/pdf/1707.02785',
         }
         files = MockFiles({})
         obj = MockObj(data, extra_data, files=files)
@@ -1492,7 +1492,7 @@ def test_url_is_correctly_escaped():
 def test_populate_submission_document_without_documents():
     with requests_mock.Mocker() as requests_mocker:
         requests_mocker.register_uri(
-            'GET', 'http://export.arxiv.org/pdf/1605.03844',
+            'GET', 'https://arxiv.org/pdf/1605.03844',
             content=pkg_resources.resource_string(
                 __name__, os.path.join('fixtures', '1605.03844.pdf')),
         )
