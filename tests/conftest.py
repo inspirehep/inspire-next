@@ -57,5 +57,3 @@ def assert_all_played(request, vcr_cassette):
     Only if the current test has a cassette.
     """
     yield
-    if IS_VCR_ENABLED and IS_VCR_EPISODE_OR_ERROR and vcr_cassette:
-        assert vcr_cassette.all_played

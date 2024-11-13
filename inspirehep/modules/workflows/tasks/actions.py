@@ -431,12 +431,17 @@ def download_documents(obj, eng):
     LOGGER.info('Downloading documents for %s', obj.id)
     documents = obj.data.get('documents', [])
     for document in documents:
-        filename = document['key']
         url = document['url']
+        if url.startswith('/api/files'):
+            obj.log.info('Document already downloaded from %s', url)
+            continue
+
+        filename = document['key']
         scheme = urlparse(url).scheme
         LOGGER.info(
             'Downloading document key:%s url:%s scheme:%s', document['key'], document['url'], scheme
         )
+
         if scheme == 'file':
             downloaded = copy_file_to_workflow(obj, filename, url)
         else:
