@@ -110,6 +110,50 @@ def test_download_documents():
         assert expected_document_url == documents[0]['url']
 
 
+def test_regression_download_documents_with_local_file_should_not_fail():
+    with requests_mock.Mocker() as requests_mocker:
+        requests_mocker.register_uri(
+            'GET', 'http://export.arxiv.org/pdf/1605.03844',
+            content=pkg_resources.resource_string(
+                __name__, os.path.join('fixtures', '1605.03844.pdf')),
+        )
+
+        schema = load_schema('hep')
+        subschema = schema['properties']['documents']
+
+        data = {
+            'documents': [
+                {
+                    'key': '1605.03844.pdf',
+                    'url': 'http://export.arxiv.org/pdf/1605.03844'
+                },
+                {
+                    'original_url': 'http://export.arxiv.org/pdf/2308.04775',
+                    'key': '2308.04775.pdf',
+                    'url': '/api/files/c04581d8-b8b1-4b4e-9819-b17c63517ee7/2308.04775.pdf'
+                }
+            ],
+        }  # literature/1458302
+        extra_data = {}
+        files = MockFiles({})
+        assert validate(data['documents'], subschema) is None
+
+        obj = MockObj(data, extra_data, files=files)
+        eng = MockEng()
+
+        assert download_documents(obj, eng) is None
+
+        documents = obj.data['documents']
+        expected_document_urls = [
+            '/api/files/0b9dd5d1-feae-4ba5-809d-3a029b0bc110/1605.03844.pdf',
+            '/api/files/c04581d8-b8b1-4b4e-9819-b17c63517ee7/2308.04775.pdf'
+        ]
+
+        assert 2 == len(documents)
+        for document in documents:
+            assert document['url'] in expected_document_urls
+
+
 def test_download_documents_with_multiple_documents():
     with requests_mock.Mocker() as requests_mocker:
         requests_mocker.register_uri(
