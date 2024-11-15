@@ -193,17 +193,23 @@ ENHANCE_RECORD = [
         extract_authors_from_pdf,
     ),
     normalize_journal_titles,
+    save_workflow,
     refextract,
+    save_workflow,
     count_reference_coreness,
     extract_journal_info,
+    save_workflow,
     populate_journal_coverage,
+    save_workflow,
     classify_paper(
         only_core_tags=False,
         spires=True,
         with_author_keywords=True,
     ),
+    save_workflow,
     filter_core_keywords,
     guess_categories,
+    save_workflow,
     IF(
         is_experimental_paper,
         guess_experiments,
@@ -211,6 +217,7 @@ ENHANCE_RECORD = [
     guess_keywords,
     guess_coreness,
     normalize_collaborations,
+    save_workflow
 ]
 
 

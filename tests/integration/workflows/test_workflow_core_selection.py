@@ -173,7 +173,7 @@ def test_core_selection_wf_starts_after_article_wf_when_no_core(
                 == 0
             )
 
-            workflow_object.callback_pos = [34, 1, 13]
+            workflow_object.callback_pos = [41, 1, 13]
             #  Run task for creating core_selection wf
             workflow_object.extra_data["auto-approved"] = True
             workflow_object.save()
@@ -306,7 +306,7 @@ def test_core_selection_wf_is_not_created_when_wf_is_record_update(
                 == 0
             )
 
-            workflow_object.callback_pos = [34, 1, 13]
+            workflow_object.callback_pos = [41, 1, 13]
             #  Run task for creating core_selection wf
             workflow_object.extra_data["auto-approved"] = True
             workflow_object.extra_data["is-update"] = True
@@ -465,7 +465,7 @@ def test_core_selection_wf_works_when_there_is_record_redirection_on_hep(
                 == 0
             )
 
-            workflow_object.callback_pos = [34, 1, 13]
+            workflow_object.callback_pos = [41, 1, 13]
             #  Run task for creating core_selection wf
             workflow_object.extra_data["auto-approved"] = True
             workflow_object.save()
@@ -610,7 +610,7 @@ def test_core_selection_wf_still_runs_when_there_is_core_on_hep_already(
                 == 0
             )
 
-            workflow_object.callback_pos = [34, 1, 13]
+            workflow_object.callback_pos = [41, 1, 13]
             #  Run task for creating core_selection wf
             workflow_object.extra_data["auto-approved"] = True
             workflow_object.save()
@@ -725,7 +725,7 @@ def test_core_selection_wf_skipped_if_record_was_manually_approved(
             )
             start("article", object_id=workflow_object.id)
 
-            workflow_object.callback_pos = [34, 1, 13]
+            workflow_object.callback_pos = [41, 1, 13]
             #  Run task for creating core_selection wf
             workflow_object.extra_data["auto-approved"] = False
             workflow_object.save()

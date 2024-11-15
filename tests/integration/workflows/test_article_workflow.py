@@ -428,7 +428,7 @@ def test_run_next_wf_is_not_starting_core_selection_wfs(
 
     wf = workflow_object_class.get(workflow.id)
     mark("auto-approved", True)(workflow, None)
-    wf.callback_pos = [34, 1, 13]
+    wf.callback_pos = [41, 1, 13]
     wf.continue_workflow()
     check_wf_state(wf.id, ObjectStatus.COMPLETED)
 

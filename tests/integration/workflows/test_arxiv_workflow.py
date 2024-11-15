@@ -401,7 +401,7 @@ def test_match_in_holdingpen_previously_rejected_wf_stop(
 
     assert obj2.extra_data["already-in-holding-pen"] is False
     assert obj2.extra_data["previously_rejected"] is True
-    assert obj2.extra_data["previously_rejected_matches"] == [obj_id]
+    assert obj_id in obj2.extra_data["previously_rejected_matches"]
 
 
 def test_article_workflow_stops_when_record_is_not_valid(workflow_app):
