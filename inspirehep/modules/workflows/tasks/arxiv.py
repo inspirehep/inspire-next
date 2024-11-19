@@ -189,6 +189,14 @@ def arxiv_plot_extract(obj, eng):
             current_app.logger.exception(err)
             delete_empty_key(obj, 'figures')
             return
+        except Exception as err:
+            obj.log.error(
+                'Error extracting plots for %s. Report and skip.',
+                arxiv_id,
+            )
+            current_app.logger.exception(err)
+            delete_empty_key(obj, 'figures')
+            return
 
         if 'figures' in obj.data:
             for figure in obj.data['figures']:
