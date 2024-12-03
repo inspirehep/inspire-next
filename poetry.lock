@@ -115,7 +115,7 @@ dulwich = ">=0.19.6,<0.20"
 
 [[package]]
 name = "babel"
-version = "2.8.0"
+version = "2.9.1"
 description = "Internationalization utilities"
 category = "main"
 optional = false
@@ -1538,27 +1538,24 @@ timeexecution = ">=3.3.0,<4"
 
 [[package]]
 name = "inspire-utils"
-version = "3.0.57"
+version = "3.0.63"
 description = "INSPIRE-specific utils."
 category = "main"
 optional = false
 python-versions = "*"
 
 [package.dependencies]
-babel = ">=2.5.1,<3.0"
-inspire-schemas = "*"
+babel = ">=2.9.1,<3.0"
 lxml = ">=5.0,<6.0"
-nameparser = {version = ">=0.5.3,<1.0", markers = "python_version <= \"2.7\""}
-pylatexenc = "*"
-python-dateutil = ">=2.6.1,<3.0"
-scrapy = "*"
+nameparser = ">=1.1.3,<2.0"
+python-dateutil = ">=2.9.0,<3.0"
 six = ">=1.10.0,<2.0"
-Unidecode = ">=1.0.22,<2.0"
-urllib3 = ">=1.0,<=1.26.12"
+Unidecode = ">=1.2.0,<2.0"
 
 [package.extras]
-all = ["deepdiff", "flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest (>=4.6.0,<5.0)", "pytest (>=8.2.2,<9.0)", "pytest-cov (>=2.5.1,<3.0)", "unicode-string-literal (>=1.1,<2.0)"]
-tests = ["deepdiff", "flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest (>=4.6.0,<5.0)", "pytest (>=8.2.2,<9.0)", "pytest-cov (>=2.5.1,<3.0)", "unicode-string-literal (>=1.1,<2.0)"]
+all = ["flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pre-commit (==3.5.0)", "pytest (>=4.6.0,<5.0)", "pytest (>=8.2.2,<9.0)", "unicode-string-literal (>=1.1,<2.0)"]
+dev = ["pre-commit (==3.5.0)"]
+tests = ["flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest (>=4.6.0,<5.0)", "pytest (>=8.2.2,<9.0)", "unicode-string-literal (>=1.1,<2.0)"]
 
 [[package]]
 name = "intervals"
@@ -2714,7 +2711,7 @@ python-versions = "*"
 
 [[package]]
 name = "nameparser"
-version = "0.5.8"
+version = "1.1.3"
 description = "A simple Python module for parsing human names into their individual components."
 category = "main"
 optional = false
@@ -3193,7 +3190,7 @@ vcrpy = "*"
 
 [[package]]
 name = "python-dateutil"
-version = "2.8.1"
+version = "2.9.0.post0"
 description = "Extensions to the standard Python datetime module"
 category = "main"
 optional = false
@@ -3933,7 +3930,7 @@ python-versions = "*"
 
 [[package]]
 name = "unidecode"
-version = "1.1.1"
+version = "1.2.0"
 description = "ASCII transliterations of Unicode text"
 category = "main"
 optional = false
@@ -4238,7 +4235,7 @@ build-node = ["ipdb"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=2.7,<3.0"
-content-hash = "5d47b7605116371d6b2fac42b64187421e97758055cac46034089df303b194f6"
+content-hash = "94d86a943abe58f3ef9ea0b1c5463865d34290231bd0c273cf988a2cc7aac701"
 
 [metadata.files]
 alabaster = [
@@ -4280,8 +4277,8 @@ autosemver = [
     {file = "autosemver-0.5.5.tar.gz", hash = "sha256:0af1e8a9c3604545c067311f1c26403e8f0d60b5d9561c0217e14eee21c98b02"},
 ]
 babel = [
-    {file = "Babel-2.8.0-py2.py3-none-any.whl", hash = "sha256:d670ea0b10f8b723672d3a6abeb87b565b244da220d76b4dba1b66269ec152d4"},
-    {file = "Babel-2.8.0.tar.gz", hash = "sha256:1aac2ae2d0d8ea368fa90906567f5c08463d98ade155c0c4bfedd6a0f7160e38"},
+    {file = "Babel-2.9.1-py2.py3-none-any.whl", hash = "sha256:ab49e12b91d937cd11f0b67cb259a57ab4ad2b59ac7a3b41d6c06c0ac5b0def9"},
+    {file = "Babel-2.9.1.tar.gz", hash = "sha256:bc0c176f9f6a994582230df350aa6e05ba2ebe4b3ac317eab29d9be5d2768da0"},
 ]
 backoff = [
     {file = "backoff-1.10.0-py2.py3-none-any.whl", hash = "sha256:5e73e2cbe780e1915a204799dba0a01896f45f4385e636bcca7a0614d879d0cd"},
@@ -4803,8 +4800,8 @@ inspire-service-orcid = [
     {file = "inspire-service-orcid-9.0.0.tar.gz", hash = "sha256:cacee4fb19224ea2eb8a0e7e943479ef628c47f4b8b51f271263c2816a6814a1"},
 ]
 inspire-utils = [
-    {file = "inspire-utils-3.0.57.tar.gz", hash = "sha256:e470a630b20ecd32bac79eb73bda2bcb4407b5bfeca99d31013c3e7a9a2ae9dd"},
-    {file = "inspire_utils-3.0.57-py3-none-any.whl", hash = "sha256:3c3170cc6b873fe9d8a9e9ec4d23b53d8179be522e25e9e4f48563f683d47d87"},
+    {file = "inspire-utils-3.0.63.tar.gz", hash = "sha256:61ed87b1e9745a60092035d2da444e8609aa728ef0339da21aba6758185e00e9"},
+    {file = "inspire_utils-3.0.63-py3-none-any.whl", hash = "sha256:81528a9ef875404d6a4f33780d963cc7759916f9c5d4c4671e391f9f3eba9c05"},
 ]
 intervals = [
     {file = "intervals-0.8.1.tar.gz", hash = "sha256:37921da1407a5e9384e8e1350cfb8500f8d0d69fc43d03d01a4fdc6e7a7c7166"},
@@ -5196,8 +5193,8 @@ munkres = [
     {file = "munkres-1.0.12-py2.py3-none-any.whl", hash = "sha256:a269adeb960c494f5fcd7f92fcc2f48fbdf90fd14b5d45716c61adc10667fed6"},
 ]
 nameparser = [
-    {file = "nameparser-0.5.8-py2.py3-none-any.whl", hash = "sha256:550bf4df749d4aca23b9fad486ed67ddc042c89234840fea106dcb8d5a3c4365"},
-    {file = "nameparser-0.5.8.tar.gz", hash = "sha256:1089efbd576c917cd6970968c2735dc6e30f20d64318c4207124476270df7afc"},
+    {file = "nameparser-1.1.3-py2.py3-none-any.whl", hash = "sha256:08ccda98681d59751c82052d52f185bc52f99d43e87d46b85c015a9096ecfa66"},
+    {file = "nameparser-1.1.3.tar.gz", hash = "sha256:aa2400ad71ccf8070675b40311a257c934659f91854b154e1ba6c264761c049d"},
 ]
 node-semver = [
     {file = "node-semver-0.1.1.tar.gz", hash = "sha256:e29ee4e51efb6d82c55aef5d569b888842e62e6404ce95df18d80c421f8e7dac"},
@@ -5436,8 +5433,8 @@ pytest-vcr = [
     {file = "pytest_vcr-0.3.0-py2.py3-none-any.whl", hash = "sha256:13f2e24ab4b8674e012ca23df50e34f0b322a8b8cf8aa80f2b432ae95a92e298"},
 ]
 python-dateutil = [
-    {file = "python-dateutil-2.8.1.tar.gz", hash = "sha256:73ebfe9dbf22e832286dafa60473e4cd239f8592f699aa5adaf10050e6e1823c"},
-    {file = "python_dateutil-2.8.1-py2.py3-none-any.whl", hash = "sha256:75bb3f31ea686f1197762692a9ee6a7550b59fc6ca3a1f4b5d7e32fb98e2da2a"},
+    {file = "python-dateutil-2.9.0.post0.tar.gz", hash = "sha256:37dd54208da7e1cd875388217d5e00ebd4179249f90fb72437e91a35459a0ad3"},
+    {file = "python_dateutil-2.9.0.post0-py2.py3-none-any.whl", hash = "sha256:a8b2bc7bffae282281c8140a97d3aa9c14da0b136dfe83f850eea9a5f7470427"},
 ]
 python-editor = [
     {file = "python-editor-1.0.4.tar.gz", hash = "sha256:51fda6bcc5ddbbb7063b2af7509e43bd84bfc32a4ff71349ec7847713882327b"},
@@ -5691,8 +5688,8 @@ ua-parser = [
     {file = "ua_parser-0.9.0-py2.py3-none-any.whl", hash = "sha256:421999f5e852b458833dd9a74765180f75bffb882cb750909c6a4db6748e4887"},
 ]
 unidecode = [
-    {file = "Unidecode-1.1.1-py2.py3-none-any.whl", hash = "sha256:1d7a042116536098d05d599ef2b8616759f02985c85b4fef50c78a5aaf10822a"},
-    {file = "Unidecode-1.1.1.tar.gz", hash = "sha256:2b6aab710c2a1647e928e36d69c21e76b453cd455f4e2621000e54b2a9b8cce8"},
+    {file = "Unidecode-1.2.0-py2.py3-none-any.whl", hash = "sha256:12435ef2fc4cdfd9cf1035a1db7e98b6b047fe591892e81f34e94959591fad00"},
+    {file = "Unidecode-1.2.0.tar.gz", hash = "sha256:8d73a97d387a956922344f6b74243c2c6771594659778744b2dbdaad8f6b727d"},
 ]
 uritools = [
     {file = "uritools-2.2.0-py2.py3-none-any.whl", hash = "sha256:522c2027e51e70e0cc40aa703fbf8665a879776826317ff1b68069084030975b"},
