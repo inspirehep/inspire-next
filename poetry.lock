@@ -1498,11 +1498,12 @@ tests = ["flake8 (>=3.5.0,<4.0)", "mock (>=2.0.0,<3.0)", "pytest (>=3.2.2,<4.0)"
 
 [[package]]
 name = "inspire-schemas"
-version = "61.5.29"
+version = "61.6.6"
 description = "Inspire JSON schemas and utilities to use them."
 category = "main"
 optional = false
 python-versions = "*"
+develop = false
 
 [package.dependencies]
 bleach = ">=3.2.1,<4.0"
@@ -1512,16 +1513,24 @@ inspire-utils = ">=3.0.0,<4.0"
 isbnid = "*"
 isodate = "*"
 jsonschema = ">=2.6.0,<3.0"
+pylatexenc = "*"
 pytz = "*"
 pyyaml = "5.3.0"
 rfc3987 = "*"
+scrapy = "*"
 six = "*"
 Unidecode = ">=1.0.22,<2.0"
 urllib3 = ">=1.21.1,<1.25.0 || >1.25.0,<1.25.1 || >1.25.1,<1.26"
 
 [package.extras]
 docs = ["jsonschema2rst (>=0.1)", "sphinx"]
-tests = ["check-manifest", "coverage", "idutils (>=1.2.1,<2.0)", "inspire-idutils (==1.2.4)", "isbnid", "isort (>=4.3.0,<5.0)", "mock", "pytest (>=3.6.0,<4.0)", "pytest-cache", "pytest-cov (==2.6.1)", "pytest-pep8", "unicode-string-literal (>=1.1,<2.0)"]
+tests = ["check-manifest", "coverage", "deepdiff", "idutils (>=1.2.1,<2.0)", "inspire-idutils (==1.2.4)", "isbnid", "isort (>=4.3.0,<5.0)", "mock", "pytest (>=4.6,<5.0)", "pytest-cache", "pytest-cov (==2.6.1)", "pytest-pep8", "unicode-string-literal (>=1.1,<2.0)"]
+
+[package.source]
+type = "git"
+url = "https://github.com/inspirehep/inspire-schemas.git"
+reference = "py-2"
+resolved_reference = "9221142a3023fcb012877249abf04770e8949c4f"
 
 [[package]]
 name = "inspire-service-orcid"
@@ -4235,7 +4244,7 @@ build-node = ["ipdb"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=2.7,<3.0"
-content-hash = "94d86a943abe58f3ef9ea0b1c5463865d34290231bd0c273cf988a2cc7aac701"
+content-hash = "dd27614505c5408232edd95f702352f4458533f884b9246af3626db2dce15114"
 
 [metadata.files]
 alabaster = [
@@ -4793,9 +4802,7 @@ inspire-query-parser = [
     {file = "inspire-query-parser-6.0.37.tar.gz", hash = "sha256:7b5e9d30e15952270fefd770824f6a6ebc531e55b8c1cbf2f971cbcfbb245c25"},
     {file = "inspire_query_parser-6.0.37-py2-none-any.whl", hash = "sha256:94124b8e2c1b5a837e73aa35f4311350090eadb357f9faf279342fa822c2725b"},
 ]
-inspire-schemas = [
-    {file = "inspire_schemas-61.5.29-py2.py3-none-any.whl", hash = "sha256:3c21c6890400fc7f3c48b43996127ca7eaffebb99859d7c90dcb4e4bcb6ec4b4"},
-]
+inspire-schemas = []
 inspire-service-orcid = [
     {file = "inspire-service-orcid-9.0.0.tar.gz", hash = "sha256:cacee4fb19224ea2eb8a0e7e943479ef628c47f4b8b51f271263c2816a6814a1"},
 ]
