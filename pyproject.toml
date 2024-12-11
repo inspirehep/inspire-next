@@ -1,6 +1,6 @@
 # The next version of INSPIRE.
 # If you are updating this file (eg. adding entry points) don't forget to update
-# setup.py which is used for setting up docker environment. The guide how to do it might 
+# setup.py which is used for setting up docker environment. The guide how to do it might
 # be found here: https://python-poetry.org/docs/pyproject/
 
 [tool.poetry]
@@ -40,7 +40,7 @@ inspire-dojson = "==63.*,>=63.1.0"
 inspire-json-merger = "^11.0.37"
 inspire-matcher = "^9.0.15"
 inspire-query-parser = "6.0.37"
-inspire-schemas = "^61.5.0"
+inspire-schemas = {git = "https://github.com/inspirehep/inspire-schemas.git", branch = "py-2"}
 inspire-service-orcid = "==9.*,>=9.0.0"
 inspire-utils = "^3.0.63"
 invenio-access = "==1.3.0"
@@ -134,9 +134,9 @@ crawler-node = ["hepcrawl"]
 build-node = ["ipdb"]
 xrootd = ["xrootdpyfs", "invenio-xrootd"]
 
-[tool.poetry.scripts] 
+[tool.poetry.scripts]
 inspirehep = "inspirehep.cli:cli"
-        
+
 [tool.poetry.plugins."invenio_access.actions"]
 admin_holdingpen_authors = "inspirehep.modules.authors.permissions:action_admin_holdingpen_authors"
 editor_use_api = "inspirehep.modules.editor.permissions:action_editor_use_api"

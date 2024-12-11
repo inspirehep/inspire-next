@@ -1,0 +1,301 @@
+Warning: The lock file is not up to date with the latest changes in pyproject.toml. You may be getting outdated dependencies. Run update to update them.
+alabaster==0.7.12
+alembic==1.4.0; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+amqp==2.6.0; python_version >= "2.7" and python_full_version < "3.0.0" and python_version < "3.7" or python_version > "3.4" and python_full_version < "3.0.0" and python_version < "3.7" or python_full_version >= "3.5.0" and python_version > "3.4" and python_version < "3.7"
+appnope==0.1.0; sys_platform == "darwin" and python_version == "2.7"
+argcomplete==1.11.1
+arrow==0.15.5; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0"
+atomicwrites==1.3.0; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+attrs==19.3.0; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+automat==20.2.0; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+autosemver==0.5.5
+babel==2.9.1; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.4.0")
+backoff==1.10.0; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0")
+backports-abc==0.5
+backports.functools-lru-cache==1.6.1; python_version == "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version == "2.7"
+backports.shutil-get-terminal-size==1.0.0; python_version == "2.7"
+backports.tempfile==1.0
+backports.weakref==1.0.post1
+base32-lib==1.0.1
+beautifulsoup4==4.8.2
+billiard==3.6.3.0; python_version >= "2.7" and python_full_version < "3.0.0" and python_version < "3.7" or python_version > "3.4" and python_full_version < "3.0.0" and python_version < "3.7" or python_version > "3.4" and python_version < "3.7"
+binaryornot==0.4.4
+bleach==3.2.1; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0"
+blinker==1.4
+boto3==1.14.61
+botocore==1.17.61
+bump2version==0.5.11; python_version == "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version == "2.7"
+celery==4.4.2; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_version > "3.4")
+certifi==2019.11.28; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0"
+cffi==1.15.1
+chardet==3.0.4; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0"
+click-spinner==0.1.8
+click==6.7
+colorama==0.4.3; python_version == "2.7" and python_full_version < "3.0.0" and sys_platform == "win32" or python_full_version >= "3.5.0" and sys_platform == "win32" and python_version == "2.7"
+configobj==5.0.6
+configparser==4.0.2; python_version >= "2.7" and python_full_version < "3.0.0" and python_version < "3" and (python_version >= "2.7" and python_full_version < "3.0.0" and python_version < "3.7" or python_version > "3.4" and python_full_version < "3.0.0" and python_version < "3.7" or python_full_version >= "3.5.0" and python_version < "3.7" and python_version > "3.4") and (python_version >= "2.7" and python_full_version < "3.0.0" and python_version < "3.2" or python_full_version >= "3.4.0" and python_version < "3.2" and python_version >= "2.6") and (python_version == "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0" and python_version == "2.7")
+constantly==15.1.0; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+contextlib2==0.6.0.post1; python_version == "2.7" and python_full_version < "3.0.0" and (python_version >= "2.7" and python_full_version < "3.0.0" and python_version < "3.7" or python_version > "3.4" and python_full_version < "3.0.0" and python_version < "3.7" or python_full_version >= "3.5.0" and python_version < "3.7" and python_version > "3.4") and (python_version >= "2.7" and python_full_version < "3.0.0" and python_version < "3.2" or python_full_version >= "3.4.0" and python_version < "3.2")
+cookiecutter==1.6.0
+coverage==4.5.4; (python_version >= "2.6" and python_full_version < "3.0.0") or (python_full_version >= "3.3.0" and python_version < "4")
+cryptography==3.3.2; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.6.0")
+cssselect==1.1.0; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+decorator==4.4.1; python_version == "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.2.0" and python_version == "2.7"
+dictdiffer @ git+https://github.com/inspirehep/dictdiffer.git@master
+docutils==0.15.2; (python_version >= "2.6" and python_full_version < "3.0.0") or (python_full_version >= "3.3.0")
+dojson==1.4.0
+dulwich==0.19.15
+editdistance==0.5.3
+elasticsearch-dsl==7.1.0; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+elasticsearch==7.1.0
+entrypoints==0.3; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0" and python_version >= "2.7"
+enum34==1.1.6
+flake8-future-import==0.4.6
+flake8==3.7.9; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+flask-admin==1.5.5
+flask-alembic==2.0.1
+flask-assets==2.0
+flask-babelex==0.9.4
+flask-breadcrumbs==0.4.0
+flask-caching==1.8.0
+flask-celeryext==0.3.4
+flask-cli==0.4.0
+flask-collect==1.2.2
+flask-cors==3.0.8
+flask-gravatar==0.5.0
+flask-kvsession==0.6.2
+flask-login==0.4.1
+flask-mail==0.9.1
+flask-menu==0.7.1
+flask-oauthlib==0.9.5
+flask-principal==0.4.0
+flask-security==3.0.0
+flask-shell-ipython==0.3.1
+flask-sqlalchemy @ git+https://github.com/inspirehep/flask-sqlalchemy.git@71abd94a1e2317a1365a25a31e719dbd9aafceea ; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.4.0")
+flask-webpackext==1.0.1
+flask-wtf==0.14.3
+flask==0.12.5
+flower==0.9.3
+fqn-decorators==1.2.5
+freezegun==0.3.15; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0")
+fs==0.5.4
+ftfy==4.4.3
+ftputil==3.4
+funcsigs==1.0.2; python_version == "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version == "2.7"
+functools32==3.2.3-2; python_version == "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0" and python_version == "2.7"
+furl==2.1.0
+future==0.18.2; python_version >= "2.6" and python_full_version < "3.0.0" or python_full_version >= "3.3.0"
+futures==3.3.0; python_version == "2.7"
+fuzzy==1.1
+gunicorn==19.10.0; (python_version >= "2.6" and python_full_version < "3.0.0") or (python_full_version >= "3.2.0")
+harvestingkit==0.6.17
+hepcrawl==13.0.72
+honcho==1.0.1
+html5lib==1.0.1
+htmlparser==0.0.2
+httplib2==0.17.0
+httpretty==0.9.7
+hyperlink==19.0.0; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+idna==2.8; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0"
+idutils==1.1.14
+imagesize==1.2.0; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+importlib-metadata==1.5.0; python_version == "2.7" and python_full_version < "3.0.0"
+incremental==17.5.0; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+infinity==1.4
+influxdb==5.2.3
+inspire-crawler @ git+https://github.com/inspirehep/inspire-crawler.git@3.0.10
+inspire-dojson==63.1.5
+inspire-idutils==1.2.4; python_version >= "2.7"
+inspire-json-merger==11.0.37
+inspire-matcher==9.0.17
+inspire-query-parser==6.0.37
+inspire-schemas @ git+https://github.com/inspirehep/inspire-schemas.git@py-2
+inspire-service-orcid==9.0.0
+inspire-utils==3.0.63
+intervals==0.8.1
+invenio-access==1.3.0
+invenio-accounts==1.1.1
+invenio-admin==1.1.2
+invenio-assets==1.1.3
+invenio-base==1.2.0
+invenio-cache==1.0.0
+invenio-celery==1.1.0
+invenio-classifier @ git+https://github.com/inveniosoftware-contrib/invenio-classifier@v1.3.3
+invenio-config==1.0.2
+invenio-db==1.0.4
+invenio-files-rest==1.0.5
+invenio-i18n==1.1.1
+invenio-indexer==1.1.1
+invenio-jsonschemas==1.0.1
+invenio-mail==1.0.2
+invenio-oaiharvester==1.0.0a4
+invenio-oauth2server==1.0.4
+invenio-oauthclient==1.1.3
+invenio-pidstore==1.1.0
+invenio-records-files==1.2.1
+invenio-records-rest==1.6.4
+invenio-records-ui==1.0.1
+invenio-records==1.1.1
+invenio-rest==1.1.3
+invenio-search==1.2.3
+invenio-userprofiles==1.0.1
+invenio-workflows-files==1.0.3
+invenio-workflows-ui @ git+https://github.com/inveniosoftware-contrib/invenio-workflows-ui.git@v2.1.0
+invenio-workflows==7.0.6
+invenio-xrootd==1.0.0a6
+ipaddr==2.2.0; python_version == "2.7"
+ipaddress==1.0.23
+ipdb==0.12.3; python_version >= "2.7"
+ipython-genutils==0.2.0; python_version == "2.7"
+ipython==5.9.0; python_version == "2.7"
+isbnid-fork==0.5.2
+isbnid==0.4.6
+isbnlib==3.10.14; python_version == "2.7"
+isodate==0.6.0
+itsdangerous==1.1.0; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+jinja2-time==0.2.0
+jinja2==2.11.1; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0")
+jmespath==0.10.0; python_version >= "2.6" and python_full_version < "3.0.0" or python_full_version >= "3.3.0"
+json-merger==0.7.11
+jsonpatch==1.25; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0"
+jsonpointer==2.0; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0"
+jsonref==0.2
+jsonresolver==0.2.1
+jsonschema==2.6.0
+kombu==4.6.11; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0")
+langdetect==1.0.7
+latexcodec==2.0.1; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+linkheader==0.4.3
+lxml==5.0.2; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0"
+mako==1.1.1; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+markupsafe==1.1.1; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0"
+marshmallow==2.20.5
+maxminddb-geolite2==2018.703
+maxminddb==1.5.2; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0"
+mccabe==0.6.1; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+mock==2.0.0
+more-itertools==5.0.0; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+msgpack==0.6.2
+munkres==1.0.12
+nameparser==1.1.3
+node-semver==0.1.1
+numpy==1.16.6; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.4.0")
+oauthlib==2.1.0
+orcid==1.0.3
+orderedmultidict==1.0.1
+packaging==20.4; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0"
+parsel==1.6.0
+passlib==1.7.2
+pathlib2==2.3.5; python_version == "2.7" and python_full_version < "3.0.0" and (python_version >= "2.7" and python_full_version < "3.0.0" and python_version < "3.7" or python_version > "3.4" and python_full_version < "3.0.0" and python_version < "3.7" or python_full_version >= "3.5.0" and python_version < "3.7" and python_version > "3.4")
+pbr==5.4.4; python_version == "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version == "2.7"
+pexpect==4.8.0; sys_platform != "win32" and python_version == "2.7"
+pickleshare==0.7.5; python_version == "2.7"
+pkgsettings==0.12.0
+plotextractor==0.3.15
+pluggy==0.13.1; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+poyo==0.5.0; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+prompt-toolkit==1.0.18; python_version == "2.7"
+psycopg2-binary==2.8.4; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+ptyprocess==0.6.0; sys_platform != "win32" and python_version == "2.7"
+py==1.8.1; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+pyasn1-modules==0.2.8; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+pyasn1==0.4.8; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+pybtex==0.22.0; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.3.0")
+pycodestyle==2.5.0; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+pycountry==17.9.23
+pycparser==2.19; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.6.0"
+pydispatcher==2.0.5; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+pyflakes==2.1.1; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+pygments==2.5.2; python_version == "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version == "2.7"
+pyhamcrest==1.10.1; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version < "4"
+pyjwt==1.7.1
+pylatexenc==2.10
+pynpm==0.1.1
+pyopenssl==17.5.0
+pyparsing==2.4.6; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0"
+pypdf2==1.26.0
+pypeg2==2.15.2
+pypydispatcher==2.1.2; python_version >= "2.7" and python_full_version < "3.0.0" and platform_python_implementation == "PyPy" or python_full_version >= "3.4.0" and platform_python_implementation == "PyPy"
+pyrsistent==0.15.7
+pytest-cov==2.8.1; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.4.0")
+pytest-runner==5.2; python_version >= "2.7"
+pytest-vcr==0.3.0
+pytest==3.10.1; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.4.0")
+python-dateutil==2.9.0.post0; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0"
+python-editor==1.0.4; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+python-logstash==0.4.8
+python-magic==0.4.15
+python-redis-lock==3.5.0; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0")
+python-scrapyd-api==2.1.2
+pytz==2018.9
+pywebpack==1.0.1
+pyyaml==5.3; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0")
+queuelib==1.5.0; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+raven==6.10.0
+rdflib==4.2.2
+redis==3.4.1; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0"
+refextract==0.2.27
+requests-mock==1.7.0
+requests-oauthlib==1.1.0; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+requests==2.22.0; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.5.0")
+rfc3987==1.3.8
+rt==1.0.13
+s3transfer==0.3.3
+scandir==1.10.0; python_version == "2.7" and python_full_version < "3.0.0" and (python_version >= "2.7" and python_full_version < "3.0.0" and python_version < "3.7" or python_version > "3.4" and python_full_version < "3.0.0" and python_version < "3.7" or python_full_version >= "3.5.0" and python_version < "3.7" and python_version > "3.4")
+scrapy-crawl-once==0.1.1
+scrapy-sentry==0.9.0
+scrapy==1.6.0; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+scrapyd-client==1.1.0
+scrapyd==1.1.0
+sentry-sdk==1.3.0
+service-identity==18.1.0; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+setproctitle==1.1.10
+sickle==0.6.5
+simplegeneric==0.8.1; python_version == "2.7"
+simplejson==3.17.0; python_version >= "2.5" and python_full_version < "3.0.0" or python_full_version >= "3.3.0"
+simplekv==0.14.0
+singledispatch==3.7.0; python_version >= "2.6"
+six==1.14.0; python_version == "2.7" and python_full_version < "3.0.0" and (python_version >= "2.7" and python_full_version < "3.0.0" and python_version < "3.7" or python_version > "3.4" and python_full_version < "3.0.0" and python_version < "3.7" or python_full_version >= "3.5.0" and python_version < "3.7" and python_version > "3.4") and (python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.3.0") and (python_version == "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.3.0" and python_version == "2.7") and (python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0") and (python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.3.0" and python_version >= "2.6") and (python_version == "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0" and python_version == "2.7") and (python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0")
+snowballstemmer==2.0.0
+soupsieve==1.9.5
+speaklater==1.3
+sphinx==1.5.6
+sqlalchemy-continuum==1.3.9
+sqlalchemy-utils==0.36.1
+sqlalchemy==1.3.13; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.4.0")
+sqlitedict==1.6.0
+structlog==20.1.0
+subprocess32==3.5.4; python_version >= "2.6" and python_full_version < "3.0.0" or python_full_version >= "3.3.0" and python_version < "4"
+superlance==1.0.0
+supervisor==4.1.0
+sword2 @ git+https://github.com/inspirehep/python-client-sword2.git@master
+timeexecution @ git+https://github.com/puntonim/py-timeexecution.git@lazy-init-tmp-3.4.0
+timeout-decorator==0.4.1
+tornado==4.5.3
+traitlets==4.3.3; python_version == "2.7"
+twisted==18.9.0
+typing==3.10.0.0; python_version >= "2.7" and python_full_version < "3.0.0" and python_version < "3.5" or python_full_version >= "3.4.0" and python_version < "3.5"
+ua-parser==0.9.0
+unidecode==1.2.0; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+uritools==2.2.0
+urllib3==1.24.3; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.4.0" and python_version < "4")
+validators==0.14.2
+vcrpy==3.0.0; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0"
+vine==1.3.0; (python_version >= "2.7" and python_full_version < "3.0.0") or (python_full_version >= "3.4.0")
+w3lib==1.21.0; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+wand==0.5.9
+wcwidth==0.1.8; python_version == "2.7"
+webargs==5.5.3
+webassets==2.0
+webencodings==0.5.1; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0"
+werkzeug==0.16.1; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.4.0"
+whichcraft==0.6.1
+win-unicode-console==0.5; sys_platform == "win32" and python_version == "2.7"
+workflow==2.1.6
+wrapt==1.12.0; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0"
+wtforms-alchemy==0.16.9
+wtforms-components==0.10.4
+wtforms==2.2.1
+xrootdpyfs @ git+https://github.com/inspirehep/xrootdpyfs.git@master
+zipp==1.2.0; python_version >= "2.7" and python_full_version < "3.0.0" and python_version < "3.7" or python_version > "3.4" and python_full_version < "3.0.0" and python_version < "3.7" or python_full_version >= "3.5.0" and python_version < "3.7" and python_version > "3.4"
+zope.interface==4.7.1; python_version >= "2.7" and python_full_version < "3.0.0" or python_full_version >= "3.5.0"
