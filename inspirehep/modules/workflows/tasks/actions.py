@@ -1151,9 +1151,9 @@ def check_if_germany_in_raw_affiliations(obj, eng):
             return True
 
 
-def check_if_core_and_uk_in_fulltext(obj, eng):
+def check_if_uk_in_fulltext(obj, eng):
     fulltext = get_fulltext(obj)
-    if not fulltext or not is_core(obj, eng):
+    if not fulltext:
         return
     regex = re.compile(
         r"\b(UK|United\s+Kingdom|England|Scotland|Northern\s+Ireland)\b", re.UNICODE | re.IGNORECASE)
