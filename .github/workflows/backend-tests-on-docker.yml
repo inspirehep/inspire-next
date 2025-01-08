@@ -16,12 +16,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4.2.2
         with:
           ref: ${{ inputs.ref }}
           fetch-depth: 0
       - name: Cache docker image
-        uses: actions/cache@v2.1.3
+        uses: actions/cache@v4.2.0
         id: cache
         with:
           path: /tmp/docker-images
@@ -45,12 +45,12 @@ jobs:
     needs: Build
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4.2.2
         with:
           ref: ${{ inputs.ref }}
           fetch-depth: 0
       - name: Cache docker image
-        uses: actions/cache@v2.1.3
+        uses: actions/cache@v4.2.0
         id: cache
         with:
           path: /tmp/docker-images
@@ -81,12 +81,12 @@ jobs:
     needs: Build
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4.2.2
         with:
           ref: ${{ inputs.ref }}
           fetch-depth: 0
       - name: Cache docker image
-        uses: actions/cache@v2.1.3
+        uses: actions/cache@v4.2.0
         id: cache
         with:
           path: /tmp/docker-images
@@ -119,12 +119,12 @@ jobs:
     needs: Build
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4.2.2
         with:
           ref: ${{ inputs.ref }}
           fetch-depth: 0
       - name: Cache docker image
-        uses: actions/cache@v2.1.3
+        uses: actions/cache@v4.2.0
         id: cache
         with:
           path: /tmp/docker-images
@@ -144,12 +144,12 @@ jobs:
     needs: Build
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4.2.2
         with:
           ref: ${{ inputs.ref }}
           fetch-depth: 0
       - name: Cache docker image
-        uses: actions/cache@v2.1.3
+        uses: actions/cache@v4.2.0
         id: cache
         with:
           path: /tmp/docker-images
@@ -169,12 +169,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4.2.2
         with:
           ref: ${{ inputs.ref }}
           fetch-depth: 0
       - name: Cache docker image
-        uses: actions/cache@v2.1.3
+        uses: actions/cache@v4.2.0
         id: cache
         with:
           path: /tmp/docker-images
@@ -193,7 +193,7 @@ jobs:
       tag: ${{ steps.set-env.outputs.tag }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4.2.2
         with:
           ref: ${{ inputs.ref }}
           fetch-depth: 0
