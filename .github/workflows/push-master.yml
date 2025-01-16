@@ -23,8 +23,9 @@ jobs:
     steps:
       - name: send event (release)
         if : ${{  github.event_name == 'release' }}
-        uses: cern-sis/gh-workflows/.github/actions/kubernetes-project-new-images@v5.6.0
+        uses: cern-sis/gh-workflows/.github/actions/kubernetes-project-new-images@v6.3.1
         with:
+          repo: cern-sis/kubernetes-inspire
           event-type: release
           images: |
             inspirehep/next@${{ needs.test.outputs.tag }}
@@ -34,8 +35,9 @@ jobs:
 
       - name: send event (update)
         if : ${{  github.event_name != 'release' }}
-        uses: cern-sis/gh-workflows/.github/actions/kubernetes-project-new-images@v5.6.0
+        uses: cern-sis/gh-workflows/.github/actions/kubernetes-project-new-images@v6.3.1
         with:
+          repo: cern-sis/kubernetes-inspire
           event-type: update
           images: |
             inspirehep/next@${{ needs.test.outputs.tag }}
