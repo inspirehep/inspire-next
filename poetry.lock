@@ -1530,7 +1530,7 @@ tests = ["check-manifest", "coverage", "deepdiff", "idutils (>=1.2.1,<2.0)", "in
 type = "git"
 url = "https://github.com/inspirehep/inspire-schemas.git"
 reference = "py-2"
-resolved_reference = "9221142a3023fcb012877249abf04770e8949c4f"
+resolved_reference = "901c40c22678e45c992967c37b98bcbdd551ff6a"
 
 [[package]]
 name = "inspire-service-orcid"
