@@ -93,37 +93,43 @@ def get_and_format_references(record):
 def map_refextract_to_schema(extracted_references, source=None):
     """Convert refextract output to the schema using the builder."""
     result = []
-
     for reference in extracted_references:
-        rb = ReferenceBuilder()
-        mapping = [
-            ('author', rb.add_refextract_authors_str),
-            ('collaboration', rb.add_collaboration),
-            ('doi', rb.add_uid),
-            ('hdl', rb.add_uid),
-            ('isbn', rb.add_uid),
-            ('journal_reference', rb.set_pubnote),
-            ('linemarker', rb.set_label),
-            ('misc', rb.add_misc),
-            ('publisher', rb.set_publisher),
-            ('raw_ref', lambda raw_ref: rb.add_raw_reference(raw_ref, source=source)),
-            ('reportnumber', rb.add_report_number),
-            ('texkey', rb.set_texkey),
-            ('title', rb.add_title),
-            ('url', rb.add_url),
-            ('year', rb.set_year),
-        ]
+        result.extend(map_refextract_reference_to_schema(reference, source))
+    return result
 
-        for field, method in mapping:
-            for el in force_list(reference.get(field)):
-                if el:
-                    method(el)
 
-        if get_value(rb.obj, 'reference.urls'):
-            rb.obj['reference']['urls'] = dedupe_list_of_dicts(rb.obj['reference']['urls'])
+def map_refextract_reference_to_schema(extracted_reference, source=None):
+    """Convert refextract output to the schema using the builder."""
 
-        result.append(rb.obj)
-        result.extend(rb.pop_additional_pubnotes())
+    rb = ReferenceBuilder()
+    mapping = [
+        ('author', rb.add_refextract_authors_str),
+        ('collaboration', rb.add_collaboration),
+        ('doi', rb.add_uid),
+        ('hdl', rb.add_uid),
+        ('isbn', rb.add_uid),
+        ('journal_reference', rb.set_pubnote),
+        ('linemarker', rb.set_label),
+        ('misc', rb.add_misc),
+        ('publisher', rb.set_publisher),
+        ('raw_ref', lambda raw_ref: rb.add_raw_reference(raw_ref, source=source)),
+        ('reportnumber', rb.add_report_number),
+        ('texkey', rb.set_texkey),
+        ('title', rb.add_title),
+        ('url', rb.add_url),
+        ('year', rb.set_year),
+    ]
+
+    for field, method in mapping:
+        for el in force_list(extracted_reference.get(field)):
+            if el:
+                method(el)
+
+    if get_value(rb.obj, 'reference.urls'):
+        rb.obj['reference']['urls'] = dedupe_list_of_dicts(rb.obj['reference']['urls'])
+
+    result = [rb.obj]
+    result.extend(rb.pop_additional_pubnotes())
 
     return result
 

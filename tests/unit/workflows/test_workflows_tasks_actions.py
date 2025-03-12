@@ -1285,26 +1285,20 @@ def test_refextract_from_text(mock_match, mock_get_document_in_workflow, mock_cr
 
 
 @patch('inspirehep.modules.workflows.tasks.actions.create_journal_kb_dict', return_value={})
-@patch(
-    'inspirehep.modules.refextract.matcher.match',
-    return_value=iter([])
-)
+@patch('inspirehep.modules.refextract.matcher.match', return_value=iter([]))
 def test_refextract_from_raw_refs(mock_create_journal_dict, mock_match):
-    """TODO: Make this an integration test and also test reference matching."""
+
     schema = load_schema('hep')
     subschema = schema['properties']['references']
-
     data = {
         'references': [
-            {
-                'raw_refs': [
-                    {
-                        'schema': 'text',
-                        'source': 'arXiv',
-                        'value': '[37] M. Vallisneri, \u201cUse and abuse of the Fisher information matrix in the assessment of gravitational-wave parameter-estimation prospects,\u201d Phys. Rev. D 77, 042001 (2008) doi:10.1103/PhysRevD.77.042001 [gr-qc/0703086 [GR-QC]].'
-                    },
-                ],
-            },
+            {'raw_refs': [{'schema': 'text',
+                           'value': "Iskra \\u0141 W et al 2017 Acta Phys. Pol. B 48 581"}]},
+            {'raw_refs': [{'schema': 'text',
+                           'value': "Iskra \\u0141 W et al 2017 Acta Phys. Pol. B 48 582"}]},
+            {'raw_refs': [{'schema': 'text',
+                           'value': "Iskra \\u0141 W et al 2017 Acta Phys. Pol. B 48 583"}]},
+            {'reference': {'publication_info': {'journal_volume': '25', 'page_start': '107', 'journal_title': 'Egypt. J. Pet.', 'artid': '107', 'year': 2016}, 'dois': ['10.1016/j.ejpe.2015.03.011'], 'misc': ['2024112816553493200_bib1', 'publisher'], 'authors': [{'full_name': 'Abdel-Shafy'}]}},
         ],
     }
     assert validate(data['references'], subschema) is None
@@ -1314,28 +1308,49 @@ def test_refextract_from_raw_refs(mock_create_journal_dict, mock_match):
     with requests_mock.Mocker() as mock_request:
         mock_request.register_uri(
             "POST",
-            "{}/extract_references_from_text".format(
+            "{}/extract_references_from_list".format(
                 current_app.config["REFEXTRACT_SERVICE_URL"]
             ),
             json={
                 "extracted_references": [
                     {
-                        "author": ["G. Chalons, M. D. Goodsell, S. Kraml"],
-                        "journal_page": ["113"],
-                        "journal_reference": ["JHEP,1904,113"],
-                        "journal_title": ["JHEP"],
-                        "journal_volume": ["1904"],
-                        "journal_year": ["2019"],
-                        "linemarker": ["67"],
-                        "misc": ["H. Reyes-González, S. L. Williamson"],
-                        "raw_ref": [
-                            "[67] G. Chalons, M. D. Goodsell, S. Kraml, H. Reyes-González, S. L. Williamson, “LHC limits on gluinos and squarks in the minimal Dirac gaugino model”, JHEP 04, 113 (2019), arXiv:1812.09293."
+                        "author": [
+                            "Pol. B"
                         ],
-                        "reportnumber": ["arXiv:1812.09293"],
-                        "title": [
-                            "LHC limits on gluinos and squarks in the minimal Dirac gaugino model"
+                        "misc": ["Iskra \Ł W et alActa Phys",
+                                 "48 581"
+                                 ],
+                        "raw_ref": ["Iskra \Ł W et al 2017 Acta Phys. Pol. B 48 581"
+                                    ],
+                        "year": [
+                            "2017"
+                        ]
+                    },
+                    {
+                        "author": [
+                            "Pol. B"
                         ],
-                        "year": ["2019"],
+                        "misc": ["Iskra \Ł W et alActa Phys",
+                                 "48 582"
+                                 ],
+                        "raw_ref": ["Iskra \Ł W et al 2017 Acta Phys. Pol. B 48 582"
+                                    ],
+                        "year": [
+                            "2017"
+                        ]
+                    },
+                    {
+                        "author": [
+                            "Pol. B"
+                        ],
+                        "misc": ["Iskra \Ł W et alActa Phys",
+                                 "48 583"
+                                 ],
+                        "raw_ref": ["Iskra \Ł W et al 2017 Acta Phys. Pol. B 48 583"
+                                    ],
+                        "year": [
+                            "2017"
+                        ]
                     },
                 ]
             },
@@ -1350,89 +1365,94 @@ def test_refextract_from_raw_refs(mock_create_journal_dict, mock_match):
                     {
                         "reference": {
                             "publication_info": {
-                                "artid": "045",
-                                "journal_title": "JHEP",
-                                "journal_volume": "06",
-                                "page_start": "045",
-                                "year": 2007,
+                                "journal_volume": "48",
+                                "page_start": "581",
+                                "year": 2017,
+                                "artid": "581",
+                                "journal_title": "Acta Phys. Pol. B"
+                            },
+                            "misc": [
+                                "Iskra \\u0141 W et al"
+                            ]
+                        },
+                        "raw_refs": [
+                            {
+                                "value": "Iskra \\u0141 W et al 2017 Acta Phys. Pol. B 48 581",
+                                "schema": "text"
                             }
+                        ]
+                    },
+                    {
+                        "reference": {
+                            "publication_info": {
+                                "journal_volume": "48",
+                                "page_start": "582",
+                                "year": 2017,
+                                "artid": "582",
+                                "journal_title": "Acta Phys. Pol. B"
+                            },
+                            "misc": [
+                                "Iskra \\u0141 W et al"
+                            ]
+                        },
+                        "raw_refs": [
+                            {
+                                "value": "Iskra \\u0141 W et al 2017 Acta Phys. Pol. B 48 582",
+                                "schema": "text"
+                            }
+                        ]
+                    },
+                    {
+                        "reference": {
+                            "publication_info": {
+                                "journal_volume": "48",
+                                "page_start": "583",
+                                "year": 2017,
+                                "artid": "583",
+                                "journal_title": "Acta Phys. Pol. B"
+                            },
+                            "misc": [
+                                "Iskra \\u0141 W et al"
+                            ]
+                        },
+                        "raw_refs": [
+                            {
+                                "value": "Iskra \\u0141 W et al 2017 Acta Phys. Pol. B 48 583",
+                                "schema": "text"
+                            }
+                        ]
+                    },
+                    {
+                        "reference": {
+                            "publication_info": {
+                                "journal_volume": "25",
+                                "page_start": "107",
+                                "journal_title": "Egypt. J. Pet.",
+                                "artid": "107",
+                                "year": 2016
+                            },
+                            "dois": [
+                                "10.1016/j.ejpe.2015.03.011"
+                            ],
+                            "misc": [
+                                "2024112816553493200_bib1",
+                                "publisher"
+                            ],
+                            "authors": [
+                                {
+                                    "full_name": "Abdel-Shafy"
+                                }
+                            ]
                         }
-                    }
+                    },
                 ]
             },
             status_code=200,
         )
 
         assert refextract(obj, eng) is None
+        assert len(obj.data['references']) == 4
         assert 'reference' in obj.data['references'][0]
-
-
-@patch('inspirehep.modules.workflows.tasks.actions.create_journal_kb_dict', return_value={})
-@patch(
-    'inspirehep.modules.refextract.matcher.match',
-    return_value=iter([])
-)
-def test_refextract_valid_refs_from_raw_refs(mock_create_journal_dict, mock_match):
-    data = {
-        'references': [
-            {
-                'raw_refs': [
-                    {
-                        'schema': 'text',
-                        'source': 'arXiv',
-                        'value': '[37] M. Vallisneri, \u201cUse and abuse of the Fisher information matrix in the assessment of gravitational-wave parameter-estimation prospects,\u201d Phys. Rev. D 77, 042001 (2008) doi:10.1103/PhysRevD.77.042001 [gr-qc/0703086 [GR-QC]].'
-                    },
-                    {
-                        'schema': 'text',
-                        'source': 'arXiv',
-                        'value': '[37] M. Vallisneri, \u201cUse and abuse of the Fisher information matrix in the assessment of gravitational-wave parameter-estimation prospects,\u201d Phys. Rev. D 77, 042001 (2008) doi:10.1103/PhysRevD.77.042001 [gr-qc/0703086 [GR-QC]].'
-                    },
-                ],
-            },
-        ],
-    }
-    obj = MockObj(data, {})
-    eng = MockEng()
-    with requests_mock.Mocker() as mock_request:
-        mock_request.register_uri(
-            "POST",
-            "{}/extract_references_from_text".format(
-                current_app.config["REFEXTRACT_SERVICE_URL"]
-            ),
-            json={
-                "extracted_references": [
-                    {
-                        "author": ["G. Chalons, M. D. Goodsell, S. Kraml"],
-                        "journal_page": ["113"],
-                        "journal_reference": ["JHEP,1904,113"],
-                        "journal_title": ["JHEP"],
-                        "journal_volume": ["1904"],
-                        "journal_year": ["2019"],
-                        "linemarker": ["67"],
-                        "misc": ["H. Reyes-González, S. L. Williamson"],
-                        "raw_ref": [
-                            "[67] G. Chalons, M. D. Goodsell, S. Kraml, H. Reyes-González, S. L. Williamson, “LHC limits on gluinos and squarks in the minimal Dirac gaugino model”, JHEP 04, 113 (2019), arXiv:1812.09293."
-                        ],
-                        "reportnumber": ["arXiv:1812.09293"],
-                        "title": [
-                            "LHC limits on gluinos and squarks in the minimal Dirac gaugino model"
-                        ],
-                        "year": ["2019"],
-                    },
-                ]
-            },
-            headers={"content-type": "application/json"},
-            status_code=200,
-        )
-        mock_request.register_uri(
-            "POST",
-            "http://web:8000/matcher/linked_references/",
-            json={"references": [{"raw_refs": [{"source": "submitter"}]}]},
-            status_code=200,
-        )
-
-        assert refextract(obj, eng) is None
-        assert len(obj.data['references']) == 1
 
 
 @patch('inspirehep.modules.workflows.tasks.actions.create_journal_kb_dict', return_value={})
