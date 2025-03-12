@@ -73,10 +73,11 @@ from inspirehep.modules.records.json_ref_loader import replace_refs
 from inspirehep.modules.records.utils import get_linked_records_in_field
 from inspirehep.modules.workflows.tasks.refextract import (
     extract_references_from_pdf_url,
-    extract_references_from_raw_refs,
     extract_references_from_pdf,
     extract_references_from_text,
     extract_references_from_text_data,
+    extract_references_from_reference_list,
+    raw_refs_to_list
 )
 from inspirehep.modules.workflows.utils import _get_headers_for_hep_root_table_request, create_error
 from inspirehep.modules.workflows.errors import BadGatewayError, MissingRecordControlNumber
@@ -498,15 +499,17 @@ def refextract(obj, eng):
         None
 
     """
+    source = LiteratureReader(obj.data).source
+    journal_kb_dict = create_journal_kb_dict()
+
     if 'references' in obj.data:
-        extracted_raw_references = dedupe_list(extract_references_from_raw_refs(obj.data['references']))
-        obj.log.info('Extracted %d references from raw refs.', len(extracted_raw_references))
-        obj.data['references'] = match_references_hep(extracted_raw_references)
+        raw_refs_to_extract, references = raw_refs_to_list(obj.data['references'])
+        extracted_references = dedupe_list(extract_references_from_reference_list(raw_refs_to_extract, custom_kbs_file=journal_kb_dict))
+        obj.log.info('Extracted %d references from raw refs.', len(extracted_references))
+        obj.data['references'] = match_references_hep(extracted_references + references)
         return
 
     matched_pdf_references, matched_text_references = [], []
-    source = LiteratureReader(obj.data).source
-    journal_kb_dict = create_journal_kb_dict()
 
     url = get_document_url_for_reference_extraction(obj)
     if current_app.config.get("FEATURE_FLAG_ENABLE_REFEXTRACT_SERVICE") and url:
