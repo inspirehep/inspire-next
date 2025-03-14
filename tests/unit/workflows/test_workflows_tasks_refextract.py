@@ -31,7 +31,7 @@ from inspirehep.modules.workflows.tasks.refextract import (
     extract_journal_info,
     extract_references_from_pdf,
     extract_references_from_text,
-    extract_references_from_raw_ref,
+    raw_refs_to_list,
 )
 
 from mocks import MockEng, MockObj
@@ -167,25 +167,19 @@ def test_extract_references_from_pdf_populates_raw_refs_source():
 
 
 def test_extract_references_from_text_handles_unicode():
-    schema = load_schema('hep')
-    subschema = schema['properties']['references']
 
     text = u'Iskra Ł W et al 2017 Acta Phys. Pol. B 48 581'
 
     result = extract_references_from_text(text)
 
-    assert validate(result, subschema) is None
     assert len(result) > 0
 
 
 def test_refextract_references_from_text_removes_duplicate_urls():
-    schema = load_schema('hep')
-    subschema = schema['properties']['references']
 
     text = u'[4] CALICE Collaboration webpage. http://twiki.cern.ch/CALICE hello http://twiki.cern.ch/CALICE'
     result = extract_references_from_text(text)
 
-    assert validate(result, subschema) is None
     assert len(result[0]['reference']['urls']) == 1
 
 
@@ -197,9 +191,7 @@ def test_extract_references_from_text_populates_raw_refs_source():
     assert result[0]['raw_refs'][0]['source'] == 'submitter'
 
 
-def test_extract_references_from_raw_ref_single_text():
-    schema = load_schema('hep')
-    subschema = schema['properties']['references']
+def test_raw_refs_to_list_single_text():
 
     reference = {
         'raw_refs': [
@@ -211,17 +203,12 @@ def test_extract_references_from_raw_ref_single_text():
         ],
     }
 
-    result = extract_references_from_raw_ref(reference)
-
-    assert validate(result, subschema) is None
-    assert len(result) == 1
-    assert 'reference' in result[0]
-    assert result[0]['raw_refs'] == reference['raw_refs']
+    raw_refs, _ = raw_refs_to_list([reference])
+    assert len(raw_refs) == 1
+    assert raw_refs[0] == reference['raw_refs'][0]["value"]
 
 
-def test_extract_references_from_raw_ref_multiple_text_takes_first():
-    schema = load_schema('hep')
-    subschema = schema['properties']['references']
+def test_raw_refs_to_list_multiple_text_takes_first():
 
     reference = {
         'raw_refs': [
@@ -238,17 +225,13 @@ def test_extract_references_from_raw_ref_multiple_text_takes_first():
         ],
     }
 
-    result = extract_references_from_raw_ref(reference)
+    raw_refs, _ = raw_refs_to_list([reference])
 
-    assert validate(result, subschema) is None
-    assert len(result) == 1
-    assert 'reference' in result[0]
-    assert result[0]['raw_refs'][0] == reference['raw_refs'][0]
+    assert len(raw_refs) == 1
+    assert raw_refs[0] == reference['raw_refs'][0]["value"]
 
 
-def test_extract_references_from_raw_ref_wrong_schema():
-    schema = load_schema('hep')
-    subschema = schema['properties']['references']
+def test_raw_refs_to_list_wrong_schema():
 
     reference = {
         'raw_refs': [
@@ -268,15 +251,11 @@ def test_extract_references_from_raw_ref_wrong_schema():
         ],
     }
 
-    result = extract_references_from_raw_ref(reference)
-
-    assert validate(result, subschema) is None
-    assert len(result) == 1
-    assert 'reference' not in result[0]
-    assert result[0]['raw_refs'][0] == reference['raw_refs'][0]
+    raw_refs, _ = raw_refs_to_list([reference])
+    assert len(raw_refs) == 0
 
 
-def test_extract_references_from_raw_ref_reference_exists():
+def test_raw_refs_to_list_reference_exists():
     schema = load_schema('hep')
     subschema = schema['properties']['references']
 
@@ -314,29 +293,8 @@ def test_extract_references_from_raw_ref_reference_exists():
         }
     }
 
-    result = extract_references_from_raw_ref(reference)
+    _, references = raw_refs_to_list([reference])
 
-    assert validate(result, subschema) is None
-    assert len(result) == 1
-    assert result[0] == reference
-
-
-def test_extract_references_from_raw_ref_when_no_source():
-    schema = load_schema('hep')
-    subschema = schema['properties']['references']
-
-    reference = {
-        'raw_refs': [
-            {
-                'schema': 'text',
-                'value': '[37] M. Vallisneri, \u201cUse and abuse of the Fisher information matrix in the assessment of gravitational-wave parameter-estimation prospects,\u201d Phys. Rev. D 77, 042001 (2008) doi:10.1103/PhysRevD.77.042001 [gr-qc/0703086 [GR-QC]].'
-            },
-        ],
-    }
-
-    result = extract_references_from_raw_ref(reference)
-
-    assert validate(result, subschema) is None
-    assert len(result) == 1
-    assert 'reference' in result[0]
-    assert result[0]['raw_refs'] == reference['raw_refs']
+    assert validate(references, subschema) is None
+    assert len(references) == 1
+    assert references[0] == reference

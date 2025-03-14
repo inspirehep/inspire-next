@@ -41,3 +41,12 @@ A preliminary version of the documentation is available on `Read the Docs`_.
 
 .. _`Invenio Digital Library Framework`: http://inveniosoftware.org/
 .. _`Read the Docs`: https://inspirehep.readthedocs.io/en/latest/
+
+
+
+Running tests
+=============
+
+1. docker compose -f docker-compose.test.yml up
+2. On the `worker`  container run `scripts/clear_pycache`
+3. On the `worker`  container run `pytest ...`
