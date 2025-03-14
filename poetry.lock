@@ -1397,7 +1397,7 @@ resolved_reference = "d60b18befd96ad7e78b3f8ade5b06e8b20f822e9"
 
 [[package]]
 name = "inspire-dojson"
-version = "63.1.5"
+version = "63.2.27"
 description = "INSPIRE-specific rules to transform from MARCXML to JSON and back."
 category = "main"
 optional = false
@@ -1405,17 +1405,20 @@ python-versions = "*"
 
 [package.dependencies]
 dojson = ">=1.3.1,<2.0"
-Flask = ">=0.12.3,<2.0.0"
+Flask = ">=0.12.3"
 IDUtils = ">=1.0.1,<2.0"
-inspire-schemas = ">=61.4,<62.0"
+inspire-schemas = "*"
 inspire-utils = ">=3.0.0,<4.0"
 isbnid-fork = ">=0.5.2,<1.0"
 langdetect = ">=1.0.7,<2.0"
+MarkupSafe = ">=1.1.1"
 pycountry = ">=17.5.4,<18.0"
+urllib3 = ">=1.25.0,<1.26.0"
 
 [package.extras]
-all = ["flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest (>=4.6,<5.0)", "pytest-cov (>=2.6.1,<3.0)", "unicode-string-literal (>=1.1,<2.0)"]
-tests = ["flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest (>=4.6,<5.0)", "pytest-cov (>=2.6.1,<3.0)", "unicode-string-literal (>=1.1,<2.0)"]
+all = ["flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pre-commit (==3.5.0)", "pytest (>=4.6,<5.0)", "pytest-cov (>=2.6.1,<3.0)"]
+dev = ["pre-commit (==3.5.0)"]
+tests = ["flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest (>=4.6,<5.0)", "pytest-cov (>=2.6.1,<3.0)"]
 
 [[package]]
 name = "inspire-idutils"
@@ -1520,7 +1523,6 @@ rfc3987 = "*"
 scrapy = "*"
 six = "*"
 Unidecode = ">=1.0.22,<2.0"
-urllib3 = ">=1.21.1,<1.25.0 || >1.25.0,<1.25.1 || >1.25.1,<1.26"
 
 [package.extras]
 docs = ["jsonschema2rst (>=0.1)", "sphinx"]
@@ -1530,7 +1532,7 @@ tests = ["check-manifest", "coverage", "deepdiff", "idutils (>=1.2.1,<2.0)", "in
 type = "git"
 url = "https://github.com/inspirehep/inspire-schemas.git"
 reference = "py-2"
-resolved_reference = "901c40c22678e45c992967c37b98bcbdd551ff6a"
+resolved_reference = "17ae094df468125c19c6b958fd05974202554fda"
 
 [[package]]
 name = "inspire-service-orcid"
@@ -3366,21 +3368,21 @@ tests = ["flake8 (>=3.5.0,<4.0)", "flake8-future-import (>=0.4.4,<1.0)", "pytest
 
 [[package]]
 name = "requests"
-version = "2.22.0"
+version = "2.27.1"
 description = "Python HTTP for Humans."
 category = "main"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*"
 
 [package.dependencies]
 certifi = ">=2017.4.17"
-chardet = ">=3.0.2,<3.1.0"
-idna = ">=2.5,<2.9"
-urllib3 = ">=1.21.1,<1.25.0 || >1.25.0,<1.25.1 || >1.25.1,<1.26"
+chardet = {version = ">=3.0.2,<5", markers = "python_version < \"3\""}
+idna = {version = ">=2.5,<3", markers = "python_version < \"3\""}
+urllib3 = ">=1.21.1,<1.27"
 
 [package.extras]
-security = ["cryptography (>=1.3.4)", "idna (>=2.0.0)", "pyOpenSSL (>=0.14)"]
 socks = ["PySocks (>=1.5.6,!=1.5.7)", "win-inet-pton"]
+use_chardet_on_py3 = ["chardet (>=3.0.2,<5)"]
 
 [[package]]
 name = "requests-mock"
@@ -3958,13 +3960,14 @@ ipaddress = {version = "*", markers = "python_version == \"2.7\""}
 
 [[package]]
 name = "urllib3"
-version = "1.24.3"
+version = "1.25.11"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
 category = "main"
 optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, <4"
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, <4"
 
 [package.extras]
+brotli = ["brotlipy (>=0.6.0)"]
 secure = ["certifi", "cryptography (>=1.3.4)", "idna (>=2.0.0)", "ipaddress", "pyOpenSSL (>=0.14)"]
 socks = ["PySocks (>=1.5.6,!=1.5.7,<2.0)"]
 
@@ -4244,7 +4247,7 @@ build-node = ["ipdb"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=2.7,<3.0"
-content-hash = "dd27614505c5408232edd95f702352f4458533f884b9246af3626db2dce15114"
+content-hash = "e5979e7c7bfc37ca5de6ee0d1c10fe20a668503c7dd52d52958500faddc8a590"
 
 [metadata.files]
 alabaster = [
@@ -4783,8 +4786,7 @@ influxdb = [
 ]
 inspire-crawler = []
 inspire-dojson = [
-    {file = "inspire-dojson-63.1.5.tar.gz", hash = "sha256:48b72b8852d8d3b78359b36b5cdce5d8e6987632497e86a5d88f98d839cc687a"},
-    {file = "inspire_dojson-63.1.5-py2-none-any.whl", hash = "sha256:21c25249e233e9b4d0461f6b5a55ef9f1a2504de6809e97ad5fac0f1980c3ec8"},
+    {file = "inspire_dojson-63.2.27-py2.py3-none-any.whl", hash = "sha256:c5159efb8b1d6c8fa68590f97fc4f0c02922e7622471bdff72a6df818ddb3d5c"},
 ]
 inspire-idutils = [
     {file = "inspire_idutils-1.2.4-py2.py3-none-any.whl", hash = "sha256:44bf2a67bdc7a3662e1406a35cbc537c8f3888abf686d3642e199a21f47915f8"},
@@ -5507,8 +5509,8 @@ refextract = [
     {file = "refextract-0.2.27.tar.gz", hash = "sha256:0533519ee2ad8e5babd6da0b1aecedd4d5c942b13ae27671f78f6874dc004284"},
 ]
 requests = [
-    {file = "requests-2.22.0-py2.py3-none-any.whl", hash = "sha256:9cf5292fcd0f598c671cfc1e0d7d1a7f13bb8085e9a590f48c010551dc6c4b31"},
-    {file = "requests-2.22.0.tar.gz", hash = "sha256:11e007a8a2aa0323f5a921e9e6a2d7e4e67d9877e85773fba9ba6419025cbeb4"},
+    {file = "requests-2.27.1-py2.py3-none-any.whl", hash = "sha256:f22fa1e554c9ddfd16e6e41ac79759e17be9e492b3587efa038054674760e72d"},
+    {file = "requests-2.27.1.tar.gz", hash = "sha256:68d7c56fd5a8999887728ef304a6d12edc7be74f1cfa47714fc8b414525c9a61"},
 ]
 requests-mock = [
     {file = "requests-mock-1.7.0.tar.gz", hash = "sha256:88d3402dd8b3c69a9e4f9d3a73ad11b15920c6efd36bc27bf1f701cf4a8e4646"},
@@ -5703,8 +5705,8 @@ uritools = [
     {file = "uritools-2.2.0.tar.gz", hash = "sha256:80e8e23cafad54fd85811b5d9ba0fc595d933f5727c61c3937945eec09f99e2b"},
 ]
 urllib3 = [
-    {file = "urllib3-1.24.3-py2.py3-none-any.whl", hash = "sha256:a637e5fae88995b256e3409dc4d52c2e2e0ba32c42a6365fee8bbd2238de3cfb"},
-    {file = "urllib3-1.24.3.tar.gz", hash = "sha256:2393a695cd12afedd0dcb26fe5d50d0cf248e5a66f75dbd89a3d4eb333a61af4"},
+    {file = "urllib3-1.25.11-py2.py3-none-any.whl", hash = "sha256:f5321fbe4bf3fefa0efd0bfe7fb14e90909eb62a48ccda331726b4319897dd5e"},
+    {file = "urllib3-1.25.11.tar.gz", hash = "sha256:8d7eaa5a82a1cac232164990f04874c594c9453ec55eef02eab885aa02fc17a2"},
 ]
 validators = [
     {file = "validators-0.14.2.tar.gz", hash = "sha256:b192e6bde7d617811d59f50584ed240b580375648cd032d106edeb3164099508"},
