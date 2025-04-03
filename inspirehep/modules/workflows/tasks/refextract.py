@@ -46,11 +46,6 @@ from refextract import (
 
 from refextract.references.errors import UnknownDocumentTypeError
 
-from inspirehep.modules.workflows.utils import (
-    ignore_timeout_error,
-    timeout_with_config,
-)
-
 from inspirehep.utils.references import (
     local_refextract_kbs_path,
     map_refextract_to_schema,
@@ -165,7 +160,6 @@ def extract_journal_info(obj, eng):
     obj.data['publication_info'] = convert_old_publication_info_to_new(obj.data['publication_info'])
 
 
-@ignore_timeout_error(return_value=[])
 @backoff.on_exception(
     backoff.expo,
     requests.exceptions.RequestException,
@@ -190,7 +184,6 @@ def extract_references_from_reference_list(raw_references, custom_kbs_file):
     return mapped_references
 
 
-@ignore_timeout_error(return_value=[])
 @backoff.on_exception(
     backoff.expo,
     requests.exceptions.RequestException,
@@ -217,8 +210,6 @@ def extract_references_from_pdf_url(url, custom_kbs_file, source=None):
     return map_refextract_to_schema(extracted_references, source=source)
 
 
-@ignore_timeout_error(return_value=[])
-@timeout_with_config('WORKFLOWS_REFEXTRACT_TIMEOUT')
 def extract_references_from_pdf(filepath, source=None, custom_kbs_file=None):
     """Extract references from PDF and return in INSPIRE format."""
     with local_refextract_kbs_path() as kbs_path:
@@ -237,8 +228,6 @@ def extract_references_from_pdf(filepath, source=None, custom_kbs_file=None):
     return map_refextract_to_schema(extracted_references, source=source)
 
 
-@ignore_timeout_error(return_value=[])
-@timeout_with_config('WORKFLOWS_REFEXTRACT_TIMEOUT')
 def extract_references_from_text(text, source=None, custom_kbs_file=None):
     """Extract references from text and return in INSPIRE format."""
     with local_refextract_kbs_path() as kbs_path:
@@ -251,7 +240,6 @@ def extract_references_from_text(text, source=None, custom_kbs_file=None):
     return map_refextract_to_schema(extracted_references, source=source)
 
 
-@ignore_timeout_error(return_value=[])
 @backoff.on_exception(
     backoff.expo,
     requests.exceptions.RequestException,
