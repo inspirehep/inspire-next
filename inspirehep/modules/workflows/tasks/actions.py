@@ -79,7 +79,13 @@ from inspirehep.modules.workflows.tasks.refextract import (
     extract_references_from_reference_list,
     raw_refs_to_list
 )
-from inspirehep.modules.workflows.utils import _get_headers_for_hep_root_table_request, create_error
+from inspirehep.modules.workflows.utils import (
+    _get_headers_for_hep_root_table_request,
+    create_error,
+    ignore_timeout_error,
+    timeout_with_config
+)
+
 from inspirehep.modules.workflows.errors import BadGatewayError, MissingRecordControlNumber
 from inspirehep.modules.workflows.utils import (
     copy_file_to_workflow,
@@ -483,6 +489,8 @@ def match_references_hep(references):
     create_error(response)
 
 
+@ignore_timeout_error()
+@timeout_with_config('WORKFLOWS_REFEXTRACT_TIMEOUT')
 @with_debug_logging
 def refextract(obj, eng):
     """Extract references from various sources and add them to the workflow.
