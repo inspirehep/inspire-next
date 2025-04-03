@@ -33,8 +33,10 @@ from inspire_json_merger.api import merge
 from inspire_schemas.readers import LiteratureReader
 from inspire_utils.record import get_value
 from invenio_pidstore.models import PersistentIdentifier
+from json_merger.errors import MaxThresholdExceededError
 
 from inspirehep.modules.records.api import InspireRecord
+from inspirehep.modules.workflows.tasks.actions import error_workflow
 from inspirehep.modules.workflows.utils import (
     get_resolve_merge_conflicts_callback_url,
     read_wf_record_source,
@@ -95,11 +97,14 @@ def merge_articles(obj, eng):
     obj.extra_data['merger_head_revision'] = head_revision_id
     obj.extra_data['merger_original_root'] = head_root
 
-    merged, conflicts = merge(
-        head=head_record,
-        root=head_root,
-        update=update,
-    )
+    try:
+        merged, conflicts = merge(
+            head=head_record,
+            root=head_root,
+            update=update,
+        )
+    except MaxThresholdExceededError as e:
+        error_workflow('Conflict resolution failed. {0}'.format(e))
 
     obj.data = merged
 

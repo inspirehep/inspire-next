@@ -31,12 +31,14 @@ from invenio_db import db
 import backoff
 import requests
 from flask import current_app
+from json_merger.errors import MaxThresholdExceededError
 from inspire_dojson.utils import get_record_ref
 from inspire_json_merger.api import merge
 from inspirehep.modules.workflows.models import WorkflowsRecordSources
 from invenio_workflows.errors import WorkflowsError
 from dateutil import parser
 from inspirehep.modules.records.api import InspireRecord
+from inspirehep.modules.workflows.tasks.actions import error_workflow
 from inspirehep.modules.workflows.utils import (
     _get_headers_for_hep_root_table_request, get_all_wf_record_sources, get_resolve_merge_conflicts_callback_url,
     put_record_to_hep, with_debug_logging)
@@ -60,11 +62,14 @@ def merge_records(obj, eng):
     """
     head, update = obj.extra_data["head"], obj.extra_data["update"]
 
-    merged, conflicts = merge(
-        root={},
-        head=head,
-        update=update,
-    )
+    try:
+        merged, conflicts = merge(
+            root={},
+            head=head,
+            update=update,
+        )
+    except MaxThresholdExceededError as e:
+        error_workflow('Conflict resolution failed. {0}'.format(e))
 
     obj.data = merged
     obj.extra_data["conflicts"] = conflicts
