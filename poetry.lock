@@ -1437,22 +1437,22 @@ tests = ["pytest-black-ng (>=0.4.0)", "pytest-cache (>=1.0)", "pytest-invenio (>
 
 [[package]]
 name = "inspire-json-merger"
-version = "11.0.37"
+version = "11.0.39"
 description = "INSPIRE-specific configuration of the JSON Merger."
 category = "main"
 optional = false
 python-versions = "*"
 
 [package.dependencies]
-inspire-schemas = ">=61.0,<62.0"
 inspire-utils = ">=3.0.0,<4.0"
-json-merger = {version = "0.7.11", extras = ["contrib"]}
+json-merger = {version = "0.7.14", extras = ["contrib"]}
 munkres = "1.0.12"
 pyrsistent = ">=0.14.0,<1.0"
 
 [package.extras]
-all = ["decorator (>=4.1.2,<5.0)", "flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest (>=4.6.0,<5.0)", "pytest (>=8.0.2,<9.0)", "pytest-cov (>=2.5.1,<3.0)"]
-tests = ["decorator (>=4.1.2,<5.0)", "flake8-future-import (>=0.4.3,<1.0)", "mock (>=2.0.0,<3.0)", "pytest (>=4.6.0,<5.0)", "pytest (>=8.0.2,<9.0)", "pytest-cov (>=2.5.1,<3.0)"]
+all = ["decorator (>=4.1.2,<5.0)", "inspire-schemas (==61.5.31)", "mock (>=2.0.0,<3.0)", "pre-commit (==3.5.0)", "pytest (>=4.6.0,<5.0)", "pytest (>=8.0.2,<9.0)", "pytest-cov (>=2.5.1,<3.0)"]
+dev = ["pre-commit (==3.5.0)"]
+tests = ["decorator (>=4.1.2,<5.0)", "inspire-schemas (==61.5.31)", "mock (>=2.0.0,<3.0)", "pytest (>=4.6.0,<5.0)", "pytest (>=8.0.2,<9.0)", "pytest-cov (>=2.5.1,<3.0)"]
 
 [[package]]
 name = "inspire-matcher"
@@ -2454,14 +2454,13 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
 name = "json-merger"
-version = "0.7.11"
+version = "0.7.14"
 description = "Python module that is able to merge json record objects."
 category = "main"
 optional = false
 python-versions = "*"
 
 [package.dependencies]
-autosemver = "0.5.5"
 dictdiffer = ">=0.6.0"
 editdistance = {version = ">=0.3.1", optional = true, markers = "extra == \"contrib\""}
 munkres = {version = "<=1.0.12", optional = true, markers = "extra == \"contrib\""}
@@ -2470,10 +2469,9 @@ six = ">=1.10.0"
 Unidecode = {version = ">=0.4.19", optional = true, markers = "extra == \"contrib\""}
 
 [package.extras]
-all = ["Sphinx (>=1.4.2)", "Unidecode (>=0.4.19)", "check-manifest (>=0.25)", "coverage (>=4.0)", "editdistance (>=0.3.1)", "flake8 (>=3.9.0)", "isort (>=4.2.2)", "munkres (<=1.0.12)", "pydocstyle (>=1.0.0)", "pytest (>=4.6.11)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)"]
+all = ["Unidecode (>=0.4.19)", "coverage (>=4.0)", "editdistance (>=0.3.1)", "flake8 (>=3.9.0)", "isort (>=4.2.2)", "munkres (<=1.0.12)", "pydocstyle (>=1.0.0)", "pytest (>=4.6.11)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)"]
 contrib = ["Unidecode (>=0.4.19)", "editdistance (>=0.3.1)", "munkres (<=1.0.12)"]
-docs = ["Sphinx (>=1.4.2)"]
-tests = ["Unidecode (>=0.4.19)", "check-manifest (>=0.25)", "coverage (>=4.0)", "editdistance (>=0.3.1)", "flake8 (>=3.9.0)", "isort (>=4.2.2)", "munkres (<=1.0.12)", "pydocstyle (>=1.0.0)", "pytest (>=4.6.11)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)"]
+tests = ["Unidecode (>=0.4.19)", "coverage (>=4.0)", "editdistance (>=0.3.1)", "flake8 (>=3.9.0)", "isort (>=4.2.2)", "munkres (<=1.0.12)", "pydocstyle (>=1.0.0)", "pytest (>=4.6.11)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)"]
 
 [[package]]
 name = "jsonpatch"
@@ -4247,7 +4245,7 @@ build-node = ["ipdb"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=2.7,<3.0"
-content-hash = "e5979e7c7bfc37ca5de6ee0d1c10fe20a668503c7dd52d52958500faddc8a590"
+content-hash = "35e5774406efc31fc0c1ad15de02a3beb2adda55b2292804ddb8d909c4cfe774"
 
 [metadata.files]
 alabaster = [
@@ -4793,8 +4791,8 @@ inspire-idutils = [
     {file = "inspire_idutils-1.2.4.tar.gz", hash = "sha256:26a247cfab92e3e1eadac84f8a6da67cf83f8c5836acb16e7b9ee2cc06e18d10"},
 ]
 inspire-json-merger = [
-    {file = "inspire-json-merger-11.0.37.tar.gz", hash = "sha256:6e0954dbfb2fc92a5a5b7db6bd7e525ceaa5c47418dc95fae5a984ee983095d7"},
-    {file = "inspire_json_merger-11.0.37-py3-none-any.whl", hash = "sha256:386d686cc0350a2500bd3e90cbee30a0e133aa0644467c8768a213f94753b2f2"},
+    {file = "inspire-json-merger-11.0.39.tar.gz", hash = "sha256:bca239e7c6e6c91dcf0fad1f395cc435c0c4a86a8eb05b7a892ee559a10de41d"},
+    {file = "inspire_json_merger-11.0.39-py3-none-any.whl", hash = "sha256:91430246308aae0cdb7a2e07c05d2f9b67d603afc48980f3ae2c89edef3e75f0"},
 ]
 inspire-matcher = [
     {file = "inspire-matcher-9.0.17.tar.gz", hash = "sha256:90b2e687b0256f0626725050a3d004cc3ce5681903acb713841fd124e45bf936"},
@@ -4975,8 +4973,7 @@ jmespath = [
     {file = "jmespath-0.10.0.tar.gz", hash = "sha256:b85d0567b8666149a93172712e68920734333c0ce7e89b78b3e987f71e5ed4f9"},
 ]
 json-merger = [
-    {file = "json-merger-0.7.11.tar.gz", hash = "sha256:11c35490c318a8493e9f652edef7ee8332280c21c1b20dd3dac42bbc187976c6"},
-    {file = "json_merger-0.7.11-py2.py3-none-any.whl", hash = "sha256:ac8fb772932e8fc396d2103bd05a5e45e614af93b2dce85ade293e0b855b7066"},
+    {file = "json_merger-0.7.14-py2.py3-none-any.whl", hash = "sha256:54154007134770f1b992ee443bddefd1e72a7dace6d274a02235dedde69f25ac"},
 ]
 jsonpatch = [
     {file = "jsonpatch-1.25-py2.py3-none-any.whl", hash = "sha256:cc3a7241010a1fd3f50145a3b33be2c03c1e679faa19934b628bb07d0f64819e"},
