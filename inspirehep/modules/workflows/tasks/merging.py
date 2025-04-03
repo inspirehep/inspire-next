@@ -28,6 +28,7 @@ from datetime import datetime
 from copy import deepcopy
 from flask import current_app
 from idutils import is_arxiv_post_2007
+from json_merger.errors import MaxThresholdExceededError
 
 from inspire_json_merger.api import merge
 from inspire_schemas.readers import LiteratureReader
@@ -40,6 +41,7 @@ from inspirehep.modules.workflows.utils import (
     read_wf_record_source,
     with_debug_logging, get_record_from_hep
 )
+from inspirehep.modules.workflows.tasks.actions import error_workflow
 
 
 @with_debug_logging
@@ -95,11 +97,14 @@ def merge_articles(obj, eng):
     obj.extra_data['merger_head_revision'] = head_revision_id
     obj.extra_data['merger_original_root'] = head_root
 
-    merged, conflicts = merge(
-        head=head_record,
-        root=head_root,
-        update=update,
-    )
+    try:
+        merged, conflicts = merge(
+            head=head_record,
+            root=head_root,
+            update=update,
+        )
+    except MaxThresholdExceededError:
+        error_workflow('Conflict resolution failed. Max threshold exceeded.')
 
     obj.data = merged
 

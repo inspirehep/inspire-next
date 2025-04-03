@@ -37,7 +37,7 @@ fs = "==0.*,>=0.0.0,>=0.5.4"
 gunicorn = {version = "==19.*,>=19.0.0,>=19.7.1", optional = true}
 honcho = {version = "==1.*,>=1.0.0,>=1.0.1", optional = true}
 inspire-dojson = "==63.*,>=63.2.27"
-inspire-json-merger = "^11.0.37"
+inspire-json-merger = "^11.0.39"
 inspire-matcher = "^9.0.15"
 inspire-query-parser = "6.0.37"
 inspire-schemas = {git = "https://github.com/inspirehep/inspire-schemas.git", branch = "py-2"}
@@ -122,6 +122,8 @@ inspire-crawler = {git = "https://github.com/inspirehep/inspire-crawler.git", re
 cffi = "1.15.1"
 inspire-idutils = "^1.2.4"
 invenio-workflows-ui = {git = "https://github.com/inveniosoftware-contrib/invenio-workflows-ui.git", rev = "v2.1.0"}
+boto3 = "1.14.61"
+scrapyd-client = "1.1.0"
 
 [tool.poetry.extras]
 all = ["coverage", "docutils", "flake8-future-import", "flower", "freezegun", "gunicorn", "hepcrawl", "honcho", "ipdb", "mock", "pytest", "pytest-cov", "pytest-vcr", "requests-mock", "sphinx", "superlance", "tornado"]
