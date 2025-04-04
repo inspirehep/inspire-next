@@ -104,7 +104,8 @@ def merge_articles(obj, eng):
             update=update,
         )
     except MaxThresholdExceededError as e:
-        error_workflow('Conflict resolution failed. {0}'.format(e))
+        _error_workflow = error_workflow('Conflict resolution failed. {0}'.format(e))
+        _error_workflow(obj, eng)
 
     obj.data = merged
 
