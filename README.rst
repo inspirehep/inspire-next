@@ -47,6 +47,22 @@ A preliminary version of the documentation is available on `Read the Docs`_.
 Running tests
 =============
 
-1. docker compose -f docker-compose.test.yml up
-2. On the `worker`  container run `scripts/clear_pycache`
-3. On the `worker`  container run `pytest ...`
+1. only needs to be run once, or when the dependencies change
+```shell
+docker compose -f services.yml build --force-rm --platform linux/amd64 base
+```
+2. Spin up `next`
+```shell 
+docker compose -f docker-compose.test.yml up test-database test-indexer test-rabbitmq test-redis test-web test-worker
+```
+3. On the `worker`  container run `scripts/clear_pycache` (optional)
+4. On the `worker`  container run `pytest ...`
+
+``` shell
+pytest tests/integration/workflows # workflows (tests in `tests/integration/workflows/test_workflow_core_selection.py` are failing locally)
+pytest tests/integration --ignore tests/integration/workflows # sync integration tests
+py.test tests/integration_async # async integration tests (Erroring locally)
+pytest tests/unit
+```
+
+
