@@ -20,7 +20,6 @@
     or submit itself to any jurisdiction.
 
 
-.. include:: ../README.rst
 
 
 Contents

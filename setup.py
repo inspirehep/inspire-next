@@ -40,7 +40,7 @@ with open(os.path.join('inspirehep', 'version.py'), 'rt') as f:
     exec(f.read(), g)
     version = g['__version__']
 
-readme = open('README.rst').read()
+readme = open('README.md').read()
 
 setup_requires = []
 
