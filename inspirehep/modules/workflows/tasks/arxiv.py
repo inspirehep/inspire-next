@@ -33,7 +33,7 @@ import requests
 from backports.tempfile import TemporaryDirectory
 from flask import current_app
 from requests import HTTPError
-from wand.exceptions import DelegateError, CoderError, FileOpenError
+from wand.exceptions import DelegateError, CoderError, FileOpenError, CacheError
 from wand.resource import limits
 from werkzeug import secure_filename
 from inspire_schemas.builders import LiteratureBuilder
@@ -187,6 +187,11 @@ def arxiv_plot_extract(obj, eng):
                 arxiv_id,
             )
             current_app.logger.exception(err)
+            delete_empty_key(obj, 'figures')
+            return
+        except CacheError as err:
+            obj.log.error('Cache resources exhausted for %s. Skipping plot extraction',
+                          arxiv_id)
             delete_empty_key(obj, 'figures')
             return
 
