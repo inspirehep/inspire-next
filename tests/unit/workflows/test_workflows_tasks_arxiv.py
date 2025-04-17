@@ -29,7 +29,7 @@ import pytest
 import pkg_resources
 import requests_mock
 from mock import patch
-from wand.exceptions import DelegateError
+from wand.exceptions import DelegateError, CacheError
 
 from inspire_schemas.api import load_schema, validate
 from inspirehep.modules.workflows.tasks.arxiv import (
@@ -618,6 +618,43 @@ def test_arxiv_plot_extract_logs_when_tarball_is_invalid(mock_process_tarball):
 
     assert arxiv_plot_extract(obj, eng) is None
     assert '1612.00626' in obj.log._info.getvalue()
+
+
+@patch('inspirehep.modules.workflows.tasks.arxiv.process_tarball')
+def test_arxiv_plot_extract_logs_when_cache_is_exhausted(mock_process_tarball):
+    mock_process_tarball.side_effect = CacheError
+
+    schema = load_schema('hep')
+    subschema = schema['properties']['arxiv_eprints']
+
+    filename = pkg_resources.resource_filename(
+        __name__, os.path.join('fixtures', '1612.00624'))
+
+    data = {
+        'arxiv_eprints': [
+            {
+                'categories': [
+                    'physics.ins-det',
+                ],
+                'value': '1612.00624',
+            },
+        ],
+    }  # synthetic data
+    extra_data = {}
+    files = MockFiles({
+        '1612.00624.tar.gz': AttrDict({
+            'file': AttrDict({
+                'uri': filename,
+            })
+        })
+    })
+    assert validate(data['arxiv_eprints'], subschema) is None
+
+    obj = MockObj(data, extra_data, files=files)
+    eng = MockEng()
+
+    assert arxiv_plot_extract(obj, eng) is None
+    assert '1612.00624' in obj.log._error.getvalue()
 
 
 @patch('inspirehep.modules.workflows.tasks.arxiv.process_tarball')
