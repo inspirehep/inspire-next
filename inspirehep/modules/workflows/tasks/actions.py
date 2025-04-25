@@ -129,6 +129,27 @@ GROBID_EXCEPTIONS = (
     requests.exceptions.RequestException,
 )
 
+CERN_EXPERIMENTS = set([
+    "AMS", "CALICE", "CHIC", "CLEAR", "CLIC", "CLICdp", "CLOUD", "CROWS",
+    "EEE", "EXPLORER", "FASER", "IAXO", "LAGUNA-LBNO", "LARP", "MATHUSLA",
+    "MERIT", "OPAL", "ProtoDUNE-DP", "ProtoDUNE-SP", "SND@LHC", "XSEN"
+])
+
+CERN_COLLABORATIONS = set([
+    "ALICE", "AMS", "ATLAS", "CLEAR", "CLIC", "CLICdp", "CLOUD", "CMS",
+    "COMPASS", "FASER", "FCC", "ISOLDE", "LAGUNA-LBNO", "LHCb", "LHCf",
+    "MATHUSLA", "MEDICIS", "MERIT", "SHINE", "SHiP", "SND@LHC",
+    "TOTEM", "n_TOF"
+])
+
+NON_CERN_COLLABORATIONS = set([
+    "CDF", "D0", "NANCY", "nanograv", "PLANCK"
+])
+
+CERN_EXPERIMENT_NAMES = {e.lower() for e in CERN_EXPERIMENTS}
+CERN_COLLABORATION_NAMES = {c.lower() for c in CERN_COLLABORATIONS}
+NON_CERN_COLLABORATION_NAMES = {n.lower() for n in NON_CERN_COLLABORATIONS}
+
 
 def mark(key, value):
     """Mark the workflow object by putting a value in a key in extra_data.
@@ -1160,6 +1181,71 @@ def check_if_germany_in_raw_affiliations(obj, eng):
     for aff in chain.from_iterable(raw_affs):
         if "germany" in aff.lower() or "deutschland" in aff.lower():
             return True
+
+
+def flatten_lower(data, *paths):
+    """Return a set of lowercase strings from nested lists at given paths."""
+    items = set()
+    for path in paths:
+        for nested in get_value(data, path, []):
+            for value in nested:
+                items.add(value.lower())
+    return items
+
+
+def check_if_cern_candidate(obj, eng):
+    """Determine if the given object should be considered a CERN candidate."""
+    data = obj.data
+
+    acc = flatten_lower(
+        data,
+        'accelerator_experiments.legacy_name',
+        'accelerator_experiments.accelerator'
+    )
+    authors = flatten_lower(
+        data,
+        'authors.affiliations.value',
+        'authors.raw_affiliations.value'
+    )
+    supervisors = flatten_lower(
+        data,
+        'supervisors.affiliations.value',
+        'supervisors.raw_affiliations.value'
+    )
+    reports = flatten_lower(data, 'report_numbers.value.fuzzy')
+    collab = flatten_lower(data, 'collaborations.value')
+    ext_schema = flatten_lower(data, 'external_system_identifiers.schema')
+    private_notes = flatten_lower(data, '_private_notes.value')
+
+    corporate_author = get_value(data, 'corporate_author', '').strip().lower()
+    collections = set(col.lower() for col in get_value(data, '_collections', []))
+
+    positive = (
+        any(name.startswith('cern') for name in acc)
+        or corporate_author == 'cern'
+        or any('cern' in name for name in (authors | supervisors))
+        or any(name.startswith('cern-') for name in reports)
+        or any(
+            name.startswith(prefix)
+            for prefix in ('na', 'rd', 'cern')
+            for name in collab
+        )
+        or bool(CERN_EXPERIMENT_NAMES & acc)
+        or bool(CERN_COLLABORATION_NAMES & collab)
+    )
+    if not positive:
+        return False
+
+    if (
+        'cds' in ext_schema
+        or 'not cern' in private_notes
+        or 'cds hidden' in collections
+        or 'uct-cern res. ctr.' in authors
+        or bool(NON_CERN_COLLABORATION_NAMES & collab)
+    ):
+        return False
+
+    return True
 
 
 def check_if_uk_in_fulltext(obj, eng):

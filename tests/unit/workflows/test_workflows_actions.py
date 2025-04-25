@@ -36,10 +36,21 @@ from mock import patch, MagicMock
 from inspirehep.modules.workflows.actions import MatchApproval, MergeApproval
 from mocks import MockEng, MockObj
 
-from inspirehep.modules.workflows.tasks.actions import check_if_uk_in_raw_affiliations, jlab_ticket_needed, load_from_source_data, \
-    extract_authors_from_pdf, is_suitable_for_pdf_authors_extraction, is_fermilab_report, add_collection, \
-    check_if_france_in_fulltext, check_if_france_in_raw_affiliations, check_if_germany_in_fulltext, \
-    check_if_germany_in_raw_affiliations, check_if_uk_in_fulltext
+from inspirehep.modules.workflows.tasks.actions import (
+    check_if_uk_in_raw_affiliations,
+    jlab_ticket_needed,
+    load_from_source_data,
+    extract_authors_from_pdf,
+    is_suitable_for_pdf_authors_extraction,
+    is_fermilab_report,
+    add_collection,
+    check_if_france_in_fulltext,
+    check_if_france_in_raw_affiliations,
+    check_if_germany_in_fulltext,
+    check_if_germany_in_raw_affiliations,
+    check_if_uk_in_fulltext,
+    check_if_cern_candidate,
+)
 
 
 def test_match_approval_gets_match_recid():
@@ -47,12 +58,12 @@ def test_match_approval_gets_match_recid():
     extra_data = {}
     obj = MockObj(data, extra_data)
 
-    ui_data = {'match_recid': 1234}
+    ui_data = {"match_recid": 1234}
     result = MatchApproval.resolve(obj, request_data=ui_data)
 
     assert result
-    assert 'fuzzy_match_approved_id' in obj.extra_data
-    assert obj.extra_data['fuzzy_match_approved_id'] == 1234
+    assert "fuzzy_match_approved_id" in obj.extra_data
+    assert obj.extra_data["fuzzy_match_approved_id"] == 1234
 
 
 def test_match_approval_gets_none():
@@ -60,12 +71,12 @@ def test_match_approval_gets_none():
     extra_data = {}
     obj = MockObj(data, extra_data)
 
-    ui_data = {'request_data': {'match_recid': None}}
+    ui_data = {"request_data": {"match_recid": None}}
     result = MatchApproval.resolve(obj, ui_data)
 
     assert not result
-    assert 'fuzzy_match_approved_id' in obj.extra_data
-    assert obj.extra_data['fuzzy_match_approved_id'] is None
+    assert "fuzzy_match_approved_id" in obj.extra_data
+    assert obj.extra_data["fuzzy_match_approved_id"] is None
 
 
 def test_match_approval_nothing_sent_via_request():
@@ -76,8 +87,8 @@ def test_match_approval_nothing_sent_via_request():
     result = MatchApproval.resolve(obj, None)
 
     assert not result
-    assert 'fuzzy_match_approved_id' in obj.extra_data
-    assert obj.extra_data['fuzzy_match_approved_id'] is None
+    assert "fuzzy_match_approved_id" in obj.extra_data
+    assert obj.extra_data["fuzzy_match_approved_id"] is None
     assert obj.status == ObjectStatus.RUNNING
 
 
@@ -85,27 +96,20 @@ def test_merge_approval():
     data = {}
     extra_data = {}
     obj = MockObj(data, extra_data)
-    obj.workflow.name = 'manual_merge'
+    obj.workflow.name = "manual_merge"
 
     result = MergeApproval.resolve(obj)
 
     assert result
-    assert obj.extra_data['approved']
-    assert not obj.extra_data['auto-approved']
+    assert obj.extra_data["approved"]
+    assert not obj.extra_data["auto-approved"]
 
 
 def test_jlab_ticket_needed_returns_false():
-    config = {'JLAB_ARXIV_CATEGORIES': ['nucl-th']}
+    config = {"JLAB_ARXIV_CATEGORIES": ["nucl-th"]}
 
     with patch.dict(current_app.config, config):
-        data = {
-            'arxiv_eprints': [
-                {
-                    'categories': ['math.DG'],
-                    'value': '1806.03979'
-                }
-            ]
-        }
+        data = {"arxiv_eprints": [{"categories": ["math.DG"], "value": "1806.03979"}]}
         extra_data = {}
 
         obj = MockObj(data, extra_data)
@@ -115,16 +119,13 @@ def test_jlab_ticket_needed_returns_false():
 
 
 def test_jlab_ticket_needed_returns_true():
-    config = {'JLAB_ARXIV_CATEGORIES': ['nucl-th']}
+    config = {"JLAB_ARXIV_CATEGORIES": ["nucl-th"]}
 
     with patch.dict(current_app.config, config):
         extra_data = {}
         data = {
-            'arxiv_eprints': [
-                {
-                    'categories': ['nucl-th', 'hep-th'],
-                    'value': '1806.03979'
-                }
+            "arxiv_eprints": [
+                {"categories": ["nucl-th", "hep-th"], "value": "1806.03979"}
             ]
         }
 
@@ -136,47 +137,35 @@ def test_jlab_ticket_needed_returns_true():
 
 def test_load_from_source_data_no_persistent_data():
     data = {
-        'document_type': 'article',
-        'titles': [{
-            'title': 'Changed in previous workflow run'
-        }]
+        "document_type": "article",
+        "titles": [{"title": "Changed in previous workflow run"}],
     }
 
     extra_data = {
-        '_last_task_name': 'whatever',
-        'source_data': {
-            'data': {
-                'document_type': 'article',
-                'titles': [{
-                    'title': 'Original title'
-                }]
+        "_last_task_name": "whatever",
+        "source_data": {
+            "data": {
+                "document_type": "article",
+                "titles": [{"title": "Original title"}],
             },
-            'extra_data': {}
-        }
+            "extra_data": {},
+        },
     }
 
     expected_data = {
-        'document_type': 'article',
-        'titles': [{
-            'title': 'Original title'
-        }]
+        "document_type": "article",
+        "titles": [{"title": "Original title"}],
     }
 
     expected_extra_data = {
-        'source_data': {
-            'extra_data': {
-                '_task_history': []
+        "source_data": {
+            "extra_data": {"_task_history": []},
+            "data": {
+                "document_type": "article",
+                "titles": [{"title": "Original title"}],
             },
-            'data': {
-                'document_type': 'article',
-                'titles': [
-                    {
-                        'title': 'Original title'
-                    }
-                ]
-            }
         },
-        '_task_history': [],
+        "_task_history": [],
     }
 
     obj = MockObj(data, extra_data)
@@ -197,13 +186,15 @@ def test_load_from_source_data_no_persistent_data():
         (["FERMILAB-ONB"], True),
         (["NOT-FERMILAB-ONE"], False),
         (["fermilab-lowercase"], False),
-    ]
+    ],
 )
 def test_is_fermilab_report(report_numbers, expected):
     wf_mock = MagicMock()
     wf_mock.data = {}
     if report_numbers:
-        wf_mock.data['report_numbers'] = [{"value": number} for number in report_numbers]
+        wf_mock.data["report_numbers"] = [
+            {"value": number} for number in report_numbers
+        ]
     assert is_fermilab_report(wf_mock, None) is expected
 
 
@@ -212,32 +203,28 @@ def test_is_fermilab_report(report_numbers, expected):
     [
         ([], "Fermilab", ["Fermilab"]),
         (["Literature"], "Fermilab", ["Literature", "Fermilab"]),
-        (['Literature'], "Literature", ["Literature"]),
-    ]
+        (["Literature"], "Literature", ["Literature"]),
+    ],
 )
 def test_add_collection(current_collections, new_collection, expected):
     wf = MagicMock()
     wf.data = {"_collections": current_collections}
     add_collection(new_collection)(wf, None)
-    assert wf.data['_collections'] == expected
+    assert wf.data["_collections"] == expected
 
 
 @patch("inspirehep.modules.workflows.tasks.actions.get_document_in_workflow")
 def test_extract_authors_from_pdf(mocked_get_document, app):
     grobid_response = pkg_resources.resource_string(
-        __name__,
-        os.path.join(
-            'fixtures',
-            'grobid_full_doc.xml'
-        )
+        __name__, os.path.join("fixtures", "grobid_full_doc.xml")
     )
 
     obj = MagicMock()
     obj.data = {
-        'authors': [
+        "authors": [
             {"full_name": "author 1"},
             {"full_name": "author 2"},
-            {"full_name": "author 3"}
+            {"full_name": "author 3"},
         ]
     }
     obj.extra_data = {}
@@ -247,34 +234,29 @@ def test_extract_authors_from_pdf(mocked_get_document, app):
     with patch.dict(current_app.config, new_config):
         with requests_mock.Mocker() as requests_mocker:
             requests_mocker.register_uri(
-                'POST', 'http://grobid_url.local/api/processHeaderDocument',
+                "POST",
+                "http://grobid_url.local/api/processHeaderDocument",
                 text=grobid_response,
-                headers={'content-type': 'application/xml'},
+                headers={"content-type": "application/xml"},
                 status_code=200,
             )
             with tempfile.NamedTemporaryFile() as tmp_file:
                 mocked_get_document.return_value.__enter__.return_value = tmp_file.name
                 extract_authors_from_pdf(obj, eng)
-    assert len(obj.data['authors']) == 3
-    assert len(obj.extra_data['authors_with_affiliations']) == 3
+    assert len(obj.data["authors"]) == 3
+    assert len(obj.extra_data["authors_with_affiliations"]) == 3
 
 
 @patch("inspirehep.modules.workflows.tasks.actions.get_document_in_workflow")
-def test_extract_authors_from_pdf_number_of_authors_is_same_after_merge_with_grobid(mocked_get_document, app):
+def test_extract_authors_from_pdf_number_of_authors_is_same_after_merge_with_grobid(
+    mocked_get_document, app
+):
     grobid_response = pkg_resources.resource_string(
-        __name__,
-        os.path.join(
-            'fixtures',
-            'grobid_full_doc.xml'
-        )
+        __name__, os.path.join("fixtures", "grobid_full_doc.xml")
     )
 
     obj = MagicMock()
-    obj.data = {
-        'authors': [
-            {"full_name": "author 1"}
-        ]
-    }
+    obj.data = {"authors": [{"full_name": "author 1"}]}
     obj.extra_data = {}
     eng = None
 
@@ -282,26 +264,23 @@ def test_extract_authors_from_pdf_number_of_authors_is_same_after_merge_with_gro
     with patch.dict(current_app.config, new_config):
         with requests_mock.Mocker() as requests_mocker:
             requests_mocker.register_uri(
-                'POST', 'http://grobid_url.local/api/processHeaderDocument',
+                "POST",
+                "http://grobid_url.local/api/processHeaderDocument",
                 text=grobid_response,
-                headers={'content-type': 'application/xml'},
+                headers={"content-type": "application/xml"},
                 status_code=200,
             )
             with tempfile.NamedTemporaryFile() as tmp_file:
                 mocked_get_document.return_value.__enter__.return_value = tmp_file.name
                 extract_authors_from_pdf(obj, eng)
-    assert len(obj.data['authors']) == 1
-    assert len(obj.extra_data.get('authors_with_affiliations')) == 3
+    assert len(obj.data["authors"]) == 1
+    assert len(obj.extra_data.get("authors_with_affiliations")) == 3
 
 
 @patch("inspirehep.modules.workflows.tasks.actions.get_document_in_workflow")
 def test_extract_authors_from_pdf_when_no_authors_in_metadata(mocked_get_document, app):
     grobid_response = pkg_resources.resource_string(
-        __name__,
-        os.path.join(
-            'fixtures',
-            'grobid_full_doc.xml'
-        )
+        __name__, os.path.join("fixtures", "grobid_full_doc.xml")
     )
 
     obj = MagicMock()
@@ -313,26 +292,25 @@ def test_extract_authors_from_pdf_when_no_authors_in_metadata(mocked_get_documen
     with patch.dict(current_app.config, new_config):
         with requests_mock.Mocker() as requests_mocker:
             requests_mocker.register_uri(
-                'POST', 'http://grobid_url.local/api/processHeaderDocument',
+                "POST",
+                "http://grobid_url.local/api/processHeaderDocument",
                 text=grobid_response,
-                headers={'content-type': 'application/xml'},
+                headers={"content-type": "application/xml"},
                 status_code=200,
             )
             with tempfile.NamedTemporaryFile() as tmp_file:
                 mocked_get_document.return_value.__enter__.return_value = tmp_file.name
                 extract_authors_from_pdf(obj, eng)
-    assert len(obj.data['authors']) == 3
-    assert len(obj.extra_data['authors_with_affiliations']) == 3
+    assert len(obj.data["authors"]) == 3
+    assert len(obj.extra_data["authors_with_affiliations"]) == 3
 
 
 @patch("inspirehep.modules.workflows.tasks.actions.get_document_in_workflow")
-def test_extract_authors_from_pdf_when_no_authors_in_metadata_and_no_authors_from_grobid(mocked_get_document, app):
+def test_extract_authors_from_pdf_when_no_authors_in_metadata_and_no_authors_from_grobid(
+    mocked_get_document, app
+):
     grobid_response = pkg_resources.resource_string(
-        __name__,
-        os.path.join(
-            'fixtures',
-            'grobid_no_authors_doc.xml'
-        )
+        __name__, os.path.join("fixtures", "grobid_no_authors_doc.xml")
     )
 
     obj = MagicMock()
@@ -344,42 +322,43 @@ def test_extract_authors_from_pdf_when_no_authors_in_metadata_and_no_authors_fro
     with patch.dict(current_app.config, new_config):
         with requests_mock.Mocker() as requests_mocker:
             requests_mocker.register_uri(
-                'POST', 'http://grobid_url.local/api/processHeaderDocument',
+                "POST",
+                "http://grobid_url.local/api/processHeaderDocument",
                 text=grobid_response,
-                headers={'content-type': 'application/xml'},
+                headers={"content-type": "application/xml"},
                 status_code=200,
             )
             with tempfile.NamedTemporaryFile() as tmp_file:
                 mocked_get_document.return_value.__enter__.return_value = tmp_file.name
                 extract_authors_from_pdf(obj, eng)
-    assert 'authors' not in obj.data
-    assert 'authors_with_affiliations' not in obj.extra_data
+    assert "authors" not in obj.data
+    assert "authors_with_affiliations" not in obj.extra_data
 
 
 @patch("inspirehep.modules.workflows.tasks.actions.get_document_in_workflow")
 def test_extract_authors_from_pdf_merges_grobid_affiliations(mocked_get_document, app):
     grobid_response = pkg_resources.resource_string(
-        __name__,
-        os.path.join(
-            'fixtures',
-            'grobid_full_doc.xml'
-        )
+        __name__, os.path.join("fixtures", "grobid_full_doc.xml")
     )
 
     obj = MagicMock()
     obj.data = {
         "authors": [
             {
-                'raw_affiliations': [{'value': u'S. N. Bose National Centre, India'}],
-                'emails': [u'parthanandi@bose.res.in'],
-                'full_name': u'Nandi, Partha'},
+                "raw_affiliations": [{"value": "S. N. Bose National Centre, India"}],
+                "emails": ["parthanandi@bose.res.in"],
+                "full_name": "Nandi, Partha",
+            },
             {
-                'raw_affiliations': [{'value': u'IIEST, Shibpur, Howrah, West Bengal-711103, India.'}],
-                'full_name': u'Sahu, Sankarshan'},
+                "raw_affiliations": [
+                    {"value": "IIEST, Shibpur, Howrah, West Bengal-711103, India."}
+                ],
+                "full_name": "Sahu, Sankarshan",
+            },
             {
-                'raw_affiliations': [{'value': u'S. N. Bose National Centre, India.'}],
-                'full_name': u'Pal, Sayan Kumar'
-            }
+                "raw_affiliations": [{"value": "S. N. Bose National Centre, India."}],
+                "full_name": "Pal, Sayan Kumar",
+            },
         ]
     }
     obj.extra_data = {}
@@ -387,38 +366,50 @@ def test_extract_authors_from_pdf_merges_grobid_affiliations(mocked_get_document
 
     expected_authors = [
         {
-            'raw_affiliations': [
-                {'value': u'S. N. Bose National Centre for Basic Sciences, JD Block, Sector III, Salt Lake, Kolkata-700106, India.'}
+            "raw_affiliations": [
+                {
+                    "value": "S. N. Bose National Centre for Basic Sciences, JD Block, Sector III, Salt Lake, Kolkata-700106, India."
+                }
             ],
-            'emails': [u'parthanandi@bose.res.in'], 'full_name': u'Nandi, Partha'
+            "emails": ["parthanandi@bose.res.in"],
+            "full_name": "Nandi, Partha",
         },
         {
-            'raw_affiliations': [
-                {'value': u'Indian Institute of Engineering Science and Technology, Shibpur, Howrah, West Bengal-711103, India.'}
-            ], 'emails': [u'sankarshan.sahu2000@gmail.com'], 'full_name': u'Sahu, Sankarshan'
+            "raw_affiliations": [
+                {
+                    "value": "Indian Institute of Engineering Science and Technology, Shibpur, Howrah, West Bengal-711103, India."
+                }
+            ],
+            "emails": ["sankarshan.sahu2000@gmail.com"],
+            "full_name": "Sahu, Sankarshan",
         },
         {
-            'raw_affiliations': [
-                {'value': u'S. N. Bose National Centre for Basic Sciences, JD Block, Sector III, Salt Lake, Kolkata-700106, India.'}
-            ], 'emails': [u'sayankpal@bose.res.in'], 'full_name': u'Pal, Sayan Kumar'
-        }
+            "raw_affiliations": [
+                {
+                    "value": "S. N. Bose National Centre for Basic Sciences, JD Block, Sector III, Salt Lake, Kolkata-700106, India."
+                }
+            ],
+            "emails": ["sayankpal@bose.res.in"],
+            "full_name": "Pal, Sayan Kumar",
+        },
     ]
 
     new_config = {"GROBID_URL": "http://grobid_url.local"}
     with patch.dict(current_app.config, new_config):
         with requests_mock.Mocker() as requests_mocker:
             requests_mocker.register_uri(
-                'POST', 'http://grobid_url.local/api/processHeaderDocument',
+                "POST",
+                "http://grobid_url.local/api/processHeaderDocument",
                 text=grobid_response,
-                headers={'content-type': 'application/xml'},
+                headers={"content-type": "application/xml"},
                 status_code=200,
             )
             with tempfile.NamedTemporaryFile() as tmp_file:
                 mocked_get_document.return_value.__enter__.return_value = tmp_file.name
                 extract_authors_from_pdf(obj, eng)
 
-    assert obj.data['authors'] == expected_authors
-    assert len(obj.extra_data['authors_with_affiliations']) == 3
+    assert obj.data["authors"] == expected_authors
+    assert len(obj.extra_data["authors_with_affiliations"]) == 3
 
 
 @pytest.mark.parametrize(
@@ -427,32 +418,37 @@ def test_extract_authors_from_pdf_merges_grobid_affiliations(mocked_get_document
         ("arxiv", False, True),
         ("arxiv", True, False),
         ("pos", False, True),
-        ('pos', True, False),
+        ("pos", True, False),
         ("ARxIV", False, True),
         ("pOs", False, True),
         ("ARXIV", True, False),
         ("other", True, False),
         ("other", False, False),
         ("", False, False),
-        ("", True, False)
-    ]
+        ("", True, False),
+    ],
 )
-def test_is_suitable_for_pdf_authors_extraction(acquisition_source, authors_xml_mark, expected):
+def test_is_suitable_for_pdf_authors_extraction(
+    acquisition_source, authors_xml_mark, expected
+):
     eng = None
     obj = MagicMock()
     obj.data = {"acquisition_source": {"source": acquisition_source}}
-    obj.extra_data = {'authors_xml': authors_xml_mark}
+    obj.extra_data = {"authors_xml": authors_xml_mark}
     suitable = is_suitable_for_pdf_authors_extraction(obj, eng)
     assert suitable is expected
 
 
 @patch("inspirehep.modules.workflows.tasks.actions.get_document_in_workflow")
-def test_extract_authors_from_pdf_do_not_run_when_there_is_more_authors_than_max_authors_parameter(mocked_get_document,
-                                                                                                   app):
+def test_extract_authors_from_pdf_do_not_run_when_there_is_more_authors_than_max_authors_parameter(
+    mocked_get_document, app
+):
     mocked_get_document.return_value.__enter__.side_effect = Exception
-    max_authors_parameter = app.config.get('WORKFLOWS_MAX_AUTHORS_COUNT_FOR_GROBID_EXTRACTION') + 1
+    max_authors_parameter = (
+        app.config.get("WORKFLOWS_MAX_AUTHORS_COUNT_FOR_GROBID_EXTRACTION") + 1
+    )
     obj = MagicMock()
-    obj.data = {'authors': [i for i in range(max_authors_parameter)]}
+    obj.data = {"authors": [i for i in range(max_authors_parameter)]}
     # Should not raise exception
     extract_authors_from_pdf(obj, None)
 
@@ -460,19 +456,15 @@ def test_extract_authors_from_pdf_do_not_run_when_there_is_more_authors_than_max
 @patch("inspirehep.modules.workflows.tasks.actions.get_document_in_workflow")
 def test_check_if_france_in_fulltext_when_france_in_header(mocked_get_document, app):
     grobid_response = pkg_resources.resource_string(
-        __name__,
-        os.path.join(
-            'fixtures',
-            'grobid_authors_full_response.txt'
-        )
+        __name__, os.path.join("fixtures", "grobid_authors_full_response.txt")
     )
 
     obj = MagicMock()
     obj.data = {
-        'authors': [
+        "authors": [
             {"full_name": "author 1"},
             {"full_name": "author 2"},
-            {"full_name": "author 3"}
+            {"full_name": "author 3"},
         ]
     }
 
@@ -483,9 +475,10 @@ def test_check_if_france_in_fulltext_when_france_in_header(mocked_get_document, 
     with patch.dict(current_app.config, new_config):
         with requests_mock.Mocker() as requests_mocker:
             requests_mocker.register_uri(
-                'POST', 'http://grobid_url.local/api/processFulltextDocument',
+                "POST",
+                "http://grobid_url.local/api/processFulltextDocument",
                 text=grobid_response,
-                headers={'content-type': 'application/xml'},
+                headers={"content-type": "application/xml"},
                 status_code=200,
             )
             with tempfile.NamedTemporaryFile() as tmp_file:
@@ -501,10 +494,10 @@ def test_check_if_france_in_fulltext_doesnt_include_francesco(mocked_get_documen
 
     obj = MagicMock()
     obj.data = {
-        'authors': [
+        "authors": [
             {"full_name": "author 1"},
             {"full_name": "author 2"},
-            {"full_name": "author 3"}
+            {"full_name": "author 3"},
         ]
     }
 
@@ -515,9 +508,10 @@ def test_check_if_france_in_fulltext_doesnt_include_francesco(mocked_get_documen
     with patch.dict(current_app.config, new_config):
         with requests_mock.Mocker() as requests_mocker:
             requests_mocker.register_uri(
-                'POST', 'http://grobid_url.local/api/processFulltextDocument',
+                "POST",
+                "http://grobid_url.local/api/processFulltextDocument",
                 text=fake_grobid_response,
-                headers={'content-type': 'application/xml'},
+                headers={"content-type": "application/xml"},
                 status_code=200,
             )
             with tempfile.NamedTemporaryFile() as tmp_file:
@@ -530,11 +524,15 @@ def test_check_if_france_in_fulltext_doesnt_include_francesco(mocked_get_documen
 def test_check_if_france_in_affiliations(app):
     obj = MagicMock()
     obj.data = {
-        'authors': [
-            {"full_name": "author 1",
-             "raw_affiliations": [{"value": "Laboratoire de Physique des 2 Infinis Irene Joliot-Curie (IJCLab), CNRS, Université Paris-Saclay, Orsay, 91405, France"}]
-
-             }
+        "authors": [
+            {
+                "full_name": "author 1",
+                "raw_affiliations": [
+                    {
+                        "value": "Laboratoire de Physique des 2 Infinis Irene Joliot-Curie (IJCLab), CNRS, Université Paris-Saclay, Orsay, 91405, France"
+                    }
+                ],
+            }
         ]
     }
 
@@ -547,19 +545,15 @@ def test_check_if_france_in_affiliations(app):
 @patch("inspirehep.modules.workflows.tasks.actions.get_document_in_workflow")
 def test_check_if_france_in_fulltext_when_france_in_text_body(mocked_get_document, app):
     grobid_response = pkg_resources.resource_string(
-        __name__,
-        os.path.join(
-            'fixtures',
-            'grobid_response_fulltext.txt'
-        )
+        __name__, os.path.join("fixtures", "grobid_response_fulltext.txt")
     )
 
     obj = MagicMock()
     obj.data = {
-        'authors': [
+        "authors": [
             {"full_name": "author 1"},
             {"full_name": "author 2"},
-            {"full_name": "author 3"}
+            {"full_name": "author 3"},
         ]
     }
 
@@ -570,9 +564,10 @@ def test_check_if_france_in_fulltext_when_france_in_text_body(mocked_get_documen
     with patch.dict(current_app.config, new_config):
         with requests_mock.Mocker() as requests_mocker:
             requests_mocker.register_uri(
-                'POST', 'http://grobid_url.local/api/processFulltextDocument',
+                "POST",
+                "http://grobid_url.local/api/processFulltextDocument",
                 text=grobid_response,
-                headers={'content-type': 'application/xml'},
+                headers={"content-type": "application/xml"},
                 status_code=200,
             )
             with tempfile.NamedTemporaryFile() as tmp_file:
@@ -585,11 +580,15 @@ def test_check_if_france_in_fulltext_when_france_in_text_body(mocked_get_documen
 def test_check_if_germany_in_affiliations(app):
     obj = MagicMock()
     obj.data = {
-        'authors': [
-            {"full_name": "author 1",
-             "raw_affiliations": [{"value": "Laboratoire de Physique des 2 Infinis Irene Joliot-Curie (IJCLab), CNRS, Université Paris-Saclay, Orsay, 91405, Germany"}]
-
-             }
+        "authors": [
+            {
+                "full_name": "author 1",
+                "raw_affiliations": [
+                    {
+                        "value": "Laboratoire de Physique des 2 Infinis Irene Joliot-Curie (IJCLab), CNRS, Université Paris-Saclay, Orsay, 91405, Germany"
+                    }
+                ],
+            }
         ]
     }
 
@@ -602,11 +601,15 @@ def test_check_if_germany_in_affiliations(app):
 def test_check_if_deutschland_in_affiliations(app):
     obj = MagicMock()
     obj.data = {
-        'authors': [
-            {"full_name": "author 1",
-             "raw_affiliations": [{"value": "Laboratoire de Physique des 2 Infinis Irene Joliot-Curie (IJCLab), CNRS, Université Paris-Saclay, Orsay, 91405, Deutschland"}]
-
-             }
+        "authors": [
+            {
+                "full_name": "author 1",
+                "raw_affiliations": [
+                    {
+                        "value": "Laboratoire de Physique des 2 Infinis Irene Joliot-Curie (IJCLab), CNRS, Université Paris-Saclay, Orsay, 91405, Deutschland"
+                    }
+                ],
+            }
         ]
     }
 
@@ -617,12 +620,12 @@ def test_check_if_deutschland_in_affiliations(app):
 
 
 @patch("inspirehep.modules.workflows.tasks.actions.get_document_in_workflow")
-def test_check_if_germany_in_fulltext_when_germany_in_text_body(mocked_get_document, app):
-    fake_grobid_response = "<country key=\"DE\">Germany</country>"
+def test_check_if_germany_in_fulltext_when_germany_in_text_body(
+    mocked_get_document, app
+):
+    fake_grobid_response = '<country key="DE">Germany</country>'
     obj = MagicMock()
-    obj.data = {
-        'core': False
-    }
+    obj.data = {"core": False}
     obj.extra_data = {}
     eng = None
     new_config = {"GROBID_URL": "http://grobid_url.local"}
@@ -631,9 +634,10 @@ def test_check_if_germany_in_fulltext_when_germany_in_text_body(mocked_get_docum
     with patch.dict(current_app.config, new_config):
         with requests_mock.Mocker() as requests_mocker:
             requests_mocker.register_uri(
-                'POST', 'http://grobid_url.local/api/processFulltextDocument',
+                "POST",
+                "http://grobid_url.local/api/processFulltextDocument",
                 text=fake_grobid_response,
-                headers={'content-type': 'application/xml'},
+                headers={"content-type": "application/xml"},
                 status_code=200,
             )
             with tempfile.NamedTemporaryFile() as tmp_file:
@@ -644,12 +648,12 @@ def test_check_if_germany_in_fulltext_when_germany_in_text_body(mocked_get_docum
 
 
 @patch("inspirehep.modules.workflows.tasks.actions.get_document_in_workflow")
-def test_check_if_germany_in_fulltext_when_deutschland_in_text_body(mocked_get_document, app):
-    fake_grobid_response = "<country key=\"DE\">Deutschland</country>"
+def test_check_if_germany_in_fulltext_when_deutschland_in_text_body(
+    mocked_get_document, app
+):
+    fake_grobid_response = '<country key="DE">Deutschland</country>'
     obj = MagicMock()
-    obj.data = {
-        'core': False
-    }
+    obj.data = {"core": False}
     obj.extra_data = {}
     eng = None
     new_config = {"GROBID_URL": "http://grobid_url.local"}
@@ -658,9 +662,10 @@ def test_check_if_germany_in_fulltext_when_deutschland_in_text_body(mocked_get_d
     with patch.dict(current_app.config, new_config):
         with requests_mock.Mocker() as requests_mocker:
             requests_mocker.register_uri(
-                'POST', 'http://grobid_url.local/api/processFulltextDocument',
+                "POST",
+                "http://grobid_url.local/api/processFulltextDocument",
                 text=fake_grobid_response,
-                headers={'content-type': 'application/xml'},
+                headers={"content-type": "application/xml"},
                 status_code=200,
             )
             with tempfile.NamedTemporaryFile() as tmp_file:
@@ -672,7 +677,7 @@ def test_check_if_germany_in_fulltext_when_deutschland_in_text_body(mocked_get_d
 
 @patch("inspirehep.modules.workflows.tasks.actions.get_document_in_workflow")
 def test_check_if_uk_in_fulltext(mocked_get_document, app):
-    fake_grobid_response = "<country key=\"UK\">England</country>"
+    fake_grobid_response = '<country key="UK">England</country>'
     obj = MagicMock()
     obj.extra_data = {}
     eng = None
@@ -680,15 +685,15 @@ def test_check_if_uk_in_fulltext(mocked_get_document, app):
     with patch.dict(current_app.config, new_config):
         with requests_mock.Mocker() as requests_mocker:
             requests_mocker.register_uri(
-                'POST', 'http://grobid_url.local/api/processFulltextDocument',
+                "POST",
+                "http://grobid_url.local/api/processFulltextDocument",
                 text=fake_grobid_response,
-                headers={'content-type': 'application/xml'},
+                headers={"content-type": "application/xml"},
                 status_code=200,
             )
             with tempfile.NamedTemporaryFile() as tmp_file:
                 mocked_get_document.return_value.__enter__.return_value = tmp_file.name
-                uk_in_fulltext = check_if_uk_in_fulltext(
-                    obj, eng)
+                uk_in_fulltext = check_if_uk_in_fulltext(obj, eng)
 
     assert uk_in_fulltext
 
@@ -703,15 +708,15 @@ def test_check_if_uk_in_fulltext_case_insensitive(mocked_get_document, app):
     with patch.dict(current_app.config, new_config):
         with requests_mock.Mocker() as requests_mocker:
             requests_mocker.register_uri(
-                'POST', 'http://grobid_url.local/api/processFulltextDocument',
+                "POST",
+                "http://grobid_url.local/api/processFulltextDocument",
                 text=fake_grobid_response,
-                headers={'content-type': 'application/xml'},
+                headers={"content-type": "application/xml"},
                 status_code=200,
             )
             with tempfile.NamedTemporaryFile() as tmp_file:
                 mocked_get_document.return_value.__enter__.return_value = tmp_file.name
-                uk_in_fulltext_and_core = check_if_uk_in_fulltext(
-                    obj, eng)
+                uk_in_fulltext_and_core = check_if_uk_in_fulltext(obj, eng)
 
     assert uk_in_fulltext_and_core
 
@@ -720,52 +725,161 @@ def test_check_if_uk_in_affiliations(app):
     obj = MagicMock()
     obj.extra_data = {}
     obj.data = {
-        'authors': [
-            {"full_name": "author 1",
-             "raw_affiliations": [{"value": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam, 91405, UK"}]
-
-             }
+        "authors": [
+            {
+                "full_name": "author 1",
+                "raw_affiliations": [
+                    {
+                        "value": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam, 91405, UK"
+                    }
+                ],
+            }
         ]
     }
     result = check_if_uk_in_raw_affiliations(obj, None)
     assert result
     obj.data = {
-        'authors': [
-            {"full_name": "author 1",
-             "raw_affiliations": [{"value": "Lorem ipsum dolor united kingdom amet, consetetur sadipscing elitr, sed diam, 91405"}]
-
-             }
+        "authors": [
+            {
+                "full_name": "author 1",
+                "raw_affiliations": [
+                    {
+                        "value": "Lorem ipsum dolor united kingdom amet, consetetur sadipscing elitr, sed diam, 91405"
+                    }
+                ],
+            }
         ]
     }
     result = check_if_uk_in_raw_affiliations(obj, None)
     assert result
     obj.data = {
-        'authors': [
-            {"full_name": "author 1",
-             "raw_affiliations": [{"value": "Lorem ipsum dolor sit amet, Scotland sadipscing elitr, sed diam, 91405"}]
-
-             }
+        "authors": [
+            {
+                "full_name": "author 1",
+                "raw_affiliations": [
+                    {
+                        "value": "Lorem ipsum dolor sit amet, Scotland sadipscing elitr, sed diam, 91405"
+                    }
+                ],
+            }
         ]
     }
     result = check_if_uk_in_raw_affiliations(obj, None)
     assert result
     obj.data = {
-        'authors': [
-            {"full_name": "author 1",
-             "raw_affiliations": [{"value": "Lorem engLand dolor sit amet, sadipscing elitr, sed diam, 91405"}]
-
-             }
+        "authors": [
+            {
+                "full_name": "author 1",
+                "raw_affiliations": [
+                    {
+                        "value": "Lorem engLand dolor sit amet, sadipscing elitr, sed diam, 91405"
+                    }
+                ],
+            }
         ]
     }
     result = check_if_uk_in_raw_affiliations(obj, None)
     assert result
     obj.data = {
-        'authors': [
-            {"full_name": "author 1",
-             "raw_affiliations": [{"value": "Lorem ipsum dolor sit amet, Northern ireland, sed diam, 91405"}]
-
-             }
+        "authors": [
+            {
+                "full_name": "author 1",
+                "raw_affiliations": [
+                    {
+                        "value": "Lorem ipsum dolor sit amet, Northern ireland, sed diam, 91405"
+                    }
+                ],
+            }
         ]
     }
     result = check_if_uk_in_raw_affiliations(obj, None)
     assert result
+
+
+@pytest.mark.parametrize(
+    "wf_data",
+    [
+        {"accelerator_experiments": [{"legacy_name": "CERN-TestExp"}]},
+        {"accelerator_experiments": [{"accelerator": "CERNring"}]},
+        {"corporate_author": ["CERN"]},
+        {"authors": [{"affiliations": [{"value": "Dept. of High Energy, CERN"}]}]},
+        {"authors": [{"raw_affiliations": [{"value": "cern lab"}]}]},
+        {"supervisors": [{"affiliations": [{"value": "CERN Faculty"}]}]},
+        {"supervisors": [{"raw_affiliations": [{"value": "the cern group"}]}]},
+        {"report_numbers": ["CERN-1234"]},
+        {"collaborations": [{"value": "NA12"}]},
+        {"collaborations": [{"value": "RD34"}]},
+        {"collaborations": [{"value": "CERN_collab"}]},
+        {"accelerator_experiments": [{"legacy_name": "AMS"}]},
+        {"collaborations": [{"value": "ATLAS"}]},
+    ],
+)
+def test_positive_should_clauses(wf_data):
+    """
+    Each of these alone should yield True (no exclusions present).
+    """
+    obj = MagicMock()
+    obj.extra_data = {}
+    obj.data = wf_data
+
+    assert check_if_cern_candidate(obj, None), "Expected True for data={}".format(
+        wf_data
+    )
+
+
+@pytest.mark.parametrize(
+    "wf_data",
+    [
+        {"external_system_identifiers": [{"schema": "CDS"}]},
+        {"_private_notes": [{"value": ["Something Not CERN here"]}]},
+        {"_collections": ["CDS Hidden"]},
+        {"authors": [{"affiliations": [{"value": "UCT-CERN Res. Ctr."}]}]},
+        {"collaborations": [{"value": "CDF"}]},
+    ],
+)
+def test_exclusion_must_not_clauses(wf_data):
+    """
+    Even if a 'should' clause matches, any 'must_not' clause should cause False.
+    We add corporate_author="CERN" to ensure a positive 'should' before the exclusion.
+    """
+    wf_data["corporate_author"] = "CERN"
+    obj = MagicMock()
+    obj.extra_data = {}
+    obj.data = wf_data
+
+    assert not check_if_cern_candidate(obj, None), (
+        "Expected False for exclusion data={}".format(wf_data)
+    )
+
+
+def test_combined_positive_and_negative():
+    """
+    If both a should matches and a must_not matches,
+    the must_not should take precedence.
+    """
+    obj = MagicMock()
+    obj.extra_data = {}
+    obj.data = {
+        "corporate_author": ["CERN"],
+        "_collections": ["CDS Hidden"],
+        "authors": [{"affiliations": [{"value": "some dept"}]}],
+    }
+    assert not check_if_cern_candidate(obj, None), "Expected False for data={}".format(
+        obj.data
+    )
+
+
+def test_no_should_match_results_false():
+    """
+    If none of the should clauses fires, must return False.
+    """
+    obj = MagicMock()
+    obj.extra_data = {}
+    obj.data = {
+        "corporate_author": "NotCERN",
+        "authors": [{"affiliations": [{"value": "Some other place"}]}],
+        "collaborations": [{"value": "OTHER"}],
+    }
+    assert not check_if_cern_candidate(obj, None), "Expected False for data={}".format(
+        obj.data
+    )
