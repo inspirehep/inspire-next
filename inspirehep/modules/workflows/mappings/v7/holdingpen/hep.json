@@ -1,311 +1,374 @@
 {
-    "mappings": {
-        "dynamic": false,
-        "date_detection": false,
-        "numeric_detection": false,
+  "mappings": {
+    "dynamic": false,
+    "date_detection": false,
+    "numeric_detection": false,
+    "properties": {
+      "_extra_data": {
         "properties": {
-            "_extra_data": {
+          "_action": {
+            "type": "keyword"
+          },
+          "is-update": {
+            "type": "boolean"
+          },
+          "approved": {
+            "type": "boolean"
+          },
+          "matches": {
+            "type": "object"
+          },
+          "_error_msg": {
+            "type": "text"
+          },
+          "_last_task_name": {
+            "type": "text"
+          },
+          "relevance_prediction": {
+            "properties": {
+              "decision": {
+                "type": "keyword"
+              },
+              "relevance_score": {
+                "type": "float"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "type": "object"
+      },
+      "_workflow": {
+        "properties": {
+          "status": {
+            "type": "keyword"
+          },
+          "workflow_name": {
+            "type": "keyword"
+          }
+        }
+      },
+      "metadata": {
+        "properties": {
+          "acquisition_source": {
+            "properties": {
+              "datetime": {
+                "type": "date"
+              },
+              "method": {
+                "type": "keyword"
+              },
+              "source": {
+                "type": "keyword"
+              }
+            },
+            "type": "object"
+          },
+          "arxiv_eprints": {
+            "properties": {
+              "categories": {
+                "type": "keyword"
+              },
+              "value": {
+                "fields": {
+                  "raw": {
+                    "normalizer": "lowercase_normalizer",
+                    "type": "keyword"
+                  }
+                },
+                "type": "keyword"
+              }
+            },
+            "type": "object"
+          },
+          "abstracts": {
+            "properties": {
+              "source": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text",
+                "copy_to": "_all"
+              }
+            },
+            "type": "object"
+          },
+          "control_number": {
+            "type": "integer"
+          },
+          "core": {
+            "type": "boolean"
+          },
+          "dois": {
+            "properties": {
+              "material": {
+                "type": "keyword"
+              },
+              "source": {
+                "type": "keyword"
+              },
+              "value": {
+                "fields": {
+                  "raw": {
+                    "normalizer": "lowercase_normalizer",
+                    "type": "keyword"
+                  }
+                },
+                "type": "keyword"
+              }
+            },
+            "type": "object"
+          },
+          "accelerator_experiments": {
+            "properties": {
+              "legacy_name": {
+                "type": "text"
+              }
+            },
+            "type": "object"
+          },
+          "corporate_author": {
+            "copy_to": "_all",
+            "type": "text"
+          },
+          "authors": {
+            "properties": {
+              "full_name": {
+                "type": "text"
+              },
+              "affiliations": {
                 "properties": {
-                    "_action": {
+                  "value": {
+                    "fields": {
+                      "raw": {
                         "type": "keyword"
+                      }
                     },
-                    "is-update": {
-                        "type": "boolean"
-                    },
-                    "approved": {
-                        "type": "boolean"
-                    },
-                    "matches": {
-                        "type": "object"
-                    },
-                    "_error_msg":{
-                        "type": "text"
-                    },
-                    "_last_task_name": {
-                        "type": "text"
-                    },
-                    "relevance_prediction": {
-                        "properties": {
-                            "decision": {
-                                "type": "keyword"
-                            },
-                            "relevance_score": {
-                                "type": "float"
-                            }
-                        },
-                        "type": "object"
-                    }
+                    "normalizer": "lowercase_normalizer",
+                    "copy_to": "_all",
+                    "type": "keyword"
+                  }
                 },
                 "type": "object"
+              }
             },
-            "_workflow": {
-                "properties": {
-                    "status": {
-                        "type": "keyword"
-                    },
-                    "workflow_name": {
-                        "type": "keyword"
-                    }
-                }
+            "type": "object"
+          },
+          "public_notes": {
+            "properties": {
+              "source": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text"
+              }
             },
-            "metadata": {
+            "type": "object"
+          },
+          "collaborations": {
+            "properties": {
+              "value": {
+                "type": "text"
+              }
+            },
+            "type": "object"
+          },
+          "external_system_identifiers": {
+            "properties": {
+              "schema": {
+                "normalizer": "lowercase_normalizer",
+                "type": "keyword"
+              },
+              "value": {
+                "copy_to": "_all",
+                "fields": {
+                  "raw": {
+                    "type": "keyword"
+                  }
+                },
+                "type": "text"
+              }
+            },
+            "type": "object"
+          },
+          "_private_notes": {
+            "properties": {
+              "source": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text"
+              }
+            },
+            "type": "object"
+          },
+          "publication_info": {
+            "properties": {
+              "journal_issue": {
+                "type": "keyword"
+              },
+              "journal_title": {
+                "fields": {
+                  "raw": {
+                    "type": "keyword"
+                  }
+                },
+                "copy_to": "metadata.facet_journal_title",
+                "type": "text"
+              },
+              "journal_volume": {
+                "type": "text"
+              }
+            },
+            "type": "object"
+          },
+          "report_numbers": {
+            "properties": {
+              "hidden": {
+                "type": "boolean"
+              },
+              "source": {
+                "type": "keyword"
+              },
+              "value": {
+                "fields": {
+                  "fuzzy": {
+                    "analyzer": "report_number",
+                    "type": "text"
+                  },
+                  "raw": {
+                    "type": "keyword"
+                  }
+                },
+                "type": "text"
+              }
+            },
+            "type": "object"
+          },
+          "supervisors": {
+            "properties": {
+              "affiliations": {
                 "properties": {
-                    "acquisition_source": {
-                        "properties": {
-                            "datetime": {
-                                "type": "date"
-                            },
-                            "method": {
-                                "type": "keyword"
-                            },
-                            "source": {
-                                "type": "keyword"
-                            }
-                        },
-                        "type": "object"
-                    },
-                    "arxiv_eprints": {
-                        "properties": {
-                            "categories": {
-                                "type": "keyword"
-                            },
-                            "value": {
-                                "fields": {
-                                    "raw": {
-                                        "normalizer": "lowercase_normalizer",
-                                        "type": "keyword"
-                                    }
-                                },
-                                "type": "keyword"
-                            }
-                        },
-                        "type": "object"
-                    },
-                    "abstracts": {
-                        "properties": {
-                          "source": {
-                            "type": "keyword"
-                          },
-                          "value": {
-                            "type": "text",
-                            "copy_to": "_all"
-                          }
-                        },
-                        "type": "object"
-                      },
-                    "control_number": {
-                        "type": "integer"
-                    },
-                    "core": {
-                        "type": "boolean"
-                    },
-                    "dois": {
-                        "properties": {
-                            "material": {
-                                "type": "keyword"
-                            },
-                            "source": {
-                                "type": "keyword"
-                            },
-                            "value": {
-                                "fields": {
-                                    "raw": {
-                                        "normalizer": "lowercase_normalizer",
-                                        "type": "keyword"
-                                    }
-                                },
-                                "type": "keyword"
-                            }
-                        },
-                        "type": "object"
-                    },
-                    "authors": {
-                        "properties": {
-                            "full_name": {
-                                "type": "text"
-                            }
-                        },
-                        "type": "object"
-                    },
-                    "public_notes": {
-                        "properties": {
-                            "source": {
-                                "type": "keyword"
-                            },
-                            "value": {
-                                "type": "text"
-                            }
-                        },
-                        "type": "object"
-                    },
-                    "_private_notes": {
-                        "properties": {
-                            "source": {
-                                "type": "keyword"
-                            },
-                            "value": {
-                                "type": "text"
-                            }
-                        },
-                        "type": "object"
-                    },
-                    "publication_info": {
-                        "properties": {
-                            "journal_issue": {
-                                "type": "keyword"
-                            },
-                          "journal_title": {
-                            "fields": {
-                              "raw": {
-                                "type": "keyword"
-                              }
-                            },
-                            "copy_to": "metadata.facet_journal_title",
-                            "type": "text"
-                          },
-                            "journal_volume": {
-                                "type": "text"
-                            }
-                        },
-                        "type": "object"
-                    },
-                    "report_numbers": {
-                        "properties": {
-                            "hidden": {
-                                "type": "boolean"
-                            },
-                            "source": {
-                                "type": "keyword"
-                            },
-                            "value": {
-                                "fields": {
-                                    "fuzzy": {
-                                        "analyzer": "report_number",
-                                        "type": "text"
-                                    },
-                                    "raw": {
-                                        "type": "keyword"
-                                    }
-                                },
-                                "type": "text"
-                            }
-                        },
-                        "type": "object"
-                    },
-                    "titles": {
-                        "properties": {
-                            "full_title": {
-                                "analyzer": "title",
-                                "fields": {
-                                    "search": {
-                                        "analyzer": "title_whitespace_tokenized",
-                                        "type": "text"
-                                    }
-                                },
-                                "type": "text"
-                            },
-                            "source": {
-                                "type": "keyword"
-                            },
-                            "subtitle": {
-                                "copy_to": [
-                                    "titles.full_title",
-                                    "_all"
-                                ],
-                                "type": "text"
-                            },
-                            "title": {
-                                "copy_to": [
-                                    "titles.full_title",
-                                    "_all"
-                                ],
-                                "type": "text"
-                            }
-                        },
-                        "type": "object"
-                    },
-                    "inspire_categories": {
-                        "properties": {
-                            "term": {
-                                "type": "keyword"
-                            }
-                        },
-                        "type": "object"
-                    },
-                    "facet_journal_title": {
+                  "value": {
+                    "fields": {
+                      "raw": {
                         "type": "keyword"
-                }
+                      }
+                    },
+                    "normalizer": "lowercase_normalizer",
+                    "copy_to": "_all",
+                    "type": "keyword"
+                  }
                 },
                 "type": "object"
-            }
-        }
-    },
-    "settings": {
-        "analysis": {
-            "analyzer": {
-                "title_whitespace_tokenized": {
-                    "char_filter": [
-                        "tex_normalizer"
-                    ],
-                    "filter": [
-                        "lowercase_normalizer",
-                        "ascii_normalizer"
-                    ],
-                    "tokenizer": "whitespace",
-                    "type": "custom"
+              },
+              "raw_affiliations": {
+                "properties": {
+                  "source": {
+                    "type": "keyword"
+                  },
+                  "value": {
+                    "copy_to": "_all",
+                    "type": "text"
+                  }
                 },
-                "title": {
-                    "char_filter": [
-                        "tex_normalizer"
-                    ],
-                    "filter": [
-                        "lowercase_normalizer",
-                        "ascii_normalizer"
-                    ],
-                    "tokenizer": "icu_tokenizer",
-                    "type": "custom"
-                },
-                "report_number": {
-                    "char_filter": [
-                        "alphanumeric_normalizer"
-                    ],
-                    "filter": [
-                        "lowercase_normalizer"
-                    ],
-                    "tokenizer": "keyword",
-                    "type": "custom"
-                }
+                "type": "object"
+              }
             },
-            "normalizer": {
-                "lowercase_normalizer": {
-                    "type": "custom",
-                    "char_filter": [],
-                    "filter": [
-                        "lowercase"
-                    ]
-                }
-            },
-            "char_filter": {
-                "alphanumeric_normalizer": {
-                    "pattern": "[^A-Za-z0-9]",
-                    "replacement": "",
-                    "type": "pattern_replace"
+            "type": "nested"
+          },
+          "titles": {
+            "properties": {
+              "full_title": {
+                "analyzer": "title",
+                "fields": {
+                  "search": {
+                    "analyzer": "title_whitespace_tokenized",
+                    "type": "text"
+                  }
                 },
-                "tex_normalizer": {
-                    "pattern": "\\$[^$]+\\$",
-                    "replacement": "",
-                    "type": "pattern_replace"
-                }
+                "type": "text"
+              },
+              "source": {
+                "type": "keyword"
+              },
+              "subtitle": {
+                "copy_to": ["titles.full_title", "_all"],
+                "type": "text"
+              },
+              "title": {
+                "copy_to": ["titles.full_title", "_all"],
+                "type": "text"
+              }
             },
-            "filter": {
-                "ascii_normalizer": {
-                    "preserve_original": true,
-                    "type": "asciifolding"
-                },
-                "lowercase_normalizer": {
-                    "type": "lowercase"
-                }
-            }
-        }
+            "type": "object"
+          },
+          "inspire_categories": {
+            "properties": {
+              "term": {
+                "type": "keyword"
+              }
+            },
+            "type": "object"
+          },
+          "facet_journal_title": {
+            "type": "keyword"
+          }
+        },
+        "type": "object"
+      }
     }
+  },
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "title_whitespace_tokenized": {
+          "char_filter": ["tex_normalizer"],
+          "filter": ["lowercase_normalizer", "ascii_normalizer"],
+          "tokenizer": "whitespace",
+          "type": "custom"
+        },
+        "title": {
+          "char_filter": ["tex_normalizer"],
+          "filter": ["lowercase_normalizer", "ascii_normalizer"],
+          "tokenizer": "icu_tokenizer",
+          "type": "custom"
+        },
+        "report_number": {
+          "char_filter": ["alphanumeric_normalizer"],
+          "filter": ["lowercase_normalizer"],
+          "tokenizer": "keyword",
+          "type": "custom"
+        }
+      },
+      "normalizer": {
+        "lowercase_normalizer": {
+          "type": "custom",
+          "char_filter": [],
+          "filter": ["lowercase"]
+        }
+      },
+      "char_filter": {
+        "alphanumeric_normalizer": {
+          "pattern": "[^A-Za-z0-9]",
+          "replacement": "",
+          "type": "pattern_replace"
+        },
+        "tex_normalizer": {
+          "pattern": "\\$[^$]+\\$",
+          "replacement": "",
+          "type": "pattern_replace"
+        }
+      },
+      "filter": {
+        "ascii_normalizer": {
+          "preserve_original": true,
+          "type": "asciifolding"
+        },
+        "lowercase_normalizer": {
+          "type": "lowercase"
+        }
+      }
+    }
+  }
 }
