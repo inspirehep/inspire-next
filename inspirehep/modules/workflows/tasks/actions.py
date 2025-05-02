@@ -1180,6 +1180,183 @@ def check_if_uk_in_raw_affiliations(obj, eng):
             return True
 
 
+def check_if_cern_candidate(obj, eng):
+    cern_experiments = [
+        "AMS",
+        "CALICE",
+        "CHIC",
+        "CLEAR",
+        "CLIC",
+        "CLICdp",
+        "CLOUD",
+        "CROWS",
+        "EEE",
+        "EXPLORER",
+        "FASER",
+        "IAXO",
+        "LAGUNA-LBNO",
+        "LARP",
+        "MATHUSLA",
+        "MERIT",
+        "OPAL",
+        "ProtoDUNE-DP",
+        "ProtoDUNE-SP",
+        "SND@LHC",
+        "XSEN",
+    ]
+    cern_collaborations = [
+        "ALICE",
+        "AMS",
+        "ATLAS",
+        "CLEAR",
+        "CLIC",
+        "CLICdp",
+        "CLOUD",
+        "CMS",
+        "COMPASS",
+        "FASER",
+        "FCC",
+        "ISOLDE",
+        "LAGUNA-LBNO",
+        "LHCb",
+        "LHCf",
+        "MATHUSLA",
+        "MEDICIS",
+        "MERIT",
+        "SHINE",
+        "SHiP",
+        "SND@LHC",
+        "TOTEM",
+        "n_TOF",
+    ]
+    non_cern_collaborations = ["CDF", "D0", "NANCY", "nanograv", "PLANCK"]
+    cern_experiment_matches = [
+        {"match": {"metadata.accelerator_experiments.legacy_name": exp}}
+        for exp in cern_experiments
+    ]
+    cern_collaboration_matches = [
+        {"match": {"metadata.collaborations.value": {"query": coll, "operator": "and"}}}
+        for coll in cern_collaborations
+    ]
+    non_cern_collaboration_matches = [
+        {"match": {"metadata.collaborations.value": {"query": coll, "operator": "and"}}}
+        for coll in non_cern_collaborations
+    ]
+
+    should_clauses = (
+        [
+            {"match": {"metadata.corporate_author": "CERN"}},
+            {
+                "match": {
+                    "metadata.authors.affiliations.value": {
+                        "query": "CERN",
+                        "operator": "and",
+                    }
+                }
+            },
+            {
+                "match": {
+                    "metadata.authors.affiliations.value.raw": {
+                        "query": "CERN",
+                        "operator": "and",
+                    }
+                }
+            },
+            {
+                "match": {
+                    "metadata.supervisors.affiliations.value": {
+                        "query": "CERN",
+                        "operator": "and",
+                    }
+                }
+            },
+            {
+                "match": {
+                    "metadata.supervisors.affiliations.value.raw": {
+                        "query": "CERN",
+                        "operator": "and",
+                    }
+                }
+            },
+            {
+                "query_string": {
+                    "query": "cern\\-*",
+                    "fields": ["metadata.report_numbers.value.fuzzy"],
+                    "analyze_wildcard": True,
+                }
+            },
+            {
+                "query_string": {
+                    "query": "NA*",
+                    "fields": ["metadata.collaborations.value"],
+                    "analyze_wildcard": True,
+                }
+            },
+            {
+                "query_string": {
+                    "query": "RD*",
+                    "fields": ["metadata.collaborations.value"],
+                    "analyze_wildcard": True,
+                }
+            },
+            {
+                "query_string": {
+                    "query": "CERN*",
+                    "fields": ["metadata.collaborations.value"],
+                    "analyze_wildcard": True,
+                }
+            },
+        ]
+        + cern_experiment_matches
+        + cern_collaboration_matches
+    )
+
+    # we must much the current workflow id
+    must_clauses = [
+        {"term": {"_id": obj.id}},
+    ]
+
+    must_not_clauses = [
+        {
+            "match": {
+                "metadata.external_system_identifiers.schema": {
+                    "query": "CDS",
+                    "operator": "and",
+                }
+            }
+        },
+        {"match_phrase": {"metadata._private_notes.value": "Not CERN"}},
+        {"match": {"metadata._collections": "CDS Hidden"}},
+        {
+            "match": {
+                "metadata.authors.affiliations.value": {
+                    "query": "UCT-CERN Res. Ctr.",
+                    "operator": "and",
+                }
+            }
+        },
+    ] + non_cern_collaboration_matches
+
+    cds_candidates_filter = {
+        "bool": {
+            "should": should_clauses,
+            "must": must_clauses,
+            "must_not": must_not_clauses,
+            "minimum_should_match": 1,
+        }
+    }
+
+    response = (
+        Search(index="holdingpen-hep", using=current_search_client)
+        .query(cds_candidates_filter)
+        .execute()
+    )
+
+    if response.hits.total.value == 1:
+        return True
+    return False
+
+
 def load_record_from_hep(obj, wf):
     control_number = obj.data['control_number']
     pid_type = get_pid_type_from_schema(obj.data['$schema'])

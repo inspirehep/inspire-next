@@ -65,12 +65,14 @@ from inspirehep.modules.workflows.tasks.actions import (
     update_inspire_categories,
     validate_record,
     jlab_ticket_needed,
-    delay_if_necessary, should_be_hidden,
+    delay_if_necessary,
+    should_be_hidden,
     replace_collection_to_hidden,
     is_suitable_for_pdf_authors_extraction,
     extract_authors_from_pdf,
     is_fermilab_report,
-    add_collection, normalize_collaborations,
+    add_collection,
+    normalize_collaborations,
     normalize_author_affiliations,
     is_core,
     create_core_selection_wf,
@@ -81,6 +83,7 @@ from inspirehep.modules.workflows.tasks.actions import (
     link_institutions_with_affiliations,
     check_if_uk_in_fulltext,
     check_if_uk_in_raw_affiliations,
+    check_if_cern_candidate,
 )
 
 from inspirehep.modules.workflows.tasks.classifier import (
@@ -108,11 +111,12 @@ from inspirehep.modules.workflows.tasks.matching import (
     has_more_than_one_exact_match,
     raise_if_match_workflow,
     match_previously_rejected_wf_in_holdingpen,
-    match_non_completed_wf_in_holdingpen
+    match_non_completed_wf_in_holdingpen,
 )
 from inspirehep.modules.workflows.tasks.merging import (
     has_conflicts,
-    merge_articles, conflicts_ticket_context,
+    merge_articles,
+    conflicts_ticket_context,
 )
 from inspirehep.modules.workflows.tasks.upload import (
     is_stale_data,
@@ -125,7 +129,7 @@ from inspirehep.modules.workflows.tasks.submission import (
     create_ticket,
     filter_keywords,
     reply_ticket,
-    send_to_legacy
+    send_to_legacy,
 )
 from inspirehep.modules.workflows.utils import do_not_repeat
 from inspirehep.modules.literaturesuggest.tasks import (
@@ -138,37 +142,37 @@ from inspirehep.modules.literaturesuggest.tasks import (
 
 
 NOTIFY_SUBMISSION = [
-    do_not_repeat('create_ticket_curator_new_submission')(
+    do_not_repeat("create_ticket_curator_new_submission")(
         create_ticket(
             template="literaturesuggest/tickets/curator_submitted.html",
             queue="HEP_add_user",
             context_factory=new_ticket_context,
-            ticket_id_key="ticket_id"
+            ticket_id_key="ticket_id",
         ),
     ),
-    do_not_repeat('reply_ticket_user_new_submission')(
+    do_not_repeat("reply_ticket_user_new_submission")(
         reply_ticket(
             template="literaturesuggest/tickets/user_submitted.html",
             context_factory=reply_ticket_context,
-            keep_new=True
+            keep_new=True,
         ),
-    )
+    ),
 ]
 
 CHECK_AUTO_APPROVE = [
     IF_ELSE(
         is_submission,
-        mark('auto-approved', False),
+        mark("auto-approved", False),
         IF_ELSE(
             auto_approve,
             [
-                mark('auto-approved', True),
+                mark("auto-approved", True),
                 IF_NOT(
-                    is_marked('is-update'),
+                    is_marked("is-update"),
                     set_core_in_extra_data,
-                )
+                ),
             ],
-            mark('auto-approved', False),
+            mark("auto-approved", False),
         ),
     ),
 ]
@@ -181,7 +185,7 @@ ENHANCE_RECORD = [
             arxiv_package_download,
             arxiv_plot_extract,
             arxiv_author_list,
-        ]
+        ],
     ),
     IF(
         is_submission,
@@ -217,17 +221,16 @@ ENHANCE_RECORD = [
     guess_keywords,
     guess_coreness,
     normalize_collaborations,
-    save_workflow
+    save_workflow,
 ]
 
 
 NOTIFY_AND_CLOSE_NOT_ACCEPTED = [
     IF(
         is_submission,
-        do_not_repeat('close_ticket_submission_not_accepted')(
+        do_not_repeat("close_ticket_submission_not_accepted")(
             close_ticket(
-                ticket_id_key="ticket_id",
-                context_factory=reply_ticket_context
+                ticket_id_key="ticket_id", context_factory=reply_ticket_context
             ),
         ),
     )
@@ -235,16 +238,13 @@ NOTIFY_AND_CLOSE_NOT_ACCEPTED = [
 
 
 NOTIFY_AND_CLOSE_ALREADY_EXISTING = [
-    reject_record('Article was already found on INSPIRE'),
-    mark('approved', False),
-    do_not_repeat('close_ticket_user_submission_already_in_inspire')(
+    reject_record("Article was already found on INSPIRE"),
+    mark("approved", False),
+    do_not_repeat("close_ticket_user_submission_already_in_inspire")(
         close_ticket(
             ticket_id_key="ticket_id",
-            template=(
-                "literaturesuggest/tickets/"
-                "user_rejected_exists.html"
-            ),
-            context_factory=reply_ticket_context
+            template=("literaturesuggest/tickets/user_rejected_exists.html"),
+            context_factory=reply_ticket_context,
         ),
     ),
     save_workflow,
@@ -255,10 +255,10 @@ NOTIFY_AND_CLOSE_ALREADY_EXISTING = [
 NOTIFY_AND_CLOSE_ACCEPTED = [
     IF(
         is_submission,
-        do_not_repeat('close_ticket_user_submission_accepted')(
+        do_not_repeat("close_ticket_user_submission_accepted")(
             close_ticket(
                 ticket_id_key="ticket_id",
-                template='literaturesuggest/tickets/user_accepted.html',
+                template="literaturesuggest/tickets/user_accepted.html",
                 context_factory=reply_ticket_context,
             ),
         ),
@@ -268,17 +268,17 @@ NOTIFY_AND_CLOSE_ACCEPTED = [
 
 NOTIFY_CURATOR_IF_NEEDED = [
     IF_NOT(
-        is_marked('is-update'),
+        is_marked("is-update"),
         IF_ELSE(
             is_arxiv_paper,
             [
                 IF(
                     check_if_france_in_fulltext,
                     create_ticket(
-                        template='literaturesuggest/tickets/curation_core.html',
-                        queue='HAL_curation',
+                        template="literaturesuggest/tickets/curation_core.html",
+                        queue="HAL_curation",
                         context_factory=curation_ticket_context,
-                        ticket_id_key='curation_ticket_id',
+                        ticket_id_key="curation_ticket_id",
                     ),
                 ),
                 IF(
@@ -287,19 +287,19 @@ NOTIFY_CURATOR_IF_NEEDED = [
                         IF(
                             check_if_germany_in_fulltext,
                             create_ticket(
-                                template='literaturesuggest/tickets/curation_core.html',
-                                queue='GER_curation',
+                                template="literaturesuggest/tickets/curation_core.html",
+                                queue="GER_curation",
                                 context_factory=curation_ticket_context,
-                                ticket_id_key='curation_ticket_id',
+                                ticket_id_key="curation_ticket_id",
                             ),
                         ),
                         IF(
                             check_if_uk_in_fulltext,
                             create_ticket(
-                                template='literaturesuggest/tickets/curation_core.html',
-                                queue='UK_curation',
+                                template="literaturesuggest/tickets/curation_core.html",
+                                queue="UK_curation",
                                 context_factory=curation_ticket_context,
-                                ticket_id_key='curation_ticket_id',
+                                ticket_id_key="curation_ticket_id",
                             ),
                         ),
                     ],
@@ -309,10 +309,10 @@ NOTIFY_CURATOR_IF_NEEDED = [
                 IF(
                     check_if_france_in_raw_affiliations,
                     create_ticket(
-                        template='literaturesuggest/tickets/curation_core.html',
-                        queue='HAL_curation',
+                        template="literaturesuggest/tickets/curation_core.html",
+                        queue="HAL_curation",
                         context_factory=curation_ticket_context,
-                        ticket_id_key='curation_ticket_id',
+                        ticket_id_key="curation_ticket_id",
                     ),
                 ),
                 IF(
@@ -321,37 +321,46 @@ NOTIFY_CURATOR_IF_NEEDED = [
                         IF(
                             check_if_germany_in_raw_affiliations,
                             create_ticket(
-                                template='literaturesuggest/tickets/curation_core.html',
-                                queue='GER_curation',
+                                template="literaturesuggest/tickets/curation_core.html",
+                                queue="GER_curation",
                                 context_factory=curation_ticket_context,
-                                ticket_id_key='curation_ticket_id',
+                                ticket_id_key="curation_ticket_id",
                             ),
                         ),
                         IF(
                             check_if_uk_in_raw_affiliations,
                             create_ticket(
-                                template='literaturesuggest/tickets/curation_core.html',
-                                queue='UK_curation',
+                                template="literaturesuggest/tickets/curation_core.html",
+                                queue="UK_curation",
                                 context_factory=curation_ticket_context,
-                                ticket_id_key='curation_ticket_id',
+                                ticket_id_key="curation_ticket_id",
+                            ),
+                        ),
+                        IF(
+                            check_if_cern_candidate,
+                            create_ticket(
+                                template="literaturesuggest/tickets/curation_core.html",
+                                queue="CERN_curation",
+                                context_factory=curation_ticket_context,
+                                ticket_id_key="curation_ticket_id",
                             ),
                         ),
                     ],
                 ),
-            ]
-        )
+            ],
+        ),
     ),
     IF_NOT(
-        is_marked('is-update'),
+        is_marked("is-update"),
         [
             IF_ELSE(
                 jlab_ticket_needed,
-                do_not_repeat('create_ticket_jlab_curation')(
+                do_not_repeat("create_ticket_jlab_curation")(
                     create_ticket(
-                        template='literaturesuggest/tickets/curation_jlab.html',
-                        queue='HEP_curation_jlab',
+                        template="literaturesuggest/tickets/curation_jlab.html",
+                        queue="HEP_curation_jlab",
                         context_factory=curation_ticket_context,
-                        ticket_id_key='curation_ticket_id',
+                        ticket_id_key="curation_ticket_id",
                     ),
                 ),
                 IF(
@@ -359,33 +368,33 @@ NOTIFY_CURATOR_IF_NEEDED = [
                     IF_ELSE(
                         # if it is coming from publisher, create ticket in hep_publisher queue
                         check_source_publishing,
-                        do_not_repeat('create_ticket_curator_core_publisher')(
+                        do_not_repeat("create_ticket_curator_core_publisher")(
                             create_ticket(
-                                template='literaturesuggest/tickets/curation_core.html',
-                                queue='HEP_publishing',
+                                template="literaturesuggest/tickets/curation_core.html",
+                                queue="HEP_publishing",
                                 context_factory=curation_ticket_context,
-                                ticket_id_key='curation_ticket_id',
+                                ticket_id_key="curation_ticket_id",
                             ),
                         ),  # Otherwise create ticket in hep_curation queue
-                        do_not_repeat('create_ticket_curator_core_curation')(
+                        do_not_repeat("create_ticket_curator_core_curation")(
                             create_ticket(
-                                template='literaturesuggest/tickets/curation_core.html',
-                                queue='HEP_curation',
+                                template="literaturesuggest/tickets/curation_core.html",
+                                queue="HEP_curation",
                                 context_factory=curation_ticket_context,
-                                ticket_id_key='curation_ticket_id',
+                                ticket_id_key="curation_ticket_id",
                             ),
                         ),
                     ),
                 ),
             )
-        ]
+        ],
     ),
 ]
 
 
 POSTENHANCE_RECORD = [
     IF_NOT(
-        is_marked('is-update'),
+        is_marked("is-update"),
         add_core,
     ),
     filter_keywords,
@@ -402,25 +411,19 @@ POSTENHANCE_RECORD = [
 
 
 SEND_TO_LEGACY = [
-    send_to_legacy(priority_config_key='LEGACY_ROBOTUPLOAD_PRIORITY_ARTICLE'),
+    send_to_legacy(priority_config_key="LEGACY_ROBOTUPLOAD_PRIORITY_ARTICLE"),
 ]
 
 
 STOP_IF_EXISTING_SUBMISSION = [
-    IF(
-        is_submission,
-        IF(
-            is_marked('is-update'),
-            NOTIFY_AND_CLOSE_ALREADY_EXISTING
-        )
-    )
+    IF(is_submission, IF(is_marked("is-update"), NOTIFY_AND_CLOSE_ALREADY_EXISTING))
 ]
 
 
 HALT_FOR_APPROVAL_IF_NEW_OR_REJECT_IF_NOT_RELEVANT = [
     preserve_root,
     IF_ELSE(
-        is_marked('is-update'),
+        is_marked("is-update"),
         [
             merge_articles,
             IF(
@@ -430,23 +433,23 @@ HALT_FOR_APPROVAL_IF_NEW_OR_REJECT_IF_NOT_RELEVANT = [
                         template="workflows/tickets/conflicts-ticket-template.html",
                         queue="HEP_conflicts",
                         ticket_id_key="conflict-ticket-id",
-                        context_factory=conflicts_ticket_context
+                        context_factory=conflicts_ticket_context,
                     ),
                     halt_record(
-                        action='merge_approval',
-                        message='Submission halted for merging conflicts.'
+                        action="merge_approval",
+                        message="Submission halted for merging conflicts.",
                     ),
                     close_ticket(ticket_id_key="conflict-ticket-id"),
-                ]
+                ],
             ),
-            mark('approved', True),
-            mark('merged', True),
+            mark("approved", True),
+            mark("merged", True),
         ],
         [
             update_inspire_categories,
             IF_ELSE(
-                is_marked('auto-approved'),
-                mark('approved', True),
+                is_marked("auto-approved"),
+                mark("approved", True),
                 [
                     IF(
                         is_record_relevant,
@@ -456,15 +459,15 @@ HALT_FOR_APPROVAL_IF_NEW_OR_REJECT_IF_NOT_RELEVANT = [
                         ),
                     ),
                     IF_NOT(
-                        is_marked('approved'),
+                        is_marked("approved"),
                         IF_ELSE(
                             should_be_hidden,
                             [
                                 replace_collection_to_hidden,
-                                mark('approved', True),
+                                mark("approved", True),
                             ],
                             [
-                                mark('approved', False),
+                                mark("approved", False),
                             ],
                         ),
                     ),
@@ -472,15 +475,12 @@ HALT_FOR_APPROVAL_IF_NEW_OR_REJECT_IF_NOT_RELEVANT = [
             ),
         ],
     ),
-    save_workflow
+    save_workflow,
 ]
 
 
 STORE_RECORD = [
-    IF(
-        is_stale_data,
-        go_to_first_step
-    ),
+    IF(is_stale_data, go_to_first_step),
     store_record,
 ]
 
@@ -495,25 +495,25 @@ MARK_IF_MATCH_IN_HOLDINGPEN = [
     IF_ELSE(
         match_non_completed_wf_in_holdingpen,
         [
-            mark('already-in-holding-pen', True),
+            mark("already-in-holding-pen", True),
             save_workflow,
         ],
-        mark('already-in-holding-pen', False),
+        mark("already-in-holding-pen", False),
     ),
     IF_ELSE(
         match_previously_rejected_wf_in_holdingpen,
         [
-            mark('previously_rejected', True),
+            mark("previously_rejected", True),
             save_workflow,
         ],
-        mark('previously_rejected', False),
-    )
+        mark("previously_rejected", False),
+    ),
 ]
 
 
 ERROR_WITH_UNEXPECTED_WORKFLOW_PATH = [
-    mark('unexpected-workflow-path', True),
-    error_workflow('Unexpected workflow path.'),
+    mark("unexpected-workflow-path", True),
+    error_workflow("Unexpected workflow path."),
     save_workflow,
 ]
 
@@ -521,34 +521,34 @@ ERROR_WITH_UNEXPECTED_WORKFLOW_PATH = [
 # Currently we handle harvests as if all were arxiv, that will have to change.
 PROCESS_HOLDINGPEN_MATCH_HARVEST = [
     IF_NOT(
-        is_marked('is-update'),
+        is_marked("is-update"),
         IF(
-            is_marked('previously_rejected'),
+            is_marked("previously_rejected"),
             IF_NOT(
-                is_marked('auto-approved'),
+                is_marked("auto-approved"),
                 IF(
-                    has_same_source('previously_rejected_matches'),
+                    has_same_source("previously_rejected_matches"),
                     [
-                        mark('approved', False),  # auto-reject
+                        mark("approved", False),  # auto-reject
                         save_workflow,
                         stop_processing,
-                        run_next_if_necessary
+                        run_next_if_necessary,
                     ],
-                )
+                ),
             ),
         ),
     ),
     IF_ELSE(
-        is_marked('already-in-holding-pen'),
+        is_marked("already-in-holding-pen"),
         [
             handle_matched_holdingpen_wfs,
             IF_ELSE(
-                has_same_source('holdingpen_matches'),
-                mark('stopped-matched-holdingpen-wf', True),
-                mark('stopped-matched-holdingpen-wf', False),
-            )
+                has_same_source("holdingpen_matches"),
+                mark("stopped-matched-holdingpen-wf", True),
+                mark("stopped-matched-holdingpen-wf", False),
+            ),
         ],
-        mark('stopped-matched-holdingpen-wf', False),
+        mark("stopped-matched-holdingpen-wf", False),
     ),
     save_workflow,
 ]
@@ -556,15 +556,14 @@ PROCESS_HOLDINGPEN_MATCH_HARVEST = [
 
 PROCESS_HOLDINGPEN_MATCH_SUBMISSION = [
     IF_ELSE(
-        has_same_source('holdingpen_matches'),
+        has_same_source("holdingpen_matches"),
         # form should detect this double submission
         ERROR_WITH_UNEXPECTED_WORKFLOW_PATH,
-
         # stop the matched wf and continue this one
         [
             handle_matched_holdingpen_wfs,
-            mark('stopped-matched-holdingpen-wf', False),
-            save_workflow
+            mark("stopped-matched-holdingpen-wf", False),
+            save_workflow,
         ],
     )
 ]
@@ -584,14 +583,14 @@ CHECK_IS_UPDATE = [
         exact_match,
         [
             set_exact_match_as_approved_in_extradata,
-            mark('is-update', True),
-            mark('exact-matched', True),
+            mark("is-update", True),
+            mark("exact-matched", True),
             IF(
                 has_more_than_one_exact_match,
                 halt_record(
                     action="resolve_multiple_exact_matches",
                     message="Workflow halted for resolving multiple exact matches.",
-                )
+                ),
             ),
         ],
         IF_ELSE(
@@ -605,14 +604,14 @@ CHECK_IS_UPDATE = [
                     is_fuzzy_match_approved,
                     [
                         set_fuzzy_match_approved_in_extradata,
-                        mark('fuzzy-matched', True),
-                        mark('is-update', True),
+                        mark("fuzzy-matched", True),
+                        mark("is-update", True),
                     ],
-                    mark('is-update', False),
-                )
+                    mark("is-update", False),
+                ),
             ],
-            mark('is-update', False),
-        )
+            mark("is-update", False),
+        ),
     ),
     save_workflow,
 ]
@@ -627,15 +626,15 @@ NOTIFY_IF_SUBMISSION = [
 
 
 INIT_MARKS = [
-    mark('auto-approved', None),
-    mark('already-in-holding-pen', None),
-    mark('previously_rejected', None),
-    mark('is-update', None),
-    mark('stopped-matched-holdingpen-wf', None),
-    mark('approved', None),
-    mark('unexpected-workflow-path', None),
-    mark('halted-by-match-with-different-source', None),
-    do_not_repeat('marks')(mark('restart-count', 0)),
+    mark("auto-approved", None),
+    mark("already-in-holding-pen", None),
+    mark("previously_rejected", None),
+    mark("is-update", None),
+    mark("stopped-matched-holdingpen-wf", None),
+    mark("approved", None),
+    mark("unexpected-workflow-path", None),
+    mark("halted-by-match-with-different-source", None),
+    do_not_repeat("marks")(mark("restart-count", 0)),
     save_workflow,
 ]
 
@@ -647,14 +646,10 @@ PRE_PROCESSING = [
     # Make sure schema is set for proper indexing in Holding Pen
     set_schema,
     INIT_MARKS,
-    validate_record('hep')
+    validate_record("hep"),
 ]
 
-FIND_NEXT_AND_RUN_IF_NECESSARY = [
-
-    run_next_if_necessary
-
-]
+FIND_NEXT_AND_RUN_IF_NECESSARY = [run_next_if_necessary]
 
 
 CREATE_CORE_SELECTION_WF = [
@@ -664,33 +659,34 @@ CREATE_CORE_SELECTION_WF = [
 
 class Article(object):
     """Article ingestion workflow for Literature collection."""
+
     name = "HEP"
     data_type = "hep"
 
     workflow = (
-        PRE_PROCESSING +
-        NOTIFY_IF_SUBMISSION +
-        MARK_IF_MATCH_IN_HOLDINGPEN +
-        CHECK_IS_UPDATE +
-        STOP_IF_EXISTING_SUBMISSION +
-        CHECK_AUTO_APPROVE +
-        PROCESS_HOLDINGPEN_MATCHES +
-        ENHANCE_RECORD +
-        HALT_FOR_APPROVAL_IF_NEW_OR_REJECT_IF_NOT_RELEVANT +
-        [
+        PRE_PROCESSING
+        + NOTIFY_IF_SUBMISSION
+        + MARK_IF_MATCH_IN_HOLDINGPEN
+        + CHECK_IS_UPDATE
+        + STOP_IF_EXISTING_SUBMISSION
+        + CHECK_AUTO_APPROVE
+        + PROCESS_HOLDINGPEN_MATCHES
+        + ENHANCE_RECORD
+        + HALT_FOR_APPROVAL_IF_NEW_OR_REJECT_IF_NOT_RELEVANT
+        + [
             IF_ELSE(
                 is_record_accepted,
                 (
-                    POSTENHANCE_RECORD +
-                    STORE_RECORD +
-                    SEND_TO_LEGACY +
-                    STORE_ROOT +
-                    NOTIFY_AND_CLOSE_ACCEPTED +
-                    NOTIFY_CURATOR_IF_NEEDED +
-                    CREATE_CORE_SELECTION_WF
+                    POSTENHANCE_RECORD
+                    + STORE_RECORD
+                    + SEND_TO_LEGACY
+                    + STORE_ROOT
+                    + NOTIFY_AND_CLOSE_ACCEPTED
+                    + NOTIFY_CURATOR_IF_NEEDED
+                    + CREATE_CORE_SELECTION_WF
                 ),
                 NOTIFY_AND_CLOSE_NOT_ACCEPTED,
             ),
-        ] +
-        FIND_NEXT_AND_RUN_IF_NECESSARY
+        ]
+        + FIND_NEXT_AND_RUN_IF_NECESSARY
     )
