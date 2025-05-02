@@ -29,15 +29,17 @@ import pkg_resources
 import requests_mock
 from invenio_search import current_search
 from invenio_workflows import ObjectStatus, start, workflow_object_class
-from mocks import (fake_classifier_api_request, fake_download_file,
-                   fake_magpie_api_request)
+from mocks import (
+    fake_classifier_api_request,
+    fake_download_file,
+    fake_magpie_api_request,
+)
 from workflow_utils import build_workflow, check_wf_state
 
-from inspirehep.modules.workflows.tasks.actions import mark
-from inspirehep.modules.workflows.tasks.matching import \
-    set_wf_not_completed_ids_to_wf
-from inspirehep.modules.workflows.utils import \
-    _get_headers_for_hep_root_table_request
+from inspirehep.modules.workflows.tasks.actions import mark, check_if_cern_candidate
+from inspirehep.modules.workflows.tasks.matching import set_wf_not_completed_ids_to_wf
+from inspirehep.modules.workflows.utils import _get_headers_for_hep_root_table_request
+
 
 PUBLISHING_RECORD = {
     "$schema": "https://labs.inspirehep.net/schemas/records/hep.json",
@@ -91,7 +93,6 @@ def test_create_ticket_when_source_is_publishing(
     workflow_app,
     mocked_external_services,
 ):
-
     workflow_id = build_workflow(PUBLISHING_RECORD).id
     start("article", object_id=workflow_id)
     wf = workflow_object_class.get(workflow_id)
@@ -125,7 +126,6 @@ def test_create_ticket_when_source_is_not_publishing(
     workflow_app,
     mocked_external_services,
 ):
-
     workflow_id = build_workflow(CURATION_RECORD).id
     start("article", object_id=workflow_id)
     wf = workflow_object_class.get(workflow_id)
@@ -458,3 +458,62 @@ def test_run_next_wf_is_not_starting_core_selection_wfs(
     start("article", object_id=workflow.id)
     matched = set_wf_not_completed_ids_to_wf(workflow)
     assert matched == []
+
+
+def test_create_cern_ticket_if_cern_candidate(workflow_app):
+    record = {
+        "$schema": "https://labs.inspirehep.net/schemas/records/hep.json",
+        "titles": [
+            {"title": "Title."},
+        ],
+        "authors": [
+            {
+                "full_name": "Some author",
+            }
+        ],
+        "corporate_author": ["CERN"],
+        "document_type": ["article"],
+        "_collections": ["Literature"],
+        "arxiv_eprints": [
+            {"value": "1802.08709.pdf"},
+        ],
+        "acquisition_source": {
+            "datetime": "2021-06-11T06:59:01.928752",
+            "method": "hepcrawl",
+            "source": "arXiv",
+        },
+    }
+
+    workflow = build_workflow(record, extra_data={"delay": 10})
+
+    current_search.flush_and_refresh("holdingpen-hep")
+    assert check_if_cern_candidate(workflow, None) is True
+
+
+def test_not_create_cern_ticket_if_cern_candidate(workflow_app):
+    record = {
+        "$schema": "https://labs.inspirehep.net/schemas/records/hep.json",
+        "titles": [
+            {"title": "Title."},
+        ],
+        "authors": [
+            {
+                "full_name": "Some author",
+            }
+        ],
+        "corporate_author": ["Something else"],
+        "document_type": ["article"],
+        "_collections": ["Literature"],
+        "arxiv_eprints": [
+            {"value": "1802.08709.pdf"},
+        ],
+        "acquisition_source": {
+            "datetime": "2021-06-11T06:59:01.928752",
+            "method": "hepcrawl",
+            "source": "arXiv",
+        },
+    }
+
+    workflow = build_workflow(record, extra_data={"delay": 10})
+    current_search.flush_and_refresh("holdingpen-hep")
+    assert check_if_cern_candidate(workflow, None) is False
