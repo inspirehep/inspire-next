@@ -2897,7 +2897,7 @@ python-versions = "*"
 
 [[package]]
 name = "plotextractor"
-version = "1.0.14"
+version = "1.0.16"
 description = "Small library for extracting plots used in scholarly communication."
 category = "main"
 optional = false
@@ -4249,7 +4249,7 @@ build-node = ["ipdb"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=2.7,<3.0"
-content-hash = "81e22cb7fb9608728356120dd2d5d5f52ce317f20bc336d395bf34717f0ecf59"
+content-hash = "5dbd1a99e3475358ed7dd7684ccffb62414dc72934a840f994fb5e2af8078f53"
 
 [metadata.files]
 alabaster = [
@@ -5312,7 +5312,7 @@ pkgsettings = [
     {file = "pkgsettings-0.12.0.tar.gz", hash = "sha256:149102d1c3d2179140eaa8acd94b085aaa6ae30605d425b84aa83a3bb1536658"},
 ]
 plotextractor = [
-    {file = "plotextractor-1.0.14-py2.py3-none-any.whl", hash = "sha256:3678687558f30d7c1f09a849befea3b400ba49e6717a2dccea9a20d731a20f56"},
+    {file = "plotextractor-1.0.16-py2.py3-none-any.whl", hash = "sha256:e441a6218225b518d9d20b80558aa0e3558e7af2616e1113c62fb8cb67a3a958"},
 ]
 pluggy = [
     {file = "pluggy-0.13.1-py2.py3-none-any.whl", hash = "sha256:966c145cd83c96502c3c3868f50408687b38434af77734af1e9ca461a4081d2d"},
