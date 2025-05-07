@@ -1506,7 +1506,6 @@ description = "Inspire JSON schemas and utilities to use them."
 category = "main"
 optional = false
 python-versions = "*"
-develop = false
 
 [package.dependencies]
 bleach = ">=3.2.1,<4.0"
@@ -1526,12 +1525,6 @@ Unidecode = ">=1.0.22,<2.0"
 [package.extras]
 docs = ["jsonschema2rst (>=0.1.7)", "sphinx"]
 tests = ["check-manifest", "coverage", "deepdiff", "idutils (>=1.2.1,<2.0)", "inspire-idutils (==1.2.4)", "isort (>=4.3.0,<5.0)", "mock", "pytest (>=4.6,<5.0)", "pytest (>=6.2.5,<7.0)", "pytest-cache", "pytest-cov (==2.6.1)", "pytest-pep8", "unicode-string-literal (>=1.1,<2.0)"]
-
-[package.source]
-type = "git"
-url = "https://github.com/inspirehep/inspire-schemas.git"
-reference = "master"
-resolved_reference = "fd800c7ee763cbc0b85321bb0ace415cc59fe526"
 
 [[package]]
 name = "inspire-service-orcid"
@@ -4241,7 +4234,7 @@ build-node = ["ipdb"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=2.7,<3.0"
-content-hash = "c7079e3a720329f140b083c89f4cae76fdb6c0af9a935a32aee678d9fec90410"
+content-hash = "bebec90ec5b14eaf6036ed278c3cfd2c6ce4dbe6d5b1013b94b308b3db0a9312"
 
 [metadata.files]
 alabaster = [
@@ -4798,7 +4791,9 @@ inspire-query-parser = [
     {file = "inspire-query-parser-6.0.37.tar.gz", hash = "sha256:7b5e9d30e15952270fefd770824f6a6ebc531e55b8c1cbf2f971cbcfbb245c25"},
     {file = "inspire_query_parser-6.0.37-py2-none-any.whl", hash = "sha256:94124b8e2c1b5a837e73aa35f4311350090eadb357f9faf279342fa822c2725b"},
 ]
-inspire-schemas = []
+inspire-schemas = [
+    {file = "inspire_schemas-61.6.14-py2.py3-none-any.whl", hash = "sha256:1566b1eec5a77f1a588d2e588b91d1ca7fa4a794aefdfc78431e31e6405d264f"},
+]
 inspire-service-orcid = [
     {file = "inspire-service-orcid-9.0.0.tar.gz", hash = "sha256:cacee4fb19224ea2eb8a0e7e943479ef628c47f4b8b51f271263c2816a6814a1"},
 ]
