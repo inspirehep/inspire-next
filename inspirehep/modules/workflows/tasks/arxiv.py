@@ -33,8 +33,6 @@ import requests
 from backports.tempfile import TemporaryDirectory
 from flask import current_app
 from requests import HTTPError
-from wand.exceptions import DelegateError, CoderError, FileOpenError, CacheError
-from wand.resource import limits
 from werkzeug import secure_filename
 from inspire_schemas.builders import LiteratureBuilder
 from inspire_schemas.readers import LiteratureReader
@@ -69,8 +67,6 @@ NO_PDF_ON_ARXIV = 'The author has provided no source to generate PDF, and no PDF
 TARBALL_EXCEPTIONS = (
     InvalidTarball,
     NoTexFilesFound,
-    CoderError,
-    FileOpenError,
     UnicodeDecodeError
 )
 
@@ -147,15 +143,6 @@ def arxiv_plot_extract(obj, eng):
     :param obj: Workflow Object to process
     :param eng: Workflow Engine processing the object
     """
-    # Crude way to set memory limits for wand globally.
-    mem_limit = current_app.config.get("WAND_MEMORY_LIMIT")
-    if mem_limit and limits['memory'] != mem_limit:
-        limits['memory'] = mem_limit
-        # This sets disk limit, if not set it will swap data on disk
-        # instead of throwing exception
-        limits['disk'] = current_app.config.get("WAND_DISK_LIMIT", 0)
-        # It will throw an exception when memory and disk limit exceeds.
-        # At least workflow status will be saved.
 
     arxiv_id = LiteratureReader(obj.data).arxiv_id
     filename = secure_filename('{0}.tar.gz'.format(arxiv_id))
@@ -179,19 +166,6 @@ def arxiv_plot_extract(obj, eng):
                 tarball.file.uri,
                 arxiv_id,
             )
-            delete_empty_key(obj, 'figures')
-            return
-        except DelegateError as err:
-            obj.log.error(
-                'Error extracting plots for %s. Report and skip.',
-                arxiv_id,
-            )
-            current_app.logger.exception(err)
-            delete_empty_key(obj, 'figures')
-            return
-        except CacheError as err:
-            obj.log.error('Cache resources exhausted for %s. Skipping plot extraction',
-                          arxiv_id)
             delete_empty_key(obj, 'figures')
             return
 
