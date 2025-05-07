@@ -40,7 +40,7 @@ inspire-dojson = "==63.*,>=63.2.27"
 inspire-json-merger = "^11.0.39"
 inspire-matcher = "^9.0.15"
 inspire-query-parser = "6.0.37"
-inspire-schemas = {git = "https://github.com/inspirehep/inspire-schemas.git", branch = "py-2"}
+inspire-schemas = {git = "https://github.com/inspirehep/inspire-schemas.git"}
 inspire-service-orcid = "==9.*,>=9.0.0"
 inspire-utils = "^3.0.63"
 invenio-access = "==1.3.0"
