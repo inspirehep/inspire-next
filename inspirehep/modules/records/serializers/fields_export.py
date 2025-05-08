@@ -25,7 +25,7 @@ from __future__ import absolute_import, division, print_function
 import re
 
 from babel import Locale
-from isbn import ISBNError
+from isbnlib import ISBNLibException
 from six import text_type
 
 from idutils import is_arxiv_post_2007, normalize_isbn
@@ -297,7 +297,7 @@ def get_isbn(data, doc_type):
     def hyphenate_if_possible(no_hyphens):
         try:
             return normalize_isbn(no_hyphens)
-        except ISBNError:
+        except ISBNLibException:
             return no_hyphens
 
     isbns = get_value(data, 'isbns.value', [])
