@@ -1397,7 +1397,7 @@ resolved_reference = "d60b18befd96ad7e78b3f8ade5b06e8b20f822e9"
 
 [[package]]
 name = "inspire-dojson"
-version = "63.2.27"
+version = "63.2.30"
 description = "INSPIRE-specific rules to transform from MARCXML to JSON and back."
 category = "main"
 optional = false
@@ -1408,8 +1408,7 @@ dojson = ">=1.3.1,<2.0"
 Flask = ">=0.12.3"
 IDUtils = ">=1.0.1,<2.0"
 inspire-schemas = "*"
-inspire-utils = ">=3.0.0,<4.0"
-isbnid-fork = ">=0.5.2,<1.0"
+inspire-utils = ">=3.0.65,<4.0"
 langdetect = ">=1.0.7,<2.0"
 MarkupSafe = ">=1.1.1"
 pycountry = ">=17.5.4,<18.0"
@@ -1549,7 +1548,7 @@ timeexecution = ">=3.3.0,<4"
 
 [[package]]
 name = "inspire-utils"
-version = "3.0.63"
+version = "3.0.65"
 description = "INSPIRE-specific utils."
 category = "main"
 optional = false
@@ -1557,6 +1556,7 @@ python-versions = "*"
 
 [package.dependencies]
 babel = ">=2.9.1,<3.0"
+isbnlib = ">=3.10.14,<4.0"
 lxml = ">=5.0,<6.0"
 nameparser = ">=1.1.3,<2.0"
 python-dateutil = ">=2.9.0,<3.0"
@@ -2376,20 +2376,6 @@ description = "Python ISBN ids"
 category = "main"
 optional = false
 python-versions = "*"
-
-[[package]]
-name = "isbnid-fork"
-version = "0.5.2"
-description = "Python ISBN ids"
-category = "main"
-optional = false
-python-versions = "*"
-
-[package.dependencies]
-autosemver = ">=0.2,<1.0"
-
-[package.extras]
-tests = ["pytest (>=3.0.4)", "pytest-pep8 (>=1.0.6)"]
 
 [[package]]
 name = "isbnlib"
@@ -4249,7 +4235,7 @@ build-node = ["ipdb"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=2.7,<3.0"
-content-hash = "5dbd1a99e3475358ed7dd7684ccffb62414dc72934a840f994fb5e2af8078f53"
+content-hash = "9d1b575d46a41a331391ba070dcc378ae61cf9e6a237e8fee5db261d30c35030"
 
 [metadata.files]
 alabaster = [
@@ -4788,7 +4774,7 @@ influxdb = [
 ]
 inspire-crawler = []
 inspire-dojson = [
-    {file = "inspire_dojson-63.2.27-py2.py3-none-any.whl", hash = "sha256:c5159efb8b1d6c8fa68590f97fc4f0c02922e7622471bdff72a6df818ddb3d5c"},
+    {file = "inspire_dojson-63.2.30-py2.py3-none-any.whl", hash = "sha256:8a093519c332d7c3a9bb851379585adaf3e8719fe572cc35cd886e9565b930fc"},
 ]
 inspire-idutils = [
     {file = "inspire_idutils-1.2.4-py2.py3-none-any.whl", hash = "sha256:44bf2a67bdc7a3662e1406a35cbc537c8f3888abf686d3642e199a21f47915f8"},
@@ -4811,8 +4797,8 @@ inspire-service-orcid = [
     {file = "inspire-service-orcid-9.0.0.tar.gz", hash = "sha256:cacee4fb19224ea2eb8a0e7e943479ef628c47f4b8b51f271263c2816a6814a1"},
 ]
 inspire-utils = [
-    {file = "inspire-utils-3.0.63.tar.gz", hash = "sha256:61ed87b1e9745a60092035d2da444e8609aa728ef0339da21aba6758185e00e9"},
-    {file = "inspire_utils-3.0.63-py3-none-any.whl", hash = "sha256:81528a9ef875404d6a4f33780d963cc7759916f9c5d4c4671e391f9f3eba9c05"},
+    {file = "inspire-utils-3.0.65.tar.gz", hash = "sha256:f6637a0015294c86dce4d4adea16b36cebd2c679de97290aaa9094cd5330d224"},
+    {file = "inspire_utils-3.0.65-py3-none-any.whl", hash = "sha256:de29cf7ca5928931c9c8bced5644e124883712c2284c6d7df178b5c18b7a0968"},
 ]
 intervals = [
     {file = "intervals-0.8.1.tar.gz", hash = "sha256:37921da1407a5e9384e8e1350cfb8500f8d0d69fc43d03d01a4fdc6e7a7c7166"},
@@ -4948,9 +4934,6 @@ ipython-genutils = [
 ]
 isbnid = [
     {file = "isbnid-0.4.6.tar.gz", hash = "sha256:2b2f9868b4a9ccb701b198a7839765bde852a5b790407fed5da2a518ea6608ce"},
-]
-isbnid-fork = [
-    {file = "isbnid_fork-0.5.2.tar.gz", hash = "sha256:8d878866aa0e7f06e700a37fce586c7398ce4837da8bca39683db7028a9c3837"},
 ]
 isbnlib = [
     {file = "isbnlib-3.10.14-py2.py3-none-any.whl", hash = "sha256:f885b350fc8e600a919ed46e3b07253062cd604af69885455a25a299217b3fe2"},
