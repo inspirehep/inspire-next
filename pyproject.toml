@@ -36,11 +36,11 @@ freezegun = {version = "==0.*,>=0.3.0,>=0.3.11", optional = true}
 fs = "==0.*,>=0.0.0,>=0.5.4"
 gunicorn = {version = "==19.*,>=19.0.0,>=19.7.1", optional = true}
 honcho = {version = "==1.*,>=1.0.0,>=1.0.1", optional = true}
-inspire-dojson = "==63.*,>=63.2.30"
-inspire-json-merger = "^11.0.39"
+inspire-dojson = "==63.*,>=63.2.31"
+inspire-json-merger = "^11.0.40"
 inspire-matcher = "^9.0.15"
 inspire-query-parser = "6.0.37"
-inspire-schemas = "61.6.14"
+inspire-schemas = "61.6.16"
 inspire-service-orcid = "==9.*,>=9.0.0"
 inspire-utils = "^3.0.63"
 invenio-access = "==1.3.0"
@@ -106,7 +106,6 @@ workflow = "==2.*,>=2.0.0,>=2.1.3"
 
 refextract = "^0.2.27"
 sword2 = {git ="https://github.com/inspirehep/python-client-sword2.git"}
-dictdiffer = {git ="https://github.com/inspirehep/dictdiffer.git"}
 flask-sqlalchemy = {git = "https://github.com/inspirehep/flask-sqlalchemy.git", rev = "71abd94a1e2317a1365a25a31e719dbd9aafceea"}
 timeexecution = {git= "https://github.com/puntonim/py-timeexecution.git", branch = "lazy-init-tmp-3.4.0"}
 invenio-xrootd = {version = ">=1.0.0a6", optional = true}

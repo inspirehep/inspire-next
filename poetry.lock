@@ -278,14 +278,6 @@ python-dateutil = ">=2.1,<3.0.0"
 urllib3 = {version = ">=1.20,<1.26", markers = "python_version != \"3.4\""}
 
 [[package]]
-name = "bump2version"
-version = "0.5.11"
-description = "Version-bump your software with a single command!"
-category = "main"
-optional = false
-python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*"
-
-[[package]]
 name = "celery"
 version = "4.4.2"
 description = "Distributed Task Queue."
@@ -491,23 +483,17 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*"
 
 [[package]]
 name = "dictdiffer"
-version = "0.7.2.dev20180504"
+version = "0.8.1"
 description = "Dictdiffer is a library that helps you to diff and patch dictionaries."
 category = "main"
 optional = false
 python-versions = "*"
-develop = true
 
 [package.extras]
-all = ["Sphinx (>=1.4.4)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "numpy (>=1.11.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "sphinx-rtd-theme (>=0.1.9)"]
+all = ["Sphinx (>=1.4.4)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "numpy (>=1.11.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "sphinx-rtd-theme (>=0.1.9)", "tox (>=3.7.0)"]
 docs = ["Sphinx (>=1.4.4)", "sphinx-rtd-theme (>=0.1.9)"]
 numpy = ["numpy (>=1.11.0)"]
-tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cache (>=1.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)"]
-
-[package.source]
-type = "git"
-url = "https://github.com/inspirehep/dictdiffer.git"
-reference = "master"
+tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.2.2)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest (>=2.8.0)", "pytest-cov (>=1.8.0)", "pytest-pep8 (>=1.0.6)", "tox (>=3.7.0)"]
 
 [[package]]
 name = "docutils"
@@ -1396,8 +1382,21 @@ reference = "3.0.10"
 resolved_reference = "d60b18befd96ad7e78b3f8ade5b06e8b20f822e9"
 
 [[package]]
+name = "inspire-dictdiffer"
+version = "0.0.3"
+description = "Dictdiffer is a library that helps you to diff and patch dictionaries."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.extras]
+all = ["coverage (>=4.0)", "mock (>=1.3.0)", "numpy (>=1.13.0)", "numpy (>=1.15.0)", "numpy (>=1.18.0)", "numpy (>=1.20.0)", "pydocstyle (>=1.0.0)", "pytest (>=4.6,<5.0)", "pytest (>=6.2.5,<7.0)", "pytest-cache (>=1.0)", "pytest-cov (==2.6.1)", "pytest-pep8 (>=1.0.6)"]
+numpy = ["numpy (>=1.13.0)", "numpy (>=1.15.0)", "numpy (>=1.18.0)", "numpy (>=1.20.0)"]
+tests = ["coverage (>=4.0)", "mock (>=1.3.0)", "pydocstyle (>=1.0.0)", "pytest (>=4.6,<5.0)", "pytest (>=6.2.5,<7.0)", "pytest-cache (>=1.0)", "pytest-cov (==2.6.1)", "pytest-pep8 (>=1.0.6)"]
+
+[[package]]
 name = "inspire-dojson"
-version = "63.2.30"
+version = "63.2.31"
 description = "INSPIRE-specific rules to transform from MARCXML to JSON and back."
 category = "main"
 optional = false
@@ -1436,7 +1435,7 @@ tests = ["pytest-black-ng (>=0.4.0)", "pytest-cache (>=1.0)", "pytest-invenio (>
 
 [[package]]
 name = "inspire-json-merger"
-version = "11.0.39"
+version = "11.0.40"
 description = "INSPIRE-specific configuration of the JSON Merger."
 category = "main"
 optional = false
@@ -1444,7 +1443,7 @@ python-versions = "*"
 
 [package.dependencies]
 inspire-utils = ">=3.0.0,<4.0"
-json-merger = {version = "0.7.14", extras = ["contrib"]}
+json-merger = {version = ">=0.7.18,<1.0", extras = ["contrib"]}
 munkres = "1.0.12"
 pyrsistent = ">=0.14.0,<1.0"
 
@@ -1500,7 +1499,7 @@ tests = ["flake8 (>=3.5.0,<4.0)", "mock (>=2.0.0,<3.0)", "pytest (>=3.2.2,<4.0)"
 
 [[package]]
 name = "inspire-schemas"
-version = "61.6.14"
+version = "61.6.16"
 description = "Inspire JSON schemas and utilities to use them."
 category = "main"
 optional = false
@@ -1508,7 +1507,6 @@ python-versions = "*"
 
 [package.dependencies]
 bleach = ">=3.2.1,<4.0"
-bump2version = {version = ">=0.0,<1", markers = "python_version == \"2.7\""}
 inspire-idutils = {version = "1.2.4", markers = "python_version == \"2.7\""}
 inspire-utils = ">=3.0.65,<4.0"
 isodate = "*"
@@ -2424,15 +2422,15 @@ python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*"
 
 [[package]]
 name = "json-merger"
-version = "0.7.14"
+version = "0.7.18"
 description = "Python module that is able to merge json record objects."
 category = "main"
 optional = false
 python-versions = "*"
 
 [package.dependencies]
-dictdiffer = ">=0.6.0"
 editdistance = {version = ">=0.3.1", optional = true, markers = "extra == \"contrib\""}
+inspire-dictdiffer = "*"
 munkres = {version = "<=1.0.12", optional = true, markers = "extra == \"contrib\""}
 pyrsistent = ">=0.11.13"
 six = ">=1.10.0"
@@ -4219,7 +4217,7 @@ build-node = ["ipdb"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=2.7,<3.0"
-content-hash = "6f4868e445174d9db91b0d85467771f5f1330e4162446bc3c1f8914c496baef4"
+content-hash = "5dae54e06d4981136257ea073ed6205e517f3b7ae4ac7031514a1b31d943b402"
 
 [metadata.files]
 alabaster = [
@@ -4319,10 +4317,6 @@ boto3 = [
 botocore = [
     {file = "botocore-1.17.61-py2.py3-none-any.whl", hash = "sha256:4a2931b6cdbb1caf797eaf81f1f42f9cf243f94f06b3144d36a2f016a58ad125"},
     {file = "botocore-1.17.61.tar.gz", hash = "sha256:71160b06c52f21cc477bc4b5eb35fc78f1f89e363b86d93fcbebfe366cc4d8f0"},
-]
-bump2version = [
-    {file = "bump2version-0.5.11-py2.py3-none-any.whl", hash = "sha256:bfcc051498dda9fd9ac8634689f4516e1c20fdeeace3278932cc6e1248418b36"},
-    {file = "bump2version-0.5.11.tar.gz", hash = "sha256:524bde030318fe2543038defe0f77739605636fef96924883813cb290cf79c1e"},
 ]
 celery = [
     {file = "celery-4.4.2-py2.py3-none-any.whl", hash = "sha256:5b4b37e276033fe47575107a2775469f0b721646a08c96ec2c61531e4fe45f2a"},
@@ -4490,7 +4484,10 @@ decorator = [
     {file = "decorator-4.4.1-py2.py3-none-any.whl", hash = "sha256:5d19b92a3c8f7f101c8dd86afd86b0f061a8ce4540ab8cd401fa2542756bce6d"},
     {file = "decorator-4.4.1.tar.gz", hash = "sha256:54c38050039232e1db4ad7375cfce6748d7b41c29e95a081c8a6d2c30364a2ce"},
 ]
-dictdiffer = []
+dictdiffer = [
+    {file = "dictdiffer-0.8.1-py2.py3-none-any.whl", hash = "sha256:d79d9a39e459fe33497c858470ca0d2e93cb96621751de06d631856adfd9c390"},
+    {file = "dictdiffer-0.8.1.tar.gz", hash = "sha256:1adec0d67cdf6166bda96ae2934ddb5e54433998ceab63c984574d187cc563d2"},
+]
 docutils = [
     {file = "docutils-0.15.2-py2-none-any.whl", hash = "sha256:9e4d7ecfc600058e07ba661411a2b7de2fd0fafa17d1a7f7361cd47b1175c827"},
     {file = "docutils-0.15.2-py3-none-any.whl", hash = "sha256:6c4f696463b79f1fb8ba0c594b63840ebd41f059e92b31957c46b74a4599b6d0"},
@@ -4757,16 +4754,20 @@ influxdb = [
     {file = "influxdb-5.2.3.tar.gz", hash = "sha256:30276c7e04bf7659424c733b239ba2f0804d7a1f3c59ec5dd3f88c56176c8d36"},
 ]
 inspire-crawler = []
+inspire-dictdiffer = [
+    {file = "inspire-dictdiffer-0.0.3.tar.gz", hash = "sha256:2424ae8c7ed9dd72435ebdea36fcf61826c9b8c48669ac7988d4f02a0316f090"},
+    {file = "inspire_dictdiffer-0.0.3-py3-none-any.whl", hash = "sha256:b26cd21771a490e97a8850be86d2f187fefc1479b1492001ed9c2c79dd8b49aa"},
+]
 inspire-dojson = [
-    {file = "inspire_dojson-63.2.30-py2.py3-none-any.whl", hash = "sha256:8a093519c332d7c3a9bb851379585adaf3e8719fe572cc35cd886e9565b930fc"},
+    {file = "inspire_dojson-63.2.31-py2.py3-none-any.whl", hash = "sha256:39f34ab5fae5c48a0bf586e2b51243344f98347b348930969d31dc326012b3cf"},
 ]
 inspire-idutils = [
     {file = "inspire_idutils-1.2.4-py2.py3-none-any.whl", hash = "sha256:44bf2a67bdc7a3662e1406a35cbc537c8f3888abf686d3642e199a21f47915f8"},
     {file = "inspire_idutils-1.2.4.tar.gz", hash = "sha256:26a247cfab92e3e1eadac84f8a6da67cf83f8c5836acb16e7b9ee2cc06e18d10"},
 ]
 inspire-json-merger = [
-    {file = "inspire-json-merger-11.0.39.tar.gz", hash = "sha256:bca239e7c6e6c91dcf0fad1f395cc435c0c4a86a8eb05b7a892ee559a10de41d"},
-    {file = "inspire_json_merger-11.0.39-py3-none-any.whl", hash = "sha256:91430246308aae0cdb7a2e07c05d2f9b67d603afc48980f3ae2c89edef3e75f0"},
+    {file = "inspire-json-merger-11.0.40.tar.gz", hash = "sha256:cdd6e59f8da796583344daafe5e4acd3f90c855a58d8c7108d4f1506280fe8f5"},
+    {file = "inspire_json_merger-11.0.40-py3-none-any.whl", hash = "sha256:26f8a18061d06d330198efaf751af7289078b9ae4752fb9edbcb8dbdea676cc3"},
 ]
 inspire-matcher = [
     {file = "inspire-matcher-9.0.17.tar.gz", hash = "sha256:90b2e687b0256f0626725050a3d004cc3ce5681903acb713841fd124e45bf936"},
@@ -4777,7 +4778,8 @@ inspire-query-parser = [
     {file = "inspire_query_parser-6.0.37-py2-none-any.whl", hash = "sha256:94124b8e2c1b5a837e73aa35f4311350090eadb357f9faf279342fa822c2725b"},
 ]
 inspire-schemas = [
-    {file = "inspire_schemas-61.6.14-py2.py3-none-any.whl", hash = "sha256:1566b1eec5a77f1a588d2e588b91d1ca7fa4a794aefdfc78431e31e6405d264f"},
+    {file = "inspire-schemas-61.6.16.tar.gz", hash = "sha256:4c95a2ec1a271c4dc3c08dd2dbc71fa5c96fc1b419e7ae3992e92732bdc143af"},
+    {file = "inspire_schemas-61.6.16-py2.py3-none-any.whl", hash = "sha256:e616b59fe465e3cea43be0a3aacfd5d4460aaa2a4f67153724cbe9ca5804e0f5"},
 ]
 inspire-service-orcid = [
     {file = "inspire-service-orcid-9.0.0.tar.gz", hash = "sha256:cacee4fb19224ea2eb8a0e7e943479ef628c47f4b8b51f271263c2816a6814a1"},
@@ -4943,7 +4945,7 @@ jmespath = [
     {file = "jmespath-0.10.0.tar.gz", hash = "sha256:b85d0567b8666149a93172712e68920734333c0ce7e89b78b3e987f71e5ed4f9"},
 ]
 json-merger = [
-    {file = "json_merger-0.7.14-py2.py3-none-any.whl", hash = "sha256:54154007134770f1b992ee443bddefd1e72a7dace6d274a02235dedde69f25ac"},
+    {file = "json_merger-0.7.18-py2.py3-none-any.whl", hash = "sha256:504268a61652a55b952d7be266788d2ef12e0ff5611b61c601e5e90c0162799d"},
 ]
 jsonpatch = [
     {file = "jsonpatch-1.25-py2.py3-none-any.whl", hash = "sha256:cc3a7241010a1fd3f50145a3b33be2c03c1e679faa19934b628bb07d0f64819e"},
