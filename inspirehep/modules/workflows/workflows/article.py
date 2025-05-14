@@ -302,6 +302,15 @@ NOTIFY_CURATOR_IF_NEEDED = [
                                 ticket_id_key="curation_ticket_id",
                             ),
                         ),
+                        IF(
+                            check_if_cern_candidate,
+                            create_ticket(
+                                template="literaturesuggest/tickets/curation_core.html",
+                                queue="CERN_curation",
+                                context_factory=curation_ticket_context,
+                                ticket_id_key="curation_ticket_id",
+                            ),
+                        ),
                     ],
                 ),
             ],
