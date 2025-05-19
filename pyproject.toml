@@ -114,7 +114,7 @@ fuzzy = "1.1"
 pylatexenc = "^2.7"
 ipaddress = "1.0.23"
 parsel = "^1.6.0"
-hepcrawl = "^13.0.58"
+hepcrawl = "^13.0.80"
 PyYAML = "<6.0"
 cryptography = "^3.3.2"
 inspire-crawler = {git = "https://github.com/inspirehep/inspire-crawler.git", rev = "3.0.10"}
