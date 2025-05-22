@@ -2866,7 +2866,7 @@ python-versions = "*"
 
 [[package]]
 name = "plotextractor"
-version = "1.0.16"
+version = "1.0.18"
 description = "Small library for extracting plots used in scholarly communication."
 category = "main"
 optional = false
@@ -5281,7 +5281,7 @@ pkgsettings = [
     {file = "pkgsettings-0.12.0.tar.gz", hash = "sha256:149102d1c3d2179140eaa8acd94b085aaa6ae30605d425b84aa83a3bb1536658"},
 ]
 plotextractor = [
-    {file = "plotextractor-1.0.16-py2.py3-none-any.whl", hash = "sha256:e441a6218225b518d9d20b80558aa0e3558e7af2616e1113c62fb8cb67a3a958"},
+    {file = "plotextractor-1.0.18-py2.py3-none-any.whl", hash = "sha256:a9c2656b670ae9e59f23d55c207932a179c5fd2d4f5fb62a3ee6c925f9cb4816"},
 ]
 pluggy = [
     {file = "pluggy-0.13.1-py2.py3-none-any.whl", hash = "sha256:966c145cd83c96502c3c3868f50408687b38434af77734af1e9ca461a4081d2d"},
