@@ -37,7 +37,7 @@ fs = "==0.*,>=0.0.0,>=0.5.4"
 gunicorn = {version = "==19.*,>=19.0.0,>=19.7.1", optional = true}
 honcho = {version = "==1.*,>=1.0.0,>=1.0.1", optional = true}
 inspire-dojson = "==63.*,>=63.2.31"
-inspire-json-merger = "^11.0.40"
+inspire-json-merger = "^11.0.42"
 inspire-matcher = "^9.0.15"
 inspire-query-parser = "6.0.37"
 inspire-schemas = "61.6.16"
