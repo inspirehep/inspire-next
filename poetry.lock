@@ -1500,7 +1500,7 @@ tests = ["flake8 (>=3.5.0,<4.0)", "mock (>=2.0.0,<3.0)", "pytest (>=3.2.2,<4.0)"
 
 [[package]]
 name = "inspire-schemas"
-version = "61.6.16"
+version = "61.6.17"
 description = "Inspire JSON schemas and utilities to use them."
 category = "main"
 optional = false
@@ -1511,7 +1511,7 @@ bleach = ">=3.2.1,<4.0"
 inspire-idutils = {version = "1.2.4", markers = "python_version == \"2.7\""}
 inspire-utils = ">=3.0.65,<4.0"
 isodate = "*"
-jsonschema = ">=2.6.0,<3.0"
+jsonschema = {version = ">=2.6.0,<3.0", markers = "python_version == \"2.7\""}
 pylatexenc = "*"
 pytz = "*"
 pyyaml = {version = "5.3.0", markers = "python_version == \"2.7\""}
@@ -4219,7 +4219,7 @@ build-node = ["ipdb"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=2.7,<3.0"
-content-hash = "6fff76203028af8f5edddcfae4af2b5f8d7c8f5e52dea5af8bcc00e55c01dee6"
+content-hash = "f86b406ca704cde4c101e635e362d2635c0a0386e23600720b4de7e9e1023030"
 
 [metadata.files]
 alabaster = [
@@ -4780,8 +4780,8 @@ inspire-query-parser = [
     {file = "inspire_query_parser-6.0.37-py2-none-any.whl", hash = "sha256:94124b8e2c1b5a837e73aa35f4311350090eadb357f9faf279342fa822c2725b"},
 ]
 inspire-schemas = [
-    {file = "inspire-schemas-61.6.16.tar.gz", hash = "sha256:4c95a2ec1a271c4dc3c08dd2dbc71fa5c96fc1b419e7ae3992e92732bdc143af"},
-    {file = "inspire_schemas-61.6.16-py2.py3-none-any.whl", hash = "sha256:e616b59fe465e3cea43be0a3aacfd5d4460aaa2a4f67153724cbe9ca5804e0f5"},
+    {file = "inspire-schemas-61.6.17.tar.gz", hash = "sha256:16284ba257e602f17f948de66459e7864ad0d732d6fe5c3728fc629b7b4f02e8"},
+    {file = "inspire_schemas-61.6.17-py2.py3-none-any.whl", hash = "sha256:55ddd4b52b7c131594e6c7074ab4924235f6313f4bf5d11f38899682423845e8"},
 ]
 inspire-service-orcid = [
     {file = "inspire-service-orcid-9.0.0.tar.gz", hash = "sha256:cacee4fb19224ea2eb8a0e7e943479ef628c47f4b8b51f271263c2816a6814a1"},
