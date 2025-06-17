@@ -1325,6 +1325,14 @@ def check_if_cern_candidate(obj, eng):
                 }
             }
         },
+        {
+            "match": {
+                "metadata.external_system_identifiers.schema": {
+                    "query": "CDSRDM",
+                    "operator": "and",
+                }
+            }
+        },
         {"match_phrase": {"metadata._private_notes.value": "Not CERN"}},
         {"match": {"metadata._collections": "CDS Hidden"}},
         {
