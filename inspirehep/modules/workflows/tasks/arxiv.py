@@ -70,6 +70,8 @@ TARBALL_EXCEPTIONS = (
     UnicodeDecodeError
 )
 
+AUTHOR_XML_ALLOWED_IDS = [u'ORCID', u'CCID', u'INSPIRE']
+
 
 @with_debug_logging
 @backoff.on_exception(backoff.expo, DownloadError, base=4, max_tries=5)
@@ -288,6 +290,8 @@ def extract_authors_from_xml(xml_content):
         # Gets all the author ids
         for source, id in itertools.izip(author.xpath('./authorIDs/authorID[@source!="" and text()!=""]/@source | ./authorids/authorid[@source!="" and text()!=""]/@source').getall(), author.xpath('./authorIDs/authorID[@source!="" and text()!=""]/text() | ./authorids/authorid[@source!="" and text()!=""]/text()').getall()):
             source = re.sub(remove_new_line_regex, '', source)
+            if source not in AUTHOR_XML_ALLOWED_IDS:
+                continue
             id = re.sub(remove_new_line_regex, '', id)
             if not re.match(undefined_value_regex, source) and not re.match(undefined_or_empty_inspireid_value_regex, id):
                 if source == u'CCID':
