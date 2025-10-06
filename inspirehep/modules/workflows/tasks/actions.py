@@ -1011,6 +1011,7 @@ def normalize_author_affiliations(obj, eng):
     ):
         author_affiliations = author.get("affiliations", [])
         if author_affiliations:
+            author["affiliations"] = dedupe_list(author_affiliations)
             continue
         raw_affs = get_value(author, "raw_affiliations.value", [])
         if normalized_affiliation:
