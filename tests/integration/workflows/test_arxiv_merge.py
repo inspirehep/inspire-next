@@ -818,7 +818,7 @@ def test_workflow_restarts_twice_if_working_with_stale_data(
     side_effect=fake_magpie_api_request,
 )
 @patch("inspirehep.modules.workflows.tasks.upload._is_stale_data", return_value=True)
-def test_workflow_restarts_goes_in_error_after_three_restarts(
+def test_workflow_restarts_goes_in_error_after_ten_restarts(
     mocked__is_stale_data,
     mocked_api_request_magpie,
     mocked_api_request_classifier,
@@ -847,7 +847,7 @@ def test_workflow_restarts_goes_in_error_after_three_restarts(
     obj = workflow_object_class.get(obj_id)
 
     assert (
-        obj.extra_data["source_data"]["persistent_data"]["marks"]["restart-count"] == 3
+        obj.extra_data["source_data"]["persistent_data"]["marks"]["restart-count"] == 10
     )
     assert "Workflow restarted too many times" in obj.extra_data["_error_msg"]
     assert obj.status == ObjectStatus.ERROR
