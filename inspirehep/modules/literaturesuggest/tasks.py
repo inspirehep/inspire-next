@@ -218,7 +218,7 @@ def new_ticket_context(user, obj):
         identifier=identifiers or "",
         user_comment=user_comment,
         references=obj.extra_data.get('formdata', {}).get('references'),
-        obj_url=url_for('invenio_workflows_ui.details', objectid=obj.id, _external=True),
+        url=url_for('invenio_workflows_ui.details', objectid=obj.id, _external=True),
         subject=subject
     )
 

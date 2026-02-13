@@ -41,7 +41,7 @@ def new_ticket_context(user, obj):
     )
     return dict(
         email=user.email,
-        obj_url=url_for('invenio_workflows_ui.details', objectid=obj.id, _external=True),
+        url=url_for('invenio_workflows_ui.details', objectid=obj.id, _external=True),
         subject=subject,
         user_comment=obj.extra_data.get('formdata', {}).get('extra_comments', ''),
     )
