@@ -25,6 +25,7 @@ version: '2.1'
 services:
   test-service_base:
     # Overrides default inspirehep config.
+    platform: linux/amd64
     image: inspire-build/inspire-next-base
     environment:
       - APP_SQLALCHEMY_DATABASE_URI=postgresql+psycopg2://inspirehep:inspirehep@test-database:5432/inspirehep
@@ -71,6 +72,7 @@ services:
 
 
   mitm-proxy:
+    platform: linux/amd64
     image: inspirehep/inspire-mitmproxy:0
     tty: true
     ports:
@@ -122,16 +124,25 @@ services:
   integration_async:
     extends:
       service: test-service_base
-    command: py.test tests/integration_async
+    command: >-
+      bash -lc "until pg_isready --dbname=inspirehep --host=test-database --username=inspirehep;
+      do sleep 2; done;
+      until bash -lc 'exec 3<> /dev/tcp/test-redis/6379' 2>/dev/null;
+      do sleep 2; done;
+      until bash -lc 'exec 3<> /dev/tcp/test-rabbitmq/5672' 2>/dev/null;
+      do sleep 2; done;
+      until curl -fsS http://test-indexer:9200/_cluster/health >/dev/null;
+      do sleep 2; done;
+      py.test tests/integration_async"
     depends_on:
       test-database:
-        condition: service_healthy
+        condition: service_started
       test-indexer:
-        condition: service_healthy
+        condition: service_started
       test-redis:
-        condition: service_healthy
+        condition: service_started
       test-rabbitmq:
-         condition: service_healthy
+         condition: service_started
 
   test-web:
     extends:
@@ -177,6 +188,7 @@ services:
         condition: service_healthy
 
   test-redis:
+    platform: linux/amd64
     image: redis:3.2.3
     healthcheck:
       timeout: 5s
@@ -201,6 +213,7 @@ services:
         - "curl http://localhost:9200/_cluster/health | grep '.status.:.\\(green\\|yellow\\)'"
 
   test-rabbitmq:
+    platform: linux/amd64
     image: rabbitmq
     healthcheck:
       timeout: 5s

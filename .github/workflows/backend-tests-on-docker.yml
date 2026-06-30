@@ -20,25 +20,22 @@ jobs:
         with:
           ref: ${{ inputs.ref }}
           fetch-depth: 0
-      - name: Cache docker image
-        uses: actions/cache@v4.2.0
-        id: cache
-        with:
-          path: /tmp/docker-images
-          key: docker-images-cache-${{ hashFiles('.github/workflows/backend-tests-on-docker', 'services.yml', 'docker-compose.test.yml', 'Dockerfile.dev', 'poetry.lock', 'setup.py', 'setup.cfg') }}
       - name: Build images
-        if: steps.cache.outputs.cache-hit != 'true'
         run: docker compose -f services.yml build --force-rm base
       - name: Install lrzip
-        if: steps.cache.outputs.cache-hit != 'true'
         run: |
           sudo apt-get update
           sudo apt-get install -y lrzip
       - name: Save image
-        if: steps.cache.outputs.cache-hit != 'true'
         run: |
           mkdir -p /tmp/docker-images
           docker save inspire-build/inspire-next-base |lrz -l -o /tmp/docker-images/base.lz
+      - name: Upload image artifact
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: docker-images-${{ github.run_id }}-${{ github.run_attempt }}
+          path: /tmp/docker-images/base.lz
+          if-no-files-found: error
 
   Workflows-I:
     runs-on: ubuntu-latest
@@ -49,12 +46,11 @@ jobs:
         with:
           ref: ${{ inputs.ref }}
           fetch-depth: 0
-      - name: Cache docker image
-        uses: actions/cache@v4.2.0
-        id: cache
+      - name: Download image artifact
+        uses: actions/download-artifact@v4.1.9
         with:
+          name: docker-images-${{ github.run_id }}-${{ github.run_attempt }}
           path: /tmp/docker-images
-          key: docker-images-cache-${{ hashFiles('.github/workflows/backend-tests-on-docker', 'services.yml', 'docker-compose.test.yml', 'Dockerfile.dev', 'poetry.lock', 'setup.py', 'setup.cfg') }}
       - name: Load image from cache
         uses: ./.github/actions/load-image-from-cache
       - name: Prepare docker
@@ -85,12 +81,11 @@ jobs:
         with:
           ref: ${{ inputs.ref }}
           fetch-depth: 0
-      - name: Cache docker image
-        uses: actions/cache@v4.2.0
-        id: cache
+      - name: Download image artifact
+        uses: actions/download-artifact@v4.1.9
         with:
+          name: docker-images-${{ github.run_id }}-${{ github.run_attempt }}
           path: /tmp/docker-images
-          key: docker-images-cache-${{ hashFiles('.github/workflows/backend-tests-on-docker', 'services.yml', 'docker-compose.test.yml', 'Dockerfile.dev', 'poetry.lock', 'setup.py', 'setup.cfg') }}
       - name: Load image from cache
         uses: ./.github/actions/load-image-from-cache
       - name: Prepare docker
@@ -123,12 +118,11 @@ jobs:
         with:
           ref: ${{ inputs.ref }}
           fetch-depth: 0
-      - name: Cache docker image
-        uses: actions/cache@v4.2.0
-        id: cache
+      - name: Download image artifact
+        uses: actions/download-artifact@v4.1.9
         with:
+          name: docker-images-${{ github.run_id }}-${{ github.run_attempt }}
           path: /tmp/docker-images
-          key: docker-images-cache-${{ hashFiles('.github/workflows/backend-tests-on-docker', 'services.yml', 'docker-compose.test.yml', 'Dockerfile.dev', 'poetry.lock', 'setup.py', 'setup.cfg') }}
       - name: Load image from cache
         uses: ./.github/actions/load-image-from-cache
       - name: Prepare docker
@@ -148,12 +142,11 @@ jobs:
         with:
           ref: ${{ inputs.ref }}
           fetch-depth: 0
-      - name: Cache docker image
-        uses: actions/cache@v4.2.0
-        id: cache
+      - name: Download image artifact
+        uses: actions/download-artifact@v4.1.9
         with:
+          name: docker-images-${{ github.run_id }}-${{ github.run_attempt }}
           path: /tmp/docker-images
-          key: docker-images-cache-${{ hashFiles('.github/workflows/backend-tests-on-docker', 'services.yml', 'docker-compose.test.yml', 'Dockerfile.dev', 'poetry.lock', 'setup.py', 'setup.cfg') }}
       - name: Load image from cache
         uses: ./.github/actions/load-image-from-cache
       - name: Prepare docker
@@ -173,12 +166,11 @@ jobs:
         with:
           ref: ${{ inputs.ref }}
           fetch-depth: 0
-      - name: Cache docker image
-        uses: actions/cache@v4.2.0
-        id: cache
+      - name: Download image artifact
+        uses: actions/download-artifact@v4.1.9
         with:
+          name: docker-images-${{ github.run_id }}-${{ github.run_attempt }}
           path: /tmp/docker-images
-          key: docker-images-cache-${{ hashFiles('.github/workflows/backend-tests-on-docker', 'services.yml', 'docker-compose.test.yml', 'Dockerfile.dev', 'poetry.lock', 'setup.py', 'setup.cfg') }}
       - name: Load image from cache
         uses: ./.github/actions/load-image-from-cache
       - name: Run tests
